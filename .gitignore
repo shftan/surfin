@@ -1,7 +1,8 @@
 .Rproj.user
 .Rhistory
 .RData
-.Rproj.user
+.Rbuildignore
+.DS_Store
 src/*.o
 src/*.so
 src/*.dll
