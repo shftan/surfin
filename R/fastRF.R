@@ -29,6 +29,12 @@ fastRF <- function (x, y, nTree = 500, replace = TRUE, keepForest = TRUE,
        }
   }
   
+  # Only run if no NA's in either response or predictor(s)
+  if (sum(is.na(x),is.na(y)) != 0)
+  {
+    stop('NA not permitted in predictors or response') 
+  }
+    
   varNames <- if (is.null(colnames(x))) 1:ncol(x) else colnames(x)
   yOffset <- if (is.factor(y)) 0 else mean(y)
   if (!is.factor(y)) y <- y - yOffset
