@@ -23,10 +23,8 @@ fastRF <- function (x, y, nTree = 500, replace = TRUE, keepForest = TRUE,
   
   # Only run for regression or binary classification
   # multiclass classification requires different splitting, unsupervised learning requires additional code
-  if (is.factor(y))
-  {
-      if (length(levels(y)>2))
-      {
+  if (is.factor(y)) {
+      if (length(levels(y))>2) {
    			stop('can only handle regression or binary classification')  
        }
   }
@@ -41,8 +39,7 @@ fastRF <- function (x, y, nTree = 500, replace = TRUE, keepForest = TRUE,
   
   # Return predictions as factors if classification
   # R orders levels of a factor alphabetically
-  if (is.factor(y))
-  {
+  if (is.factor(y)) {
     key = unique(data.frame(y,as.numeric(y)))
     key[,1] = as.character(key[,1])
     index = rfout$predicted<mean(key[,2])   # specific to binary classification
