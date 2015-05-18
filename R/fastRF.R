@@ -46,11 +46,13 @@ fastRF <- function (x, y, nTree = 500, replace = TRUE, keepForest = TRUE,
     key = unique(data.frame(y,as.numeric(y)))
     key[,1] = as.character(key[,1])
     index = rfout$predicted<mean(key[,2])   # specific to binary classification
+    tmp = rfout$predicted
     rfout$predicted[index] = key[1,1]
     rfout$predicted[!index] = key[2,1]
     rfout$predicted = factor(rfout$predicted)
   }
   
+  print(is.factor(y))
   rfout$varNames        <- varNames
   if (!keepForest) rfout$forest <- NULL
   return(rfout)
