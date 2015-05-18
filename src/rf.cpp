@@ -126,7 +126,8 @@ List cppForest(NumericMatrix& x, NumericVector& y, int nSamp, int nodeSize,
               Named("split")         = split,
               Named("leftDaughter")  = lDaughter,
               Named("rightDaughter") = rDaughter,
-              Named("nodePred")      = nodePred));
+              Named("nodePred")      = nodePred,
+              Named("y") = y));  // remove after testing
 }
 
 //build an individual regression tree
