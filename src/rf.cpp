@@ -37,7 +37,7 @@ void findBestVal(int var, int* idTry, int nUniq, double nParent,
                  
 void sampNoReplace(int* next, IntegerVector indices, int* nRemain);
 
-void predictTree(const NumericMatrix& x, NumericVector& yPred,
+void predictTree(const NumericMatrix& x, NumericMatrix& yPred,
         int* nodes, int* splitVar, double* split, int* lDaughter, 
         int* rDaughter, double* nodePred, NumericVector& nOOB, 
         std::vector<TempData>& d);
@@ -80,7 +80,7 @@ List cppForest(NumericMatrix& x, NumericVector& y, int nSamp, int nodeSize,
     int n = x.nrow();
     double ySum = 0.0;
     IntegerMatrix nodes(n, nTree);
-    NumericVector yPred(n);    
+    NumericMatrix yPred(n, nTree);    
     NumericVector nOOB(n);
     IntegerVector IDs(n);
     std::vector<TempData> tmp;
@@ -106,13 +106,13 @@ List cppForest(NumericMatrix& x, NumericVector& y, int nSamp, int nodeSize,
                 nodePred(_,t).begin(),  IDs, tmp, classify);
     
       //update OOB predictions
-      predictTree(x, yPred, nodes(_,t).begin(), splitVar(_,t).begin(),
+      predictTree(x, yPred(_,t).begin(), nodes(_,t).begin(), splitVar(_,t).begin(),
                   split(_,t).begin(), lDaughter(_,t).begin(), rDaughter(_,t).begin(), 
                   nodePred(_,t).begin(), nOOB,  tmp);
     }
     
     //normalize the y predictions
-    yPred = yPred / nOOB;
+    //yPred = yPred / nOOB;
     
     //interface with R's random number generator
     PutRNGstate();
@@ -121,13 +121,14 @@ List cppForest(NumericMatrix& x, NumericVector& y, int nSamp, int nodeSize,
     return List::create(
             Named("nodes")     = nodes,
             Named("predicted") = yPred,
+            Named("nOOB") = nOOB,
+            Named("y") = y,
             Named("forest") =  Rcpp::List::create(
               Named("splitVar")      = splitVar,
               Named("split")         = split,
               Named("leftDaughter")  = lDaughter,
               Named("rightDaughter") = rDaughter,
-              Named("nodePred")      = nodePred,
-              Named("y") = y));  // remove after testing
+              Named("nodePred")      = nodePred));
 }
 
 //build an individual regression tree
@@ -322,7 +323,7 @@ void resample(int nOrig, int nSamp, int replace, IntegerVector& IDs,
 }
         
 //generate OOB predictions from a built tree
-void predictTree(const NumericMatrix& x, NumericVector& yPred, int* nodes, 
+void predictTree(const NumericMatrix& x, NumericMatrix& yPred, int* nodes, 
         int* splitVar, double* split, int* lDaughter, int* rDaughter, 
         double* nodePred, NumericVector& nOOB, std::vector<TempData>& tmp) {
           
@@ -342,7 +343,7 @@ void predictTree(const NumericMatrix& x, NumericVector& yPred, int* nodes,
       
       //Reached terminal node. Update predictions and reset node
       nOOB[i]++;
-      yPred[i] += nodePred[nd];
+      yPred[i] = nodePred[nd];
       nodes[i] = nd+1; 
       nd = 0; 
     }
