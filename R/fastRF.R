@@ -45,11 +45,14 @@ fastRF <- function (x, y, nTree = 500, replace = TRUE, keepForest = TRUE,
   if (!is.factor(y)) y <- y - yOffset
   rfout <- cppForest(data.matrix(x), y, nSamp, nodeSize, maxNodes, nTree, mtry, 
                       keepForest, replace, is.factor(y))
+  if (!is.factor(y)) y = y + yOffset
   rfout$forest$nodePred <- rfout$forest$nodePred + yOffset
-  rfout$predicted       <- rfout$predicted + yOffset
+  rfout$predicted = rowMeans(rfout$predictedByTree,na.rm=T)
+  rfout$predicted <- rfout$predicted + yOffset
   
-  # Return predictions as factors if classification
+  ## If classification, format predictions as factors and calculate oob err.rate
   # R orders levels of a factor alphabetically
+  ## If regression, calculate oob mse
   if (is.factor(y)) {
     key = unique(data.frame(y,as.numeric(y)))
     key[,1] = as.character(key[,1])
@@ -58,6 +61,10 @@ fastRF <- function (x, y, nTree = 500, replace = TRUE, keepForest = TRUE,
     rfout$predicted[index] = key[1,1]
     rfout$predicted[!index] = key[2,1]
     rfout$predicted = factor(rfout$predicted)
+    rfout$err.rate = apply(rfout$predictedByTree,2,function(x) mean(x!=y,na.rm=T))
+  }
+  else {
+    rfout$mse = apply(rfout$predictedByTree,2,function(x) mean((x-y)^2,na.rm=T))
   }
   
   rfout$varNames        <- varNames
