@@ -60,7 +60,6 @@ fastRF <- function (x, y, nTree = 500, replace = TRUE, keepForest = TRUE,
     rfout$predicted = factor(rfout$predicted)
   }
   
-  print(is.factor(y))
   rfout$varNames        <- varNames
   if (!keepForest) rfout$forest <- NULL
   return(rfout)

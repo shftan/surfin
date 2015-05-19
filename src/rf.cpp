@@ -37,7 +37,7 @@ void findBestVal(int var, int* idTry, int nUniq, double nParent,
                  
 void sampNoReplace(int* next, IntegerVector indices, int* nRemain);
 
-void predictTree(const NumericMatrix& x, NumericMatrix& yPred,
+void predictTree(const NumericMatrix& x, double* yPred,
         int* nodes, int* splitVar, double* split, int* lDaughter, 
         int* rDaughter, double* nodePred, NumericVector& nOOB, 
         std::vector<TempData>& d);
@@ -323,7 +323,7 @@ void resample(int nOrig, int nSamp, int replace, IntegerVector& IDs,
 }
         
 //generate OOB predictions from a built tree
-void predictTree(const NumericMatrix& x, NumericMatrix& yPred, int* nodes, 
+void predictTree(const NumericMatrix& x, double* yPred, int* nodes, 
         int* splitVar, double* split, int* lDaughter, int* rDaughter, 
         double* nodePred, NumericVector& nOOB, std::vector<TempData>& tmp) {
           
