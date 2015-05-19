@@ -37,6 +37,8 @@ void findBestVal(int var, int* idTry, int nUniq, double nParent,
                  
 void sampNoReplace(int* next, IntegerVector indices, int* nRemain);
 
+NumericMatrix na_matrix(int n, int p);
+
 void predictTree(const NumericMatrix& x, double* yPred,
         int* nodes, int* splitVar, double* split, int* lDaughter, 
         int* rDaughter, double* nodePred, NumericVector& nOOB, 
@@ -80,7 +82,7 @@ List cppForest(NumericMatrix& x, NumericVector& y, int nSamp, int nodeSize,
     int n = x.nrow();
     double ySum = 0.0;
     IntegerMatrix nodes(n, nTree);
-    NumericMatrix yPred(n, nTree);    
+    NumericMatrix yPred = na_matrix(n, nTree);    
     NumericVector nOOB(n);
     IntegerVector IDs(n);
     std::vector<TempData> tmp;
@@ -122,7 +124,6 @@ List cppForest(NumericMatrix& x, NumericVector& y, int nSamp, int nodeSize,
             Named("nodes")     = nodes,
             Named("predicted") = yPred,
             Named("nOOB") = nOOB,
-            Named("y") = y,
             Named("forest") =  Rcpp::List::create(
               Named("splitVar")      = splitVar,
               Named("split")         = split,
@@ -355,4 +356,11 @@ void sampNoReplace(int* next, IntegerVector indices, int* nRemain) {
   *next = indices[tmp];
   swapInt(indices[tmp], indices[*nRemain-1]);
   *nRemain -= 1;
+}
+
+// helper function for initialization of NA matrices
+NumericMatrix na_matrix(int n, int p){
+  NumericMatrix m(n,p) ;
+  std::fill( m.begin(), m.end(), NumericVector::get_na() ) ;
+  return m ;
 }
