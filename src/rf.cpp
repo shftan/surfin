@@ -344,8 +344,8 @@ void predictTree(const NumericMatrix& x, double* yPred, int* nodes,
       
       //Reached terminal node. Update predictions and reset node
       nOOB[i]++;
-      yPred[i] = nodePred[nd];
-      nodes[i] = nd+1; 
+      nodes[i] = nd+1;
+      yPred[i] = nodePred[nd]; 
       nd = 0; 
     }
 }
