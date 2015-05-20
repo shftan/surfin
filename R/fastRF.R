@@ -47,23 +47,35 @@ fastRF <- function (x, y, nTree = 500, replace = TRUE, keepForest = TRUE,
                       keepForest, replace, is.factor(y))
   if (!is.factor(y)) y = y + yOffset
   rfout$forest$nodePred <- rfout$forest$nodePred + yOffset
+  rfout$predictedByTree <- rfout$predictedByTree + yOffset
   rfout$predicted = rowMeans(rfout$predictedByTree,na.rm=T)
-  rfout$predicted <- rfout$predicted + yOffset
   
   ## If classification, format predictions as factors and calculate oob err.rate
   # R orders levels of a factor alphabetically
   ## If regression, calculate oob mse
   if (is.factor(y)) {
+    rfout$type = "binary classification"
+    
+    # Find mapping of factor level to number
     key = unique(data.frame(y,as.numeric(y)))
     key[,1] = as.character(key[,1])
-    index = rfout$predicted<mean(key[,2])   # specific to binary classification
+    
+    # Convert numbers to factor levels
+    index = rfout$predictedByTree<mean(key[,2])   # specific to binary classification
+    tmp = rfout$predictedbyTree
+    rfout$predictedByTree[index] = key[1,1]
+    rfout$predictedByTree[!index] = key[2,1]
+    
+    index = rfout$predicted<mean(key[,2]) 
     tmp = rfout$predicted
     rfout$predicted[index] = key[1,1]
     rfout$predicted[!index] = key[2,1]
     rfout$predicted = factor(rfout$predicted)
-    rfout$err.rate = apply(rfout$predictedByTree,2,function(x) mean(x!=y,na.rm=T))
+    
+    rfout$err.rate = apply(rfout$predictedByTree,2,function(x) mean(x!=as.character(y),na.rm=T))
   }
   else {
+    rfout$type = "regression"
     rfout$mse = apply(rfout$predictedByTree,2,function(x) mean((x-y)^2,na.rm=T))
   }
   
