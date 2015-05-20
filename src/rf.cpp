@@ -121,9 +121,9 @@ List cppForest(NumericMatrix& x, NumericVector& y, int nSamp, int nodeSize,
     
     //return as nested list
     return List::create(
-            Named("nodes")     = nodes,
+            Named("inbag.times")     = nodes,
             Named("predictedByTree") = yPred,
-            Named("nOOB") = nOOB,
+            Named("oob.times") = nOOB,
             Named("forest") =  Rcpp::List::create(
               Named("splitVar")      = splitVar,
               Named("split")         = split,
