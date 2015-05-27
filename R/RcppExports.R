@@ -64,6 +64,3 @@ cppPredict <- function(x, splitVar, split, lDaughter, rDaughter, nodePred) {
     .Call('proxMatch_cppPredict', PACKAGE = 'proxMatch', x, splitVar, split, lDaughter, rDaughter, nodePred)
 }
 
-#'@importFrom Rcpp evalCpp
-#'@useDynLib proxMatch
-
