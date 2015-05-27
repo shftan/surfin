@@ -125,7 +125,7 @@ List cppForest(NumericMatrix& x, NumericVector& y, int nSamp, int nodeSize,
             Named("predictedByTree") = yPred,
             Named("oob.times") = nOOB,
             Named("forest") =  Rcpp::List::create(
-              Named("splitVar")      = splitVar,
+              Named("splitVar")       = splitVar,
               Named("split")         = split,
               Named("leftDaughter")  = lDaughter,
               Named("rightDaughter") = rDaughter,

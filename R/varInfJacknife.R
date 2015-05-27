@@ -1,3 +1,12 @@
+#' Infinitesimal jacknife variance of random forest
+#'
+#' This function calculates the infinitesimal jacknife variance of the random forest
+#' @param object random forest object
+#' @keywords random forest, infitesimal jacknife variance
+#' @export
+#' @examples
+#' varInfJacknife()
+
 varInfJacknife <- function (object) {
   # Get number of observations
   n = dim(object$inbag.times)
