@@ -2,20 +2,6 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #' @title
-#' cppMatch
-#' @description
-#' Nearest neighbor 1:1 matching within and between conditions. 
-#' @param tr vector
-#' @param dist distance
-#' @param type corresponds to R's representation of distance. 'v' = vector of pairwise distances (class "dist"), 'm' = matrix of pairwise distances (coerced as a vector), 'p' = vector of propensity scores
-#' @details
-#' Ties are broken using the the first match (not randomly).
-#' @export
-cppMatch <- function(tr, dist, type) {
-    .Call('proxMatch_cppMatch', PACKAGE = 'proxMatch', tr, dist, type)
-}
-
-#' @title
 #' cppForest
 #' @description
 #' Construct random forest
@@ -33,19 +19,21 @@ cppMatch <- function(tr, dist, type) {
 #' Options available for bootstrap samples or subsamples
 #' @export
 cppForest <- function(x, y, nSamp, nodeSize, maxNodes, nTree, mtry, keepF, replace, classify) {
-    .Call('proxMatch_cppForest', PACKAGE = 'proxMatch', x, y, nSamp, nodeSize, maxNodes, nTree, mtry, keepF, replace, classify)
+    .Call('surfin_cppForest', PACKAGE = 'surfin', x, y, nSamp, nodeSize, maxNodes, nTree, mtry, keepF, replace, classify)
 }
 
 #' @title
-#' cppProx
+#' cppMatch
 #' @description
-#' Given an n x nTree matrix of terminal nodes, this function will return an n x n proximimity matrix.
-#' @param nodes n x nTree matrix of terminal nodes
+#' Nearest neighbor 1:1 matching within and between conditions. 
+#' @param tr vector
+#' @param dist distance
+#' @param type corresponds to R's representation of distance. 'v' = vector of pairwise distances (class "dist"), 'm' = matrix of pairwise distances (coerced as a vector), 'p' = vector of propensity scores
 #' @details
-#' The computed proximities are based on only the out-of-bag predictions. Zero-valued entries in nodes correspond to in-bag instances.
+#' Ties are broken using the the first match (not randomly).
 #' @export
-cppProx <- function(nodes) {
-    .Call('proxMatch_cppProx', PACKAGE = 'proxMatch', nodes)
+cppMatch <- function(tr, dist, type) {
+    .Call('surfin_cppMatch', PACKAGE = 'surfin', tr, dist, type)
 }
 
 #' @title
@@ -61,6 +49,18 @@ cppProx <- function(nodes) {
 #' All other matrices represent the forest. Trees are columns, and nodes are rows.
 #' @export
 cppPredict <- function(x, splitVar, split, lDaughter, rDaughter, nodePred) {
-    .Call('proxMatch_cppPredict', PACKAGE = 'proxMatch', x, splitVar, split, lDaughter, rDaughter, nodePred)
+    .Call('surfin_cppPredict', PACKAGE = 'surfin', x, splitVar, split, lDaughter, rDaughter, nodePred)
+}
+
+#' @title
+#' cppProx
+#' @description
+#' Given an n x nTree matrix of terminal nodes, this function will return an n x n proximimity matrix.
+#' @param nodes n x nTree matrix of terminal nodes
+#' @details
+#' The computed proximities are based on only the out-of-bag predictions. Zero-valued entries in nodes correspond to in-bag instances.
+#' @export
+cppProx <- function(nodes) {
+    .Call('surfin_cppProx', PACKAGE = 'surfin', nodes)
 }
 

@@ -6,22 +6,9 @@
 
 using namespace Rcpp;
 
-// cppMatch
-DataFrame cppMatch(IntegerVector tr, NumericVector dist, char type);
-RcppExport SEXP proxMatch_cppMatch(SEXP trSEXP, SEXP distSEXP, SEXP typeSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< IntegerVector >::type tr(trSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type dist(distSEXP);
-    Rcpp::traits::input_parameter< char >::type type(typeSEXP);
-    __result = Rcpp::wrap(cppMatch(tr, dist, type));
-    return __result;
-END_RCPP
-}
 // cppForest
 List cppForest(NumericMatrix& x, NumericVector& y, int nSamp, int nodeSize, int maxNodes, int nTree, int mtry, int keepF, int replace, int classify);
-RcppExport SEXP proxMatch_cppForest(SEXP xSEXP, SEXP ySEXP, SEXP nSampSEXP, SEXP nodeSizeSEXP, SEXP maxNodesSEXP, SEXP nTreeSEXP, SEXP mtrySEXP, SEXP keepFSEXP, SEXP replaceSEXP, SEXP classifySEXP) {
+RcppExport SEXP surfin_cppForest(SEXP xSEXP, SEXP ySEXP, SEXP nSampSEXP, SEXP nodeSizeSEXP, SEXP maxNodesSEXP, SEXP nTreeSEXP, SEXP mtrySEXP, SEXP keepFSEXP, SEXP replaceSEXP, SEXP classifySEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -39,20 +26,22 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// cppProx
-arma::mat cppProx(arma::umat nodes);
-RcppExport SEXP proxMatch_cppProx(SEXP nodesSEXP) {
+// cppMatch
+DataFrame cppMatch(IntegerVector tr, NumericVector dist, char type);
+RcppExport SEXP surfin_cppMatch(SEXP trSEXP, SEXP distSEXP, SEXP typeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< arma::umat >::type nodes(nodesSEXP);
-    __result = Rcpp::wrap(cppProx(nodes));
+    Rcpp::traits::input_parameter< IntegerVector >::type tr(trSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type dist(distSEXP);
+    Rcpp::traits::input_parameter< char >::type type(typeSEXP);
+    __result = Rcpp::wrap(cppMatch(tr, dist, type));
     return __result;
 END_RCPP
 }
 // cppPredict
 NumericVector cppPredict(NumericMatrix x, IntegerMatrix splitVar, NumericMatrix split, IntegerMatrix lDaughter, IntegerMatrix rDaughter, NumericMatrix nodePred);
-RcppExport SEXP proxMatch_cppPredict(SEXP xSEXP, SEXP splitVarSEXP, SEXP splitSEXP, SEXP lDaughterSEXP, SEXP rDaughterSEXP, SEXP nodePredSEXP) {
+RcppExport SEXP surfin_cppPredict(SEXP xSEXP, SEXP splitVarSEXP, SEXP splitSEXP, SEXP lDaughterSEXP, SEXP rDaughterSEXP, SEXP nodePredSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -63,6 +52,17 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< IntegerMatrix >::type rDaughter(rDaughterSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type nodePred(nodePredSEXP);
     __result = Rcpp::wrap(cppPredict(x, splitVar, split, lDaughter, rDaughter, nodePred));
+    return __result;
+END_RCPP
+}
+// cppProx
+arma::mat cppProx(arma::umat nodes);
+RcppExport SEXP surfin_cppProx(SEXP nodesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< arma::umat >::type nodes(nodesSEXP);
+    __result = Rcpp::wrap(cppProx(nodes));
     return __result;
 END_RCPP
 }

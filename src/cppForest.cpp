@@ -2,6 +2,8 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
+#include "cppPredict.h"
+
 ///////////////////////////
 //      Header file      //
 ///////////////////////////
@@ -41,8 +43,7 @@ NumericMatrix na_matrix(int n, int p);
 
 void predictTree(const NumericMatrix& x, double* yPred,
         int* nodes, int* splitVar, double* split, int* lDaughter, 
-        int* rDaughter, double* nodePred, NumericVector& nOOB, 
-        std::vector<TempData>& d);
+        int* rDaughter, double* nodePred, NumericVector& nOOB);
 
 ///////////////////////
 //     Main file     //
@@ -107,11 +108,12 @@ List cppForest(NumericMatrix& x, NumericVector& y, int nSamp, int nodeSize,
                 split(_,t).begin(), lDaughter(_,t).begin(), rDaughter(_,t).begin(),
                 nodePred(_,t).begin(),  IDs, tmp, classify);
     
-      //update OOB predictions
-      predictTree(x, yPred(_,t).begin(), nodes(_,t).begin(), splitVar(_,t).begin(),
-                  split(_,t).begin(), lDaughter(_,t).begin(), rDaughter(_,t).begin(), 
-                  nodePred(_,t).begin(), nOOB,  tmp);
+      //update predictions, both out-of-bag and in-bag
+      //predictTree(x, yPred(_,t).begin(), nodes(_,t).begin(), splitVar(_,t).begin(),
+      //            split(_,t).begin(), lDaughter(_,t).begin(), rDaughter(_,t).begin(), 
+      //            nodePred(_,t).begin(), nOOB);
     }
+    
     
     //normalize the y predictions
     //yPred = yPred / nOOB;
@@ -326,14 +328,14 @@ void resample(int nOrig, int nSamp, int replace, IntegerVector& IDs,
 //generate OOB predictions from a built tree
 void predictTree(const NumericMatrix& x, double* yPred, int* nodes, 
         int* splitVar, double* split, int* lDaughter, int* rDaughter, 
-        double* nodePred, NumericVector& nOOB, std::vector<TempData>& tmp) {
+        double* nodePred, NumericVector& nOOB) {
           
     //iterate through the observations
     int oob, var, nd = 0;
     for (int i = 0; i < x.nrow(); ++i) {
       
       //skip in-bag observations
-      if (tmp[i].wgt>0) continue;
+      //if (tmp[i].wgt>0) continue;
       
       //iterate through nodes in the tree
       while (splitVar[nd] > 0) { 
