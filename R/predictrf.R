@@ -10,9 +10,9 @@
 #' response = runif(10) 
 #' rfobject = random.forest(x=features,y=response)
 #' testfeatures = matrix(rnorm(100),nrow=10)
-#' predict.rf(object=rfobject,x=testfeatures)
+#' predictrf(object=rfobject,x=testfeatures)
 
-predict.rf <- function (object, x) {
+predictrf <- function (object, x) {
   
   ## make sure that variables are correctly ordered
   x <- data.matrix(x[, object$varNames, drop = FALSE])

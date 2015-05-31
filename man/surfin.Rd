@@ -15,7 +15,7 @@ This package computes standard error estimates for random forest predictions usi
 
 \section{Details}{
 
-Functions include: rf, predict.rf, impute.rf, proximity.rf, rf.varIJ, rf.varU
+Functions include: random.forest, predict.rf, impute.rf, proximity.rf, rf.varIJ, rf.varU
 }
 
 \section{Dependencies}{

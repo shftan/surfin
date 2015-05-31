@@ -15,7 +15,9 @@ cppPredict(x, splitVar, split, lDaughter, rDaughter, nodePred)
 
 \item{lDaughter}{= left daughter node assignments}
 
-\item{nnodePred}{= terminal node predictions}
+\item{rDaughter}{= right daughter node assignments}
+
+\item{nodePred}{= terminal node predictions}
 }
 \description{
 Returns predictions from a stored forest.

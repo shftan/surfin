@@ -44,7 +44,8 @@ cppMatch <- function(tr, dist, type) {
 #' @param splitVar  = best split variables
 #' @param split     = best split values
 #' @param lDaughter = left daughter node assignments
-#' @param nnodePred = terminal node predictions
+#' @param rDaughter = right daughter node assignments
+#' @param nodePred = terminal node predictions
 #' @details
 #' All other matrices represent the forest. Trees are columns, and nodes are rows.
 #' @export

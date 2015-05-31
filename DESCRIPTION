@@ -1,9 +1,9 @@
 Package: surfin
 Title: Statistical Inference for Random Forests
-Version: 1.0.0.0
+Version: 0.0.0.9000
 Authors@R: c(person("Sarah","Tan",email="ht395@cornell.edu",role = c("aut", "cre")), person("David","Miller",role="aut"))
-Description: Computes standard error estimates for random forest predictions using a fast re-implementation of random forests in Rcpp
+Description: Computes standard error estimates for random forest predictions using a fast re-implementation of random forests in Rcpp. Two kinds of standard error estimates provided: U-statistics based and infinitesimal jackknife.
 Depends: R (>= 3.1.1)
-License: What license is it under?
+License: GPL-3
 Imports: Rcpp (>= 0.11.3), RcppArmadillo (>= 0.2.35)
 LinkingTo: Rcpp, RcppArmadillo

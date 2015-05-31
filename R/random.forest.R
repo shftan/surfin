@@ -14,9 +14,11 @@
 #' @keywords random forest, causal inference
 #' @export
 #' @examples
-#' rf()
+#' features = matrix(rnorm(100),nrow=10)
+#' response = runif(10) 
+#' random.forest(x=features,y=response)
 
-rf <- function (x, y, nTree = 500, replace = TRUE, keepForest = TRUE,
+random.forest <- function (x, y, nTree = 500, replace = TRUE, keepForest = TRUE,
           mtry     = if (is.factor(y)) floor(sqrt(ncol(x))) else max(floor(ncol(x)/3), 1), 
           nodeSize = if (is.factor(y)) 1                    else 5, 
           nSamp    = if (replace) nrow(x) else ceiling(0.632 * nrow(x)),
