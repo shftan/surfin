@@ -1,20 +1,20 @@
-#'proxMatch
+#'surfin
 #'
-#'Proximity Score Matching using the Random Forest for Causal Inference
+#'Statistical Inference for Random Forests
 #'
 #'@section Description:
-#'This package implements proximity score matching using a fast implementation of the random forest in C++.
+#'This package computes standard error estimates for random forest predictions using a fast implementation of random forests in C++.
 #'
 #'@section Details:
-#'Functions include: fastRF, rfPredict
+#'Functions include: random.forest, predict
 #'
 #'@section Dependencies:
 #'Rcpp and RcppArmadillo
 #'
 #'@author person
 #'@docType package
-#'@name proxMatch
+#'@name surfin
 #'@importFrom Rcpp evalCpp
 #'@import RcppArmadillo
-#'@useDynLib proxMatch
+#'@useDynLib surfin
 NULL
