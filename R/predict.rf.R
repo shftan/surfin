@@ -6,9 +6,9 @@
 #' @keywords random forest, causal inference
 #' @export
 #' @examples
-#' rfPredict()
+#' predict.rf()
 
-rfPredict <- function (object, x) {
+predict.rf <- function (object, x) {
   
   ## make sure that variables are correctly ordered
   x <- data.matrix(x[, object$varNames, drop = FALSE])

@@ -1,7 +1,7 @@
 Package: surfin
 Title: Statistical Inference for Random Forests
 Version: 1.0.0.0
-Authors@R: person("Sarah", "Tan", , "ht395@cornell.edu", role = c("aut", "cre"))
+Authors@R: c(person("Sarah","Tan",email="ht395@cornell.edu",role = c("aut", "cre")), person("David","Miller",role="aut"))
 Description: Computes standard error estimates for random forest predictions using a fast re-implementation of random forests in Rcpp
 Depends: R (>= 3.1.1)
 License: What license is it under?

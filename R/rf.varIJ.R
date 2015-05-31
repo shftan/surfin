@@ -5,9 +5,9 @@
 #' @keywords random forest, infitesimal jacknife variance
 #' @export
 #' @examples
-#' varInfJacknife()
+#' rf.varIJ()
 
-varInfJacknife <- function (object) {
+rf.varIJ <- function (object) {
   # Get number of observations
   n = dim(object$inbag.times)
   

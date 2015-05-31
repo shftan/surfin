@@ -1,3 +1,4 @@
+
 #' Random forest wrapper function
 #'
 #' This function is a wrapper for the C++ implementation of random forest
@@ -13,9 +14,9 @@
 #' @keywords random forest, causal inference
 #' @export
 #' @examples
-#' fastRF()
+#' rf()
 
-fastRF <- function (x, y, nTree = 500, replace = TRUE, keepForest = TRUE,
+rf <- function (x, y, nTree = 500, replace = TRUE, keepForest = TRUE,
           mtry     = if (is.factor(y)) floor(sqrt(ncol(x))) else max(floor(ncol(x)/3), 1), 
           nodeSize = if (is.factor(y)) 1                    else 5, 
           nSamp    = if (replace) nrow(x) else ceiling(0.632 * nrow(x)),
