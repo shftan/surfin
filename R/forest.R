@@ -16,9 +16,9 @@
 #' @examples
 #' features = matrix(rnorm(100),nrow=10)
 #' response = runif(10) 
-#' random.forest(x=features,y=response)
+#' forest(x=features,y=response)
 
-random.forest <- function (x, y, nTree = 500, replace = TRUE, keepForest = TRUE,
+forest <- function (x, y, nTree = 500, replace = TRUE, keepForest = TRUE,
           mtry     = if (is.factor(y)) floor(sqrt(ncol(x))) else max(floor(ncol(x)/3), 1), 
           nodeSize = if (is.factor(y)) 1                    else 5, 
           nSamp    = if (replace) nrow(x) else ceiling(0.632 * nrow(x)),
@@ -46,43 +46,45 @@ random.forest <- function (x, y, nTree = 500, replace = TRUE, keepForest = TRUE,
   varNames <- if (is.null(colnames(x))) 1:ncol(x) else colnames(x)
   yOffset <- if (is.factor(y)) 0 else mean(y)
   if (!is.factor(y)) y <- y - yOffset
-  rfout <- cppForest(data.matrix(x), y, nSamp, nodeSize, maxNodes, nTree, mtry, 
+  out <- cppForest(data.matrix(x), y, nSamp, nodeSize, maxNodes, nTree, mtry, 
                       keepForest, replace, is.factor(y))
   if (!is.factor(y)) y = y + yOffset
-  rfout$forest$nodePred <- rfout$forest$nodePred + yOffset
-  rfout$predictedByTree <- rfout$predictedByTree + yOffset
-  rfout$predicted = rowMeans(rfout$predictedByTree,na.rm=T)
+  out$forest$nodePred <- out$forest$nodePred + yOffset
+  out$predictedByTree <- out$predictedByTree + yOffset
+  out$predicted = rowMeans(out$predictedByTree,na.rm=T)
   
   ## If classification, format predictions as factors and calculate oob err.rate
   # R orders levels of a factor alphabetically
   ## If regression, calculate oob mse
   if (is.factor(y)) {
-    rfout$type = "binary classification"
+    out$type = "binary classification"
     
     # Find mapping of factor level to number
     key = unique(data.frame(y,as.numeric(y)))
     key[,1] = as.character(key[,1])
     
     # Convert numbers to factor levels
-    index = rfout$predictedByTree<mean(key[,2])   # specific to binary classification
-    tmp = rfout$predictedbyTree
-    rfout$predictedByTree[index] = key[1,1]
-    rfout$predictedByTree[!index] = key[2,1]
+    index = out$predictedByTree<mean(key[,2])   # specific to binary classification
+    tmp = out$predictedbyTree
+    out$predictedByTree[index] = key[1,1]
+    out$predictedByTree[!index] = key[2,1]
     
-    index = rfout$predicted<mean(key[,2]) 
-    tmp = rfout$predicted
-    rfout$predicted[index] = key[1,1]
-    rfout$predicted[!index] = key[2,1]
-    rfout$predicted = factor(rfout$predicted)
+    index = out$predicted<mean(key[,2]) 
+    tmp = out$predicted
+    out$predicted[index] = key[1,1]
+    out$predicted[!index] = key[2,1]
+    out$predicted = factor(out$predicted)
     
-    rfout$err.rate = apply(rfout$predictedByTree,2,function(x) mean(x!=as.character(y),na.rm=T))
+    out$err.rate = apply(out$predictedByTree,2,function(x) mean(x!=as.character(y),na.rm=T))
   }
   else {
-    rfout$type = "regression"
-    rfout$mse = apply(rfout$predictedByTree,2,function(x) mean((x-y)^2,na.rm=T))
+    out$type = "regression"
+    out$mse = apply(out$predictedByTree,2,function(x) mean((x-y)^2,na.rm=T))
   }
   
-  rfout$varNames        <- varNames
-  if (!keepForest) rfout$forest <- NULL
-  return(rfout)
+  out$varNames        <- varNames
+  if (!keepForest) out$forest <- NULL
+  
+  class(out) = "forest"
+  return(out)
 }

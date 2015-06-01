@@ -1,5 +1,5 @@
 
-rf.varIJ <- function (object) {
+forest.varIJ <- function (object) {
   # Get number of observations
   n = dim(object$inbag.times)
   
