@@ -1,7 +1,6 @@
-
 #' Random forest wrapper function
 #'
-#' This function is a wrapper for the C++ implementation of random forest
+#' Wrapper for the C++ implementation of random forest
 #' @param x matrix
 #' @param y vector
 #' @param nTree number of trees desired, default is 500
@@ -11,7 +10,7 @@
 #' @param nodeSize node size
 #' @param nSamp number of samples
 #' @param maxNodes maximum number of nodes
-#' @keywords random forest, causal inference
+#' @keywords random forest
 #' @export
 #' @examples
 #' features = matrix(rnorm(100),nrow=10)
@@ -44,14 +43,16 @@ forest <- function (x, y, nTree = 500, replace = TRUE, keepForest = TRUE,
   }
     
   varNames <- if (is.null(colnames(x))) 1:ncol(x) else colnames(x)
-  yOffset <- if (is.factor(y)) 0 else mean(y)
-  if (!is.factor(y)) y <- y - yOffset
+  #yOffset <- if (is.factor(y)) 0 else mean(y)     # consider moving this back in for speed improvements
+  #if (!is.factor(y)) y <- y - yOffset
   out <- cppForest(data.matrix(x), y, nSamp, nodeSize, maxNodes, nTree, mtry, 
                       keepForest, replace, is.factor(y))
-  if (!is.factor(y)) y = y + yOffset
-  out$forest$nodePred <- out$forest$nodePred + yOffset
-  out$predictedByTree <- out$predictedByTree + yOffset
-  out$predicted = rowMeans(out$predictedByTree,na.rm=T)
+  #if (!is.factor(y)) y = y + yOffset
+  #out$forest$nodePred <- out$forest$nodePred + yOffset
+  #out$predictedByTree <- out$predictedByTree + yOffset
+  out$predictedOOB = out$predictedAll
+  out$predictedOOB[out$inbag.times!=0] = NA
+  out$predicted = rowMeans(out$predictedOOB,na.rm=T)
   
   ## If classification, format predictions as factors and calculate oob err.rate
   # R orders levels of a factor alphabetically
@@ -63,23 +64,29 @@ forest <- function (x, y, nTree = 500, replace = TRUE, keepForest = TRUE,
     key = unique(data.frame(y,as.numeric(y)))
     key[,1] = as.character(key[,1])
     
-    # Convert numbers to factor levels
-    index = out$predictedByTree<mean(key[,2])   # specific to binary classification
-    tmp = out$predictedbyTree
-    out$predictedByTree[index] = key[1,1]
-    out$predictedByTree[!index] = key[2,1]
+    ## Convert numbers to factor levels
+    # All predictions by tree
+    index = out$predictedAll<mean(key[,2])   # specific to binary classification
+    tmp = out$predictedAll
+    out$predictedAll[index] = key[1,1]
+    out$predictedAll[!index] = key[2,1]
     
+    # OOB predictions by tree
+    out$predictedOOB = out$predictedAll
+    out$predictedOOB[out$inbag.times!=0] = NA
+    
+    # Prediction for each observation based on OOB predictions by tree
     index = out$predicted<mean(key[,2]) 
     tmp = out$predicted
     out$predicted[index] = key[1,1]
     out$predicted[!index] = key[2,1]
     out$predicted = factor(out$predicted)
     
-    out$err.rate = apply(out$predictedByTree,2,function(x) mean(x!=as.character(y),na.rm=T))
+    out$err.rate = apply(out$predictedOOB,2,function(x) mean(x!=as.character(y),na.rm=TRUE))
   }
   else {
     out$type = "regression"
-    out$mse = apply(out$predictedByTree,2,function(x) mean((x-y)^2,na.rm=T))
+    out$mse = apply(out$predictedOOB,2,function(x) mean((x-y)^2,na.rm=TRUE))
   }
   
   out$varNames        <- varNames

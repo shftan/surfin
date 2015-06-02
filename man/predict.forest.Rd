@@ -14,7 +14,7 @@
 \item{...}{further arguments passed to or from other methods}
 }
 \description{
-This function is a wrapper for the C++ implementation of random forest predictions
+Wrapper for the C++ implementation of random forest predictions
 }
 \examples{
 features = matrix(rnorm(100),nrow=10)
@@ -23,8 +23,7 @@ forestobject = forest(x=features,y=response)
 testfeatures = matrix(rnorm(100),nrow=10)
 predict(object=forestobject,newdata=testfeatures)
 }
-\keyword{causal}
 \keyword{forest,}
-\keyword{inference}
+\keyword{prediction}
 \keyword{random}
 

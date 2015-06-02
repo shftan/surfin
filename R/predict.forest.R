@@ -1,10 +1,10 @@
 #' Prediction wrapper function
 #'
-#' This function is a wrapper for the C++ implementation of random forest predictions
+#' Wrapper for the C++ implementation of random forest predictions
 #' @param object random forest output
 #' @param newdata matrix
 #' @param ... further arguments passed to or from other methods
-#' @keywords random forest, causal inference
+#' @keywords random forest, prediction
 #' @export
 #' @examples
 #' features = matrix(rnorm(100),nrow=10)

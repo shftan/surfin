@@ -3,15 +3,15 @@
 #'Statistical Inference for Random Forests
 #'
 #'@section Description:
-#'This package computes standard error estimates for random forest predictions using a fast implementation of random forests in C++.
+#'This R package computes variance estimates for random forest predictions using a fast implementation of random forests in C++. Two variance estimates are provided: U-statistic based and infinitesimal jackknife.
 #'
 #'@section Details:
-#'Functions include: random.forest, predict.rf, impute.rf, proximity.rf, rf.varIJ, rf.varU
+#'Functions include: forest, forest.varU, forest.varIJ, predict.forest, proximity.forest, impute.forest
 #'
 #'@section Dependencies:
 #'Rcpp and RcppArmadillo
 #'
-#'@author person
+#'@author Sarah Tan, David Miller, Giles Hooker, Lucas Mentch, Stefan Wager
 #'@docType package
 #'@name surfin
 #'@importFrom Rcpp evalCpp

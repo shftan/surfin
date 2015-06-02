@@ -30,15 +30,13 @@ forest(x, y, nTree = 500, replace = TRUE, keepForest = TRUE, mtry = if
 \item{maxNodes}{maximum number of nodes}
 }
 \description{
-This function is a wrapper for the C++ implementation of random forest
+Wrapper for the C++ implementation of random forest
 }
 \examples{
 features = matrix(rnorm(100),nrow=10)
 response = runif(10)
 forest(x=features,y=response)
 }
-\keyword{causal}
-\keyword{forest,}
-\keyword{inference}
+\keyword{forest}
 \keyword{random}
 

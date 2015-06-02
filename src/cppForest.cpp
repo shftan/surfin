@@ -2,7 +2,7 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-#include "cppPredict.h"
+//#include "cppPredict.h"   // use when merging cppPredict and predictTree functions at some later time
 
 ///////////////////////////
 //      Header file      //
@@ -43,7 +43,8 @@ NumericMatrix na_matrix(int n, int p);
 
 void predictTree(const NumericMatrix& x, double* yPred,
         int* nodes, int* splitVar, double* split, int* lDaughter, 
-        int* rDaughter, double* nodePred, NumericVector& nOOB);
+        int* rDaughter, double* nodePred, NumericVector& nOOB,
+        std::vector<TempData>& tmp);
 
 ///////////////////////
 //     Main file     //
@@ -109,9 +110,9 @@ List cppForest(NumericMatrix& x, NumericVector& y, int nSamp, int nodeSize,
                 nodePred(_,t).begin(),  IDs, tmp, classify);
     
       //update predictions, both out-of-bag and in-bag
-      //predictTree(x, yPred(_,t).begin(), nodes(_,t).begin(), splitVar(_,t).begin(),
-      //            split(_,t).begin(), lDaughter(_,t).begin(), rDaughter(_,t).begin(), 
-      //            nodePred(_,t).begin(), nOOB);
+      predictTree(x, yPred(_,t).begin(), nodes(_,t).begin(), splitVar(_,t).begin(),
+                  split(_,t).begin(), lDaughter(_,t).begin(), rDaughter(_,t).begin(), 
+                  nodePred(_,t).begin(), nOOB, tmp);
     }
     
     
@@ -124,7 +125,7 @@ List cppForest(NumericMatrix& x, NumericVector& y, int nSamp, int nodeSize,
     //return as nested list
     return List::create(
             Named("inbag.times")     = nodes,
-            Named("predictedByTree") = yPred,
+            Named("predictedAll") = yPred,
             Named("oob.times") = nOOB,
             Named("forest") =  Rcpp::List::create(
               Named("splitVar")       = splitVar,
@@ -328,7 +329,7 @@ void resample(int nOrig, int nSamp, int replace, IntegerVector& IDs,
 //generate OOB predictions from a built tree
 void predictTree(const NumericMatrix& x, double* yPred, int* nodes, 
         int* splitVar, double* split, int* lDaughter, int* rDaughter, 
-        double* nodePred, NumericVector& nOOB) {
+        double* nodePred, NumericVector& nOOB, std::vector<TempData>& tmp) {
           
     //iterate through the observations
     int oob, var, nd = 0;
@@ -345,8 +346,10 @@ void predictTree(const NumericMatrix& x, double* yPred, int* nodes,
       }
       
       //Reached terminal node. Update predictions and reset node
+      if (tmp[i].wgt==0) {
       nOOB[i]++;
       nodes[i] = nd+1;
+      }
       yPred[i] = nodePred[nd]; 
       nd = 0; 
     }
