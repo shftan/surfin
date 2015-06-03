@@ -5,8 +5,8 @@
 #' @keywords random forest, variance, infinitesimal jackknife
 #' @export
 #' @examples
-#' features = matrix(rnorm(100),nrow=10)
-#' response = runif(10) 
+#' features = birds[,setdiff(names(birds),"y")]
+#' response = birds[,"y"]
 #' forestobject = forest(x=features,y=response)
 #' varIJ = forest.varIJ(forestobject)
 
@@ -26,7 +26,7 @@ forest.varIJ <- function (rf) {
   y.hat = rowMeans(pred)
   pred.centered = pred - rowMeans(pred)
   
-  N = Matrix::Matrix(rf$inbag[, used.trees], sparse = TRUE)
+  N = Matrix::Matrix(rf$inbag.times, sparse = TRUE)
   N.avg = Matrix::rowMeans(N)
   
   #
@@ -45,6 +45,6 @@ forest.varIJ <- function (rf) {
   bias.correction = n * N.var * boot.var / B
   vars = raw.IJ - bias.correction
   
-  results = data.frame(y.hat=y.hat, var.hat=vars)
+  return(data.frame(y.hat=y.hat, var.hat=vars))
 }
 

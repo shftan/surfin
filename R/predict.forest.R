@@ -7,10 +7,12 @@
 #' @keywords random forest, prediction
 #' @export
 #' @examples
-#' features = matrix(rnorm(100),nrow=10)
-#' response = runif(10) 
+#' n = dim(birds)[1]
+#' n_train = round(n/2)
+#' features = birds[1:n_train,setdiff(names(birds),"y")]
+#' response = birds[,"y"]
 #' forestobject = forest(x=features,y=response)
-#' testfeatures = matrix(rnorm(100),nrow=10)
+#' testfeatures = birds[n_train+1:n,setdiff(names(birds),"y")]
 #' predict(object=forestobject,newdata=testfeatures)
 
 predict.forest <- function (object, newdata=NULL, ...) {  
@@ -19,20 +21,25 @@ predict.forest <- function (object, newdata=NULL, ...) {
   if (is.null(object$forest)) 
     stop("object does not have forest")
   if (is.null(newdata))
-  {
-    # oob prediction on forest object  
-  }
-  else
-  {
-    ## make sure that variables are correctly ordered
-    newdata <- data.matrix(newdata[, object$varNames, drop = FALSE])
+    stop("OOB predictions already available in forest object")
+  ## make sure that variables are correctly ordered
+  newdata <- data.matrix(newdata[, object$varNames, drop = FALSE])
   
-    #get predictions using C++ function 
-    cppPredict(data.matrix(newdata), 
+  #get predictions using C++ function 
+  predicted = cppPredict(data.matrix(newdata), 
              object$forest$splitVar, 
              object$forest$split,
              object$forest$leftDaughter, 
              object$forest$rightDaughter,
              object$forest$nodePred)  
+  
+  # Convert numbers to factor levels if binary classification
+  if (object$type == "binary classification")
+  {
+    index = predicted<mean(object$key[,2]) 
+    predicted[index] = object$key[1,1]
+    predicted[!index] = object$key[2,1]
+    predicted = factor(predicted)
   }
+  return(predicted)
 }

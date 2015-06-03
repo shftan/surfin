@@ -13,8 +13,8 @@ forest.varIJ(rf)
 Calculate the infinitesimal jackknife variance
 }
 \examples{
-features = matrix(rnorm(100),nrow=10)
-response = runif(10)
+features = birds[,setdiff(names(birds),"y")]
+response = birds[,"y"]
 forestobject = forest(x=features,y=response)
 varIJ = forest.varIJ(forestobject)
 }

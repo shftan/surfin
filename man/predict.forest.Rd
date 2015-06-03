@@ -17,10 +17,12 @@
 Wrapper for the C++ implementation of random forest predictions
 }
 \examples{
-features = matrix(rnorm(100),nrow=10)
-response = runif(10)
+n = dim(birds)[1]
+n_train = round(n/2)
+features = birds[1:n_train,setdiff(names(birds),"y")]
+response = birds[,"y"]
 forestobject = forest(x=features,y=response)
-testfeatures = matrix(rnorm(100),nrow=10)
+testfeatures = birds[n_train+1:n,setdiff(names(birds),"y")]
 predict(object=forestobject,newdata=testfeatures)
 }
 \keyword{forest,}

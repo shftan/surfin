@@ -33,8 +33,8 @@ forest(x, y, nTree = 500, replace = TRUE, keepForest = TRUE, mtry = if
 Wrapper for the C++ implementation of random forest
 }
 \examples{
-features = matrix(rnorm(100),nrow=10)
-response = runif(10)
+features = birds[,setdiff(names(birds),"y")]
+response = birds[,"y"]
 forest(x=features,y=response)
 }
 \keyword{forest}
