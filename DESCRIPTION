@@ -1,7 +1,7 @@
 Package: surfin
 Title: Statistical Inference for Random Forests
 Version: 0.0.0.9000
-Date: 2015-06-08
+Date: 2015-06-15
 Authors@R: c(person("Sarah","Tan",email="ht395@cornell.edu",role = c("aut", "cre")), person("David","Miller",role="aut"),person("Giles","Hooker",role="ctb"),person("Lucas","Mentch",role="ctb"),person("Stefan","Wager",role="ctb"))
 Description: This R package computes variance estimates for random forest predictions using a fast implementation of random forests in C++. Two variance estimates are provided: U-statistic based and infinitesimal jackknife.
 Depends: R (>= 3.1.1)
