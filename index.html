@@ -44,9 +44,12 @@
 <h3>
 <a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h3>
 
-<p>Package not yet on CRAN. For now, download from this website the .zip (if you are on Windows) or .tar.gz (if you are on Mac / Linux) then type the following in R:</p>
+<p>Package not yet on CRAN. For now, download from this website the .zip (if you are on Windows) or .tar.gz (if you are on Mac / Linux). 
 
-<pre><code>$ install.packages(path_to_downloaded_file, repos=NULL)
+If you don't already have the dependencies (Rcpp, RcppArmadillo, Matrix) installed, install these from CRAN first. Then type the following in R:</p>
+
+<pre><code>$ install.packages(path_to_downloaded_file, repos=NULL, type="source)
+$ library(surfin)
 </code></pre>
 
 <h3>
