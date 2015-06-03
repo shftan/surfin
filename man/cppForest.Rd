@@ -5,7 +5,7 @@
 \title{cppForest}
 \usage{
 cppForest(x, y, nSamp, nodeSize, maxNodes, nTree, mtry, keepF, replace,
-  classify)
+  classify, ustat, B)
 }
 \arguments{
 \item{x}{matrix}
@@ -27,6 +27,10 @@ cppForest(x, y, nSamp, nodeSize, maxNodes, nTree, mtry, keepF, replace,
 \item{replace}{bootstrap samples or subsamples}
 
 \item{classify}{perform classification or regression}
+
+\item{ustat}{u-statistic based or infinitesimal jackknife}
+
+\item{B}{number of common observations for u-statistic based variance estimate}
 }
 \description{
 Construct random forest

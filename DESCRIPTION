@@ -11,5 +11,5 @@ LinkingTo: Rcpp, RcppArmadillo
 LazyData: true
 URL: http://shftan.github.io/surfin
 BugReports: http://github.com/shftan/surfin/issues
-Suggests: knitr
+Suggests: knitr, randomForest, rpart
 VignetteBuilder: knitr

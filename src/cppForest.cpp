@@ -39,7 +39,7 @@ void findBestVal(int var, int* idTry, int nUniq, double nParent,
                  
 void sampNoReplace(int* next, IntegerVector indices, int* nRemain);
 
-NumericMatrix na_matrix(int n, int p);
+// NumericMatrix na_matrix(int n, int p);
 
 void predictTree(const NumericMatrix& x, double* yPred,
         int* nodes, int* splitVar, double* split, int* lDaughter, 
@@ -64,12 +64,14 @@ void predictTree(const NumericMatrix& x, double* yPred,
 //' @param keepF keep forest or not
 //' @param replace bootstrap samples or subsamples
 //' @param classify perform classification or regression
+//' @param ustat u-statistic based or infinitesimal jackknife
+//' @param B number of common observations for u-statistic based variance estimate
 //' @details
 //' Options available for bootstrap samples or subsamples
 //' @export
 // [[Rcpp::export]]
 List cppForest(NumericMatrix& x, NumericVector& y, int nSamp, int nodeSize, 
-    int maxNodes, int nTree, int mtry, int keepF, int replace, int classify) {
+    int maxNodes, int nTree, int mtry, int keepF, int replace, int classify, int ustat, int B) {
     
     //allocate memory for the forest
     //will be 1-column matrices if keepForest = FALSE
@@ -84,37 +86,99 @@ List cppForest(NumericMatrix& x, NumericVector& y, int nSamp, int nodeSize,
     int n = x.nrow();
     double ySum = 0.0;
     IntegerMatrix nodes(n, nTree);
-    NumericMatrix yPred = na_matrix(n, nTree);    
+    NumericMatrix yPred(n, nTree);   
     NumericVector nOOB(n);
     IntegerVector IDs(n);
     std::vector<TempData> tmp;
     tmp.reserve(n);
+    NumericVector obsB(B);
 
     //interface with R's random number generator
     GetRNGstate();
     
-    //BIG LOOP HERE
-    //iterate over the number of trees
-    int i, t;
-    for (i = 0; i < nTree; ++i) {
-      
-      //reset weights and resample
-      resample(n, nSamp, replace, IDs, tmp, &ySum, y);
-      
-      //tree index depends on setting for keepForest
-      t = keepF ? i : 0;
+    int i, t, L;
 
-      //grow the regression tree 
-      buildTree(x, ySum, mtry, nodeSize, nSamp, maxNodes, splitVar(_,t).begin(),
+    //// Sampling for U-statistic based variance estimate
+    // Sample without replacement and have common observations
+    if (ustat) {   
+		int j, k, id, nRemain;
+		for (i=0; i<n; ++i) tmp[i].wgt = 0.0;
+		for (i = 0; i < n; ++i) IDs[i] = i;
+    	nRemain = n;
+    	for (i = 0; i < B; ++i) {
+      		sampNoReplace(&id, IDs, &nRemain);
+      		obsB[i] = id;
+    	}
+		
+		L = double(nTree) / B;
+		
+		nt = 0;
+		for (i = 0; i < B; ++i) {
+			for (j=0; j < L; ++j) {
+			
+				//// For each tree
+				for (k=0; k<n; ++k) tmp[k].wgt = 0.0;
+				
+				// First observation already sampled
+				tmp[obsB[i]].wgt++;	
+				for (k = 0; k < n; ++k) {
+					IDs[k] = k;
+				}
+				nRemain = n;
+				swapInt(IDs[obsB[i]], IDs[nRemain-1]);
+    			nRemain -= 1;
+  
+    			// Sample rest of the observations
+    			for (k = 0; k < (nSamp-1); ++k) {
+      				sampNoReplace(&id, IDs, &nRemain);
+      				tmp[id].wgt++;
+    			}
+    			
+    			//calculate weighted y's (needed later for splitting criteria)
+  				ySum = 0.0;
+  				for (k = 0; k < n; ++k) {
+    				tmp[k].yWgt = y[k] * tmp[k].wgt; 
+    				ySum += tmp[k].yWgt;
+  				}
+             				
+  				//tree index depends on setting for keepForest
+      			t = keepF ? nt : 0;
+
+      			//grow the regression tree 
+      			buildTree(x, ySum, mtry, nodeSize, nSamp, maxNodes, splitVar(_,t).begin(),
+                	split(_,t).begin(), lDaughter(_,t).begin(), rDaughter(_,t).begin(),
+                	nodePred(_,t).begin(),  IDs, tmp, classify);
+    
+      			//update predictions, both out-of-bag and in-bag
+      			predictTree(x, yPred(_,t).begin(), nodes(_,t).begin(), splitVar(_,t).begin(),
+                	split(_,t).begin(), lDaughter(_,t).begin(), rDaughter(_,t).begin(), 
+                	nodePred(_,t).begin(), nOOB, tmp);
+                
+                nt++;	
+			}	
+		}
+	}
+	//// Sampling for infinitesimal jackknife or typical sampling without replacement
+	else {
+		//// For each tree
+    	for (i = 0; i < nTree; ++i) {
+      		//reset weights and resample
+      		resample(n, nSamp, replace, IDs, tmp, &ySum, y);
+      
+      		//tree index depends on setting for keepForest
+      		t = keepF ? i : 0;
+
+      		//grow the regression tree 
+      		buildTree(x, ySum, mtry, nodeSize, nSamp, maxNodes, splitVar(_,t).begin(),
                 split(_,t).begin(), lDaughter(_,t).begin(), rDaughter(_,t).begin(),
                 nodePred(_,t).begin(),  IDs, tmp, classify);
     
-      //update predictions, both out-of-bag and in-bag
-      predictTree(x, yPred(_,t).begin(), nodes(_,t).begin(), splitVar(_,t).begin(),
+      		//update predictions, both out-of-bag and in-bag
+      		predictTree(x, yPred(_,t).begin(), nodes(_,t).begin(), splitVar(_,t).begin(),
                   split(_,t).begin(), lDaughter(_,t).begin(), rDaughter(_,t).begin(), 
                   nodePred(_,t).begin(), nOOB, tmp);
+        }
     }
-    
     
     //normalize the y predictions
     //yPred = yPred / nOOB;
@@ -301,15 +365,16 @@ void resample(int nOrig, int nSamp, int replace, IntegerVector& IDs,
   int i, id, nRemain;
   for (i=0; i<nOrig; ++i) tmp[i].wgt = 0.0;
   
-  //sample with replacement
+  // sample with replacement
   if (replace) {       
     for (i = 0; i < nSamp; ++i) {
       id = nOrig * unif_rand();
       tmp[id].wgt++;
     }
-    
+  }
+  
   //sample without replacement
-  } else {          
+  else {          
     for (i = 0; i < nOrig; ++i) IDs[i] = i;
     nRemain = nOrig;
     for (i = 0; i < nSamp; ++i) {
@@ -326,7 +391,7 @@ void resample(int nOrig, int nSamp, int replace, IntegerVector& IDs,
   }
 }
         
-//generate OOB predictions from a built tree
+//generate predictions from a built tree
 void predictTree(const NumericMatrix& x, double* yPred, int* nodes, 
         int* splitVar, double* split, int* lDaughter, int* rDaughter, 
         double* nodePred, NumericVector& nOOB, std::vector<TempData>& tmp) {
@@ -348,8 +413,8 @@ void predictTree(const NumericMatrix& x, double* yPred, int* nodes,
       //Reached terminal node. Update predictions and reset node
       if (tmp[i].wgt==0) {
       nOOB[i]++;
-      nodes[i] = nd+1;
       }
+      nodes[i] = tmp[i].wgt; //nodes[i] = nd+1;
       yPred[i] = nodePred[nd]; 
       nd = 0; 
     }
@@ -364,8 +429,8 @@ void sampNoReplace(int* next, IntegerVector indices, int* nRemain) {
 }
 
 // helper function for initialization of NA matrices
-NumericMatrix na_matrix(int n, int p){
-  NumericMatrix m(n,p) ;
-  std::fill( m.begin(), m.end(), NumericVector::get_na() ) ;
-  return m ;
-}
+//NumericMatrix na_matrix(int n, int p){
+//  NumericMatrix m(n,p) ;
+//  std::fill( m.begin(), m.end(), NumericVector::get_na() ) ;
+//  return m ;
+//}

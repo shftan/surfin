@@ -1,7 +1,7 @@
 #' Prediction wrapper function
 #'
 #' Wrapper for the C++ implementation of random forest predictions
-#' @param object random forest output
+#' @param object random forest objectput
 #' @param newdata matrix
 #' @param ... further arguments passed to or from other methods
 #' @keywords random forest, prediction
@@ -36,9 +36,7 @@ predict.forest <- function (object, newdata=NULL, ...) {
   # Convert numbers to factor levels if binary classification
   if (object$type == "binary classification")
   {
-    index = predicted<mean(object$key[,2]) 
-    predicted[index] = object$key[1,1]
-    predicted[!index] = object$key[2,1]
+    predicted = numberToFactor(predicted,object$key)
     predicted = factor(predicted)
   }
   return(predicted)

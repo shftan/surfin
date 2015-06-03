@@ -15,11 +15,13 @@
 #' @param keepF keep forest or not
 #' @param replace bootstrap samples or subsamples
 #' @param classify perform classification or regression
+#' @param ustat u-statistic based or infinitesimal jackknife
+#' @param B number of common observations for u-statistic based variance estimate
 #' @details
 #' Options available for bootstrap samples or subsamples
 #' @export
-cppForest <- function(x, y, nSamp, nodeSize, maxNodes, nTree, mtry, keepF, replace, classify) {
-    .Call('surfin_cppForest', PACKAGE = 'surfin', x, y, nSamp, nodeSize, maxNodes, nTree, mtry, keepF, replace, classify)
+cppForest <- function(x, y, nSamp, nodeSize, maxNodes, nTree, mtry, keepF, replace, classify, ustat, B) {
+    .Call('surfin_cppForest', PACKAGE = 'surfin', x, y, nSamp, nodeSize, maxNodes, nTree, mtry, keepF, replace, classify, ustat, B)
 }
 
 #' @title

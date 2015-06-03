@@ -4,20 +4,24 @@
 \alias{forest}
 \title{Random forest wrapper function}
 \usage{
-forest(x, y, nTree = 500, replace = TRUE, keepForest = TRUE, mtry = if
-  (is.factor(y)) floor(sqrt(ncol(x))) else max(floor(ncol(x)/3), 1),
-  nodeSize = if (is.factor(y)) 1 else 5, nSamp = if (replace) nrow(x) else
-  ceiling(0.632 * nrow(x)), maxNodes = 2 * trunc(nSamp/max(1, nodeSize - 4)) +
-  1)
+forest(x, y, ntree = 500, replace = TRUE, var.type = NULL, B = NULL,
+  keepForest = TRUE, mtry = if (is.factor(y)) floor(sqrt(ncol(x))) else
+  max(floor(ncol(x)/3), 1), nodeSize = if (is.factor(y)) 1 else 5,
+  nSamp = if (replace) nrow(x) else ceiling(0.632 * nrow(x)), maxNodes = 2 *
+  trunc(nSamp/max(1, nodeSize - 4)) + 1)
 }
 \arguments{
 \item{x}{matrix}
 
 \item{y}{vector}
 
-\item{nTree}{number of trees desired, default is 500}
+\item{ntree}{number of trees desired, default is 500}
 
 \item{replace}{bootstrap samples or subsamples, default is bootstrap samples}
+
+\item{var.type}{default is NULL. Type of variance estimate to be computed. 2 options: "ustat" for u-statistic based which needs replace=FALSE or "infjack" for infinitesimal jackknife which needs replace=TRUE}
+
+\item{B}{default is NULL. Number of common observations for u-statistic based variance estimate. Note that L, the number of trees sharing a common observation, typically >> B.}
 
 \item{keepForest}{keep forest or not, default is TRUE}
 

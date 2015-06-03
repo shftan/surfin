@@ -7,7 +7,7 @@
 \method{predict}{forest}(object, newdata = NULL, ...)
 }
 \arguments{
-\item{object}{random forest output}
+\item{object}{random forest objectput}
 
 \item{newdata}{matrix}
 

@@ -4,10 +4,10 @@
 \alias{forest.varIJ}
 \title{The infinitesimal jackknife for random forests}
 \usage{
-forest.varIJ(rf)
+forest.varIJ(object)
 }
 \arguments{
-\item{rf}{A random forest trained with replace = TRUE and keep.inbag = TRUE}
+\item{object}{A random forest trained with replace = TRUE}
 }
 \description{
 Calculate the infinitesimal jackknife variance

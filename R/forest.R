@@ -3,8 +3,10 @@
 #' Wrapper for the C++ implementation of random forest
 #' @param x matrix
 #' @param y vector
-#' @param nTree number of trees desired, default is 500
+#' @param ntree number of trees desired, default is 500
 #' @param replace bootstrap samples or subsamples, default is bootstrap samples
+#' @param var.type default is NULL. Type of variance estimate to be computed. 2 options: "ustat" for u-statistic based which needs replace=FALSE or "infjack" for infinitesimal jackknife which needs replace=TRUE
+#' @param B default is NULL. Number of common observations for u-statistic based variance estimate. Note that L, the number of trees sharing a common observation, typically >> B.
 #' @param keepForest keep forest or not, default is TRUE
 #' @param mtry tuning
 #' @param nodeSize node size
@@ -17,11 +19,30 @@
 #' response = birds[,"y"]
 #' forest(x=features,y=response)
 
-forest <- function (x, y, nTree = 500, replace = TRUE, keepForest = TRUE,
+forest <- function (x, y, ntree = 500, replace=TRUE, var.type=NULL, B = NULL, keepForest = TRUE,
           mtry     = if (is.factor(y)) floor(sqrt(ncol(x))) else max(floor(ncol(x)/3), 1), 
           nodeSize = if (is.factor(y)) 1                    else 5, 
           nSamp    = if (replace) nrow(x) else ceiling(0.632 * nrow(x)),
           maxNodes = 2 * trunc(nSamp/max(1, nodeSize - 4)) + 1) {
+  
+  # Ensure correct sampling scheme
+  ustat = FALSE
+  if (!is.null(var.type)) {
+    if (var.type != "ustat" & var.type != "infjack") {
+      stop('wrong input method for type of variance estimate')  
+    }
+    if (var.type=="ustat") {
+      if (replace) stop("U-statistic based variance estimate requires sampling without replacement")
+      if (is.null(B)) stop("need to specify B")
+      if (B < 0 | ntree %% B != 0) stop("ntree and B values needed such that ntree = B * positive integer")
+      ustat=TRUE
+    }
+    if (var.type == "infjack" & !replace) stop("infinitesimal jackknife variance estimate requires sampling with replacement")
+  }  
+  if (is.null(B))
+  {
+    B = 0
+  }
   
   # Only run for regression or binary classification
   # multiclass classification requires different splitting, unsupervised learning requires additional code
@@ -41,12 +62,13 @@ forest <- function (x, y, nTree = 500, replace = TRUE, keepForest = TRUE,
   {
     stop('NA not permitted in predictors') 
   }
-    
+  
   varNames <- if (is.null(colnames(x))) 1:ncol(x) else colnames(x)
+
   #yOffset <- if (is.factor(y)) 0 else mean(y)     # consider moving this back in for speed improvements
   #if (!is.factor(y)) y <- y - yOffset
-  out <- cppForest(data.matrix(x), y, nSamp, nodeSize, maxNodes, nTree, mtry, 
-                      keepForest, replace, is.factor(y))
+  out <- cppForest(data.matrix(x), y, nSamp, nodeSize, maxNodes, ntree, mtry, 
+                      keepForest, replace, is.factor(y), ustat, B)
   #if (!is.factor(y)) y = y + yOffset
   #out$forest$nodePred <- out$forest$nodePred + yOffset
   #out$predictedByTree <- out$predictedByTree + yOffset
@@ -61,23 +83,19 @@ forest <- function (x, y, nTree = 500, replace = TRUE, keepForest = TRUE,
     out$type = "binary classification"
     
     # Find mapping of factor level to number
+    # first (alphabetically-speaking) level becomes 1, second level becomes 2
     out$key = unique(data.frame(y,as.numeric(y)))
     out$key[,1] = as.character(out$key[,1])
     
     ## Convert numbers to factor levels
     # All predictions by tree
-    index = out$predictedAll<mean(out$key[,2])   # specific to binary classification
-    out$predictedAll[index] = out$key[1,1]
-    out$predictedAll[!index] = out$key[2,1]
+    out$predictedAll = numberToFactor(out$predictedAll,out$key)
     
     # OOB predictions by tree
-    out$predictedOOB = out$predictedAll
-    out$predictedOOB[out$inbag.times!=0] = NA
+    out$predictedOOB = numberToFactor(out$predictedOOB,out$key)
     
     # Prediction for each observation based on OOB predictions by tree
-    index = out$predicted<mean(out$key[,2]) 
-    out$predicted[index] = out$key[1,1]
-    out$predicted[!index] = out$key[2,1]
+    out$predicted = numberToFactor(out$predicted,out$key)
     out$predicted = factor(out$predicted)
     
     out$err.rate = apply(out$predictedOOB,2,function(x) mean(x!=as.character(y),na.rm=TRUE))
@@ -88,7 +106,15 @@ forest <- function (x, y, nTree = 500, replace = TRUE, keepForest = TRUE,
   }
   
   out$varNames        <- varNames
+  
   if (!keepForest) out$forest <- NULL
+  
+  out$replace = replace
+  
+  out$var.type = var.type
+  out$B = B
+  out$nSamp = nSamp
+  out$ntree = ntree
   
   class(out) = "forest"
   return(out)
