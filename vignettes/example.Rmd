@@ -1,0 +1,102 @@
+---
+title: "Example"
+author: "Sarah Tan"
+date: '`r Sys.Date()`'
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown} 
+  %\VignetteEncoding{UTF-8}
+---
+
+Load packages
+```{r}
+library(rpart) # for kyphosis data
+library(randomForest)
+library(surfin)
+```
+
+First try classification:
+```{r}
+x = kyphosis[,c("Age","Number","Start")]
+y = kyphosis$Kyphosis
+```
+
+To compute the U-statistic based variance, we use sampling without replacement and specify B, the number of common observations, to be 10.
+```{r}
+fit = forest(x,y,replace=FALSE,var.type="ustat",B=10)
+names(fit)
+fit$predicted
+head(forest.varU(fit))
+predict(fit,x)
+```
+
+To compute the infinitesimal jackknife variance, we use sampling with replacement.
+```{r}
+fit = forest(x,y,replace=TRUE,var.type="infjack")
+names(fit)
+output1 = fit$predicted
+head(forest.varIJ(fit))
+predict(fit,x)
+```
+
+Let's look at the usual sampling without replacement:
+```{r}
+fit = forest(x,y,replace=FALSE)
+names(fit)
+fit$predicted
+predict(fit,x)
+```
+
+Now we compare to the randomForest package:
+```{r}
+fit = randomForest(x,y,keep.forest=TRUE,keep.inbag=TRUE,replace=TRUE)
+output2 = fit$predicted
+table(output1,output2)
+```
+
+Try regression:
+```{r}
+x = cu.summary[,c("Price","Country","Reliability","Type")]
+y = cu.summary$Mileage
+keep = !is.na(y)
+y = y[keep]
+x = x[keep,]
+keep = !apply(is.na(x),1,any)
+y = y[keep]
+x = x[keep,]
+```
+
+Similarly, compute the U-statistic variance:
+```{r}
+fit = forest(x,y,replace=FALSE,var.type="ustat",B=10)
+names(fit)
+fit$predicted
+head(forest.varU(fit))
+predict(fit,x)
+```
+
+Now, compute the infinitesimal jackknife:
+```{r}
+fit = forest(x,y,replace=TRUE,var.type="infjack")
+names(fit)
+output1 = fit$predicted
+head(forest.varIJ(fit))
+predict(fit,x)
+```
+
+Sampling without replacement:
+```{r}
+fit = forest(x,y,replace=FALSE)
+names(fit)
+fit$predicted
+predict(fit,x)
+```
+
+Compare to the randomForest package:
+```{r}
+fit = randomForest(x,y,keep.forest=TRUE,keep.inbag=TRUE,replace=TRUE)
+output2 = as.numeric(fit$predicted)
+plot(output1,output2)
+lines(output1,output1,lty="dashed")
+```

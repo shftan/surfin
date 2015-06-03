@@ -48,4 +48,3 @@ forest.varIJ <- function (object) {
   
   return(data.frame(y.hat=y.hat, var.hat=varIJ))
 }
-
