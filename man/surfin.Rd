@@ -4,15 +4,11 @@
 \name{surfin}
 \alias{surfin}
 \alias{surfin-package}
-\title{surfin: Statistical Inference for Random Forests}
+\title{surfin}
 \description{
-surfin: Statistical Inference for Random Forests
-}
-\section{Description}{
-
+surfin: Statistical Inference for Random Forests.
 This R package computes variance estimates for random forest predictions using a fast implementation of random forests in C++. Two variance estimates are provided: U-statistic based and infinitesimal jackknife.
 }
-
 \section{Details}{
 
 Functions include: forest, forest.varU, forest.varIJ, predict.forest, proximity.forest, impute.forest
@@ -41,6 +37,8 @@ Wager, Stefan, Hastie, Trevor, and Efron, Bradley. (2014). Confidence Intervals 
 }
 
 \section{Examples}{
+
+See the vignette for a brief example. We've also provided a data set:
 
 data(birds)
 
