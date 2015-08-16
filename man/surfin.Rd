@@ -4,9 +4,9 @@
 \name{surfin}
 \alias{surfin}
 \alias{surfin-package}
-\title{surfin}
+\title{surfin: Statistical Inference for Random Forests}
 \description{
-Statistical Inference for Random Forests
+surfin: Statistical Inference for Random Forests
 }
 \section{Description}{
 
@@ -35,9 +35,9 @@ Rcpp, RcppArmadillo, Matrix
 
 \section{References}{
 
-Mentch, Lucas, and Hooker, Giles. (2014). Ensemble Trees and CLTs: Statistical Inference for Supervised Learning. Arxiv.
+Mentch, Lucas, and Giles Hooker. (2014). Quantifying Uncertainty in Random Forests via Confidence Intervals and Hypothesis Tests. arXiv preprint arXiv:1404.6473.
 
-Wager, Stefan, Hastie, Trevor, and Efron, Bradley. (2014). Confidence Intervals for Random Forests: The Jackknife and the Infinitesimal Jackknife. Journal of Machine Learning Research.
+Wager, Stefan, Hastie, Trevor, and Efron, Bradley. (2014). Confidence Intervals for Random Forests: The Jackknife and the Infinitesimal Jackknife. Journal of Machine Learning Research, 15(May), 1625−1651. \url{http://jmlr.org/papers/v15/wager14a.html}
 }
 
 \section{Examples}{

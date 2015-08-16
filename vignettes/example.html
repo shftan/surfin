@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="author" content="Sarah Tan" />
+
+<meta name="date" content="2015-08-16" />
+
+<title>Example</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<link href="data:text/css,body%20%7B%0A%20%20background%2Dcolor%3A%20%23fff%3B%0A%20%20margin%3A%201em%20auto%3B%0A%20%20max%2Dwidth%3A%20700px%3B%0A%20%20overflow%3A%20visible%3B%0A%20%20padding%2Dleft%3A%202em%3B%0A%20%20padding%2Dright%3A%202em%3B%0A%20%20font%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0A%20%20font%2Dsize%3A%2014px%3B%0A%20%20line%2Dheight%3A%201%2E35%3B%0A%7D%0A%0A%23header%20%7B%0A%20%20text%2Dalign%3A%20center%3B%0A%7D%0A%0A%23TOC%20%7B%0A%20%20clear%3A%20both%3B%0A%20%20margin%3A%200%200%2010px%2010px%3B%0A%20%20padding%3A%204px%3B%0A%20%20width%3A%20400px%3B%0A%20%20border%3A%201px%20solid%20%23CCCCCC%3B%0A%20%20border%2Dradius%3A%205px%3B%0A%0A%20%20background%2Dcolor%3A%20%23f6f6f6%3B%0A%20%20font%2Dsize%3A%2013px%3B%0A%20%20line%2Dheight%3A%201%2E3%3B%0A%7D%0A%20%20%23TOC%20%2Etoctitle%20%7B%0A%20%20%20%20font%2Dweight%3A%20bold%3B%0A%20%20%20%20font%2Dsize%3A%2015px%3B%0A%20%20%20%20margin%2Dleft%3A%205px%3B%0A%20%20%7D%0A%0A%20%20%23TOC%20ul%20%7B%0A%20%20%20%20padding%2Dleft%3A%2040px%3B%0A%20%20%20%20margin%2Dleft%3A%20%2D1%2E5em%3B%0A%20%20%20%20margin%2Dtop%3A%205px%3B%0A%20%20%20%20margin%2Dbottom%3A%205px%3B%0A%20%20%7D%0A%20%20%23TOC%20ul%20ul%20%7B%0A%20%20%20%20margin%2Dleft%3A%20%2D2em%3B%0A%20%20%7D%0A%20%20%23TOC%20li%20%7B%0A%20%20%20%20line%2Dheight%3A%2016px%3B%0A%20%20%7D%0A%0Atable%20%7B%0A%20%20margin%3A%201em%20auto%3B%0A%20%20border%2Dwidth%3A%201px%3B%0A%20%20border%2Dcolor%3A%20%23DDDDDD%3B%0A%20%20border%2Dstyle%3A%20outset%3B%0A%20%20border%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0A%20%20border%2Dwidth%3A%202px%3B%0A%20%20padding%3A%205px%3B%0A%20%20border%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0A%20%20border%2Dwidth%3A%201px%3B%0A%20%20border%2Dstyle%3A%20inset%3B%0A%20%20line%2Dheight%3A%2018px%3B%0A%20%20padding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0A%20%20border%2Dleft%2Dstyle%3A%20none%3B%0A%20%20border%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0A%0Ap%20%7B%0A%20%20margin%3A%200%2E5em%200%3B%0A%7D%0A%0Ablockquote%20%7B%0A%20%20background%2Dcolor%3A%20%23f6f6f6%3B%0A%20%20padding%3A%200%2E25em%200%2E75em%3B%0A%7D%0A%0Ahr%20%7B%0A%20%20border%2Dstyle%3A%20solid%3B%0A%20%20border%3A%20none%3B%0A%20%20border%2Dtop%3A%201px%20solid%20%23777%3B%0A%20%20margin%3A%2028px%200%3B%0A%7D%0A%0Adl%20%7B%0A%20%20margin%2Dleft%3A%200%3B%0A%7D%0A%20%20dl%20dd%20%7B%0A%20%20%20%20margin%2Dbottom%3A%2013px%3B%0A%20%20%20%20margin%2Dleft%3A%2013px%3B%0A%20%20%7D%0A%20%20dl%20dt%20%7B%0A%20%20%20%20font%2Dweight%3A%20bold%3B%0A%20%20%7D%0A%0Aul%20%7B%0A%20%20margin%2Dtop%3A%200%3B%0A%7D%0A%20%20ul%20li%20%7B%0A%20%20%20%20list%2Dstyle%3A%20circle%20outside%3B%0A%20%20%7D%0A%20%20ul%20ul%20%7B%0A%20%20%20%20margin%2Dbottom%3A%200%3B%0A%20%20%7D%0A%0Apre%2C%20code%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20color%3A%20%23333%3B%0A%7D%0Apre%20%7B%0A%20%20white%2Dspace%3A%20pre%2Dwrap%3B%20%20%20%20%2F%2A%20Wrap%20long%20lines%20%2A%2F%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20margin%3A%205px%200px%2010px%200px%3B%0A%20%20padding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0A%0Acode%20%7B%0A%20%20font%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0A%20%20font%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0A%20%20padding%3A%202px%200px%3B%0A%7D%0A%0Adiv%2Efigure%20%7B%0A%20%20text%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0A%20%20background%2Dcolor%3A%20%23FFFFFF%3B%0A%20%20padding%3A%202px%3B%0A%20%20border%3A%201px%20solid%20%23DDDDDD%3B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20border%3A%201px%20solid%20%23CCCCCC%3B%0A%20%20margin%3A%200%205px%3B%0A%7D%0A%0Ah1%20%7B%0A%20%20margin%2Dtop%3A%200%3B%0A%20%20font%2Dsize%3A%2035px%3B%0A%20%20line%2Dheight%3A%2040px%3B%0A%7D%0A%0Ah2%20%7B%0A%20%20border%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0A%20%20padding%2Dtop%3A%2010px%3B%0A%20%20padding%2Dbottom%3A%202px%3B%0A%20%20font%2Dsize%3A%20145%25%3B%0A%7D%0A%0Ah3%20%7B%0A%20%20border%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0A%20%20padding%2Dtop%3A%2010px%3B%0A%20%20font%2Dsize%3A%20120%25%3B%0A%7D%0A%0Ah4%20%7B%0A%20%20border%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0A%20%20margin%2Dleft%3A%208px%3B%0A%20%20font%2Dsize%3A%20105%25%3B%0A%7D%0A%0Ah5%2C%20h6%20%7B%0A%20%20border%2Dbottom%3A%201px%20solid%20%23ccc%3B%0A%20%20font%2Dsize%3A%20105%25%3B%0A%7D%0A%0Aa%20%7B%0A%20%20color%3A%20%230033dd%3B%0A%20%20text%2Ddecoration%3A%20none%3B%0A%7D%0A%20%20a%3Ahover%20%7B%0A%20%20%20%20color%3A%20%236666ff%3B%20%7D%0A%20%20a%3Avisited%20%7B%0A%20%20%20%20color%3A%20%23800080%3B%20%7D%0A%20%20a%3Avisited%3Ahover%20%7B%0A%20%20%20%20color%3A%20%23BB00BB%3B%20%7D%0A%20%20a%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0A%20%20%20%20text%2Ddecoration%3A%20underline%3B%20%7D%0A%20%20a%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0A%20%20%20%20text%2Ddecoration%3A%20underline%3B%20%7D%0A%0A%2F%2A%20Class%20described%20in%20https%3A%2F%2Fbenjeffrey%2Ecom%2Fposts%2Fpandoc%2Dsyntax%2Dhighlighting%2Dcss%0A%20%20%20Colours%20from%20https%3A%2F%2Fgist%2Egithub%2Ecom%2Frobsimmons%2F1172277%20%2A%2F%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20Keyword%20%2A%2F%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%2F%2A%20DataType%20%2A%2F%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%2F%2A%20DecVal%20%28decimal%20values%29%20%2A%2F%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20BaseN%20%2A%2F%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20Float%20%2A%2F%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20Char%20%2A%2F%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20String%20%2A%2F%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%2F%2A%20Comment%20%2A%2F%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%2F%2A%20OtherToken%20%2A%2F%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20AlertToken%20%2A%2F%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20Function%20calls%20%2A%2F%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%2F%2A%20ErrorTok%20%2A%2F%0A%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+<div id="header">
+<h1 class="title">Example</h1>
+<h4 class="author"><em>Sarah Tan</em></h4>
+<h4 class="date"><em>2015-08-16</em></h4>
+</div>
+
+
+<p>Load packages</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rpart) <span class="co"># for kyphosis data</span>
+<span class="kw">library</span>(randomForest)</code></pre>
+<pre><code>## randomForest 4.6-11
+## Type rfNews() to see new features/changes/bug fixes.</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(surfin)</code></pre>
+<p>First try classification:</p>
+<pre class="sourceCode r"><code class="sourceCode r">x =<span class="st"> </span>kyphosis[,<span class="kw">c</span>(<span class="st">&quot;Age&quot;</span>,<span class="st">&quot;Number&quot;</span>,<span class="st">&quot;Start&quot;</span>)]
+y =<span class="st"> </span>kyphosis$Kyphosis</code></pre>
+<p>To compute the U-statistic based variance, we use sampling without replacement and specify B, the number of common observations, to be 10.</p>
+<pre class="sourceCode r"><code class="sourceCode r">fit =<span class="st"> </span><span class="kw">forest</span>(x,y,<span class="dt">replace=</span><span class="ot">FALSE</span>,<span class="dt">var.type=</span><span class="st">&quot;ustat&quot;</span>,<span class="dt">B=</span><span class="dv">10</span>)
+<span class="kw">names</span>(fit)</code></pre>
+<pre><code>##  [1] &quot;inbag.times&quot;  &quot;predictedAll&quot; &quot;oob.times&quot;    &quot;forest&quot;      
+##  [5] &quot;predictedOOB&quot; &quot;predicted&quot;    &quot;type&quot;         &quot;key&quot;         
+##  [9] &quot;err.rate&quot;     &quot;varNames&quot;     &quot;replace&quot;      &quot;var.type&quot;    
+## [13] &quot;B&quot;            &quot;nSamp&quot;        &quot;ntree&quot;</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">fit$predicted</code></pre>
+<pre><code>##  [1] present absent  present absent  absent  absent  absent  absent 
+##  [9] absent  absent  absent  absent  absent  absent  absent  absent 
+## [17] absent  absent  absent  absent  absent  present absent  present
+## [25] absent  absent  absent  absent  absent  absent  absent  absent 
+## [33] absent  absent  absent  absent  absent  absent  absent  absent 
+## [41] absent  absent  present absent  absent  absent  absent  absent 
+## [49] absent  absent  absent  absent  absent  absent  absent  absent 
+## [57] absent  present present absent  absent  present absent  absent 
+## [65] absent  absent  absent  absent  absent  absent  absent  absent 
+## [73] absent  absent  absent  absent  absent  absent  absent  present
+## [81] absent 
+## Levels: absent present</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(<span class="kw">forest.varU</span>(fit))</code></pre>
+<pre><code>##     y.hat    var.hat
+## 1  absent 0.15527355
+## 2  absent 0.04827042
+## 3 present 0.17375998
+## 4  absent 0.09832087
+## 5  absent 0.00000000
+## 6  absent 0.00000000</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">predict</span>(fit,x)</code></pre>
+<pre><code>##  [1] absent  absent  present absent  absent  absent  absent  absent 
+##  [9] absent  present present absent  absent  absent  absent  absent 
+## [17] absent  absent  absent  absent  absent  present present absent 
+## [25] present absent  absent  absent  absent  absent  absent  absent 
+## [33] absent  absent  absent  absent  absent  present absent  present
+## [41] present absent  absent  absent  absent  present absent  absent 
+## [49] present absent  absent  absent  present absent  absent  absent 
+## [57] absent  present absent  absent  present present absent  absent 
+## [65] absent  absent  absent  absent  absent  absent  absent  absent 
+## [73] absent  absent  absent  absent  present absent  absent  present
+## [81] absent 
+## Levels: absent present</code></pre>
+<p>To compute the infinitesimal jackknife variance, we use sampling with replacement.</p>
+<pre class="sourceCode r"><code class="sourceCode r">fit =<span class="st"> </span><span class="kw">forest</span>(x,y,<span class="dt">replace=</span><span class="ot">TRUE</span>,<span class="dt">var.type=</span><span class="st">&quot;infjack&quot;</span>)
+<span class="kw">names</span>(fit)</code></pre>
+<pre><code>##  [1] &quot;inbag.times&quot;  &quot;predictedAll&quot; &quot;oob.times&quot;    &quot;forest&quot;      
+##  [5] &quot;predictedOOB&quot; &quot;predicted&quot;    &quot;type&quot;         &quot;key&quot;         
+##  [9] &quot;err.rate&quot;     &quot;varNames&quot;     &quot;replace&quot;      &quot;var.type&quot;    
+## [13] &quot;B&quot;            &quot;nSamp&quot;        &quot;ntree&quot;</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">output1 =<span class="st"> </span>fit$predicted
+<span class="kw">head</span>(<span class="kw">forest.varIJ</span>(fit))</code></pre>
+<pre><code>##     y.hat    var.hat
+## 1  absent 0.04945721
+## 2  absent 0.01618201
+## 3 present 0.03331956
+## 4  absent 0.01033712
+## 5  absent 0.00000000
+## 6  absent 0.00000000</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">predict</span>(fit,x)</code></pre>
+<pre><code>##  [1] absent  absent  present absent  absent  absent  absent  absent 
+##  [9] absent  present present absent  absent  absent  absent  absent 
+## [17] absent  absent  absent  absent  absent  present present absent 
+## [25] present absent  absent  absent  absent  absent  absent  absent 
+## [33] absent  absent  absent  absent  absent  present absent  present
+## [41] present absent  absent  absent  absent  present absent  absent 
+## [49] present absent  absent  absent  present absent  absent  absent 
+## [57] absent  present absent  absent  present present absent  absent 
+## [65] absent  absent  absent  absent  absent  absent  absent  absent 
+## [73] absent  absent  absent  absent  present absent  absent  present
+## [81] absent 
+## Levels: absent present</code></pre>
+<p>Let’s look at the usual sampling without replacement:</p>
+<pre class="sourceCode r"><code class="sourceCode r">fit =<span class="st"> </span><span class="kw">forest</span>(x,y,<span class="dt">replace=</span><span class="ot">FALSE</span>)
+<span class="kw">names</span>(fit)</code></pre>
+<pre><code>##  [1] &quot;inbag.times&quot;  &quot;predictedAll&quot; &quot;oob.times&quot;    &quot;forest&quot;      
+##  [5] &quot;predictedOOB&quot; &quot;predicted&quot;    &quot;type&quot;         &quot;key&quot;         
+##  [9] &quot;err.rate&quot;     &quot;varNames&quot;     &quot;replace&quot;      &quot;B&quot;           
+## [13] &quot;nSamp&quot;        &quot;ntree&quot;</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">fit$predicted</code></pre>
+<pre><code>##  [1] present absent  present absent  absent  absent  absent  absent 
+##  [9] absent  absent  absent  absent  absent  absent  absent  absent 
+## [17] absent  absent  absent  absent  absent  present absent  present
+## [25] absent  absent  absent  absent  absent  absent  absent  absent 
+## [33] absent  absent  absent  absent  absent  absent  absent  absent 
+## [41] absent  absent  present absent  absent  absent  absent  absent 
+## [49] absent  absent  absent  absent  absent  absent  absent  absent 
+## [57] absent  present present absent  absent  present absent  absent 
+## [65] absent  absent  absent  absent  absent  absent  absent  absent 
+## [73] absent  absent  absent  absent  absent  absent  absent  present
+## [81] absent 
+## Levels: absent present</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">predict</span>(fit,x)</code></pre>
+<pre><code>##  [1] absent  absent  present absent  absent  absent  absent  absent 
+##  [9] absent  present present absent  absent  absent  absent  absent 
+## [17] absent  absent  absent  absent  absent  present present absent 
+## [25] present absent  absent  absent  absent  absent  absent  absent 
+## [33] absent  absent  absent  absent  absent  present absent  present
+## [41] present absent  absent  absent  absent  present absent  absent 
+## [49] present absent  absent  absent  present absent  absent  absent 
+## [57] absent  present absent  absent  present present absent  absent 
+## [65] absent  absent  absent  absent  absent  absent  absent  absent 
+## [73] absent  absent  absent  absent  present absent  absent  present
+## [81] absent 
+## Levels: absent present</code></pre>
+<p>Now we compare to the randomForest package:</p>
+<pre class="sourceCode r"><code class="sourceCode r">fit =<span class="st"> </span><span class="kw">randomForest</span>(x,y,<span class="dt">keep.forest=</span><span class="ot">TRUE</span>,<span class="dt">keep.inbag=</span><span class="ot">TRUE</span>,<span class="dt">replace=</span><span class="ot">TRUE</span>)
+output2 =<span class="st"> </span>fit$predicted
+<span class="kw">table</span>(output1,output2)</code></pre>
+<pre><code>##          output2
+## output1   absent present
+##   absent      71       0
+##   present      3       7</code></pre>
+<p>Try regression:</p>
+<pre class="sourceCode r"><code class="sourceCode r">x =<span class="st"> </span>cu.summary[,<span class="kw">c</span>(<span class="st">&quot;Price&quot;</span>,<span class="st">&quot;Country&quot;</span>,<span class="st">&quot;Reliability&quot;</span>,<span class="st">&quot;Type&quot;</span>)]
+y =<span class="st"> </span>cu.summary$Mileage
+keep =<span class="st"> </span>!<span class="kw">is.na</span>(y)
+y =<span class="st"> </span>y[keep]
+x =<span class="st"> </span>x[keep,]
+keep =<span class="st"> </span>!<span class="kw">apply</span>(<span class="kw">is.na</span>(x),<span class="dv">1</span>,any)
+y =<span class="st"> </span>y[keep]
+x =<span class="st"> </span>x[keep,]</code></pre>
+<p>Similarly, compute the U-statistic variance:</p>
+<pre class="sourceCode r"><code class="sourceCode r">fit =<span class="st"> </span><span class="kw">forest</span>(x,y,<span class="dt">replace=</span><span class="ot">FALSE</span>,<span class="dt">var.type=</span><span class="st">&quot;ustat&quot;</span>,<span class="dt">B=</span><span class="dv">10</span>)
+<span class="kw">names</span>(fit)</code></pre>
+<pre><code>##  [1] &quot;inbag.times&quot;  &quot;predictedAll&quot; &quot;oob.times&quot;    &quot;forest&quot;      
+##  [5] &quot;predictedOOB&quot; &quot;predicted&quot;    &quot;type&quot;         &quot;mse&quot;         
+##  [9] &quot;varNames&quot;     &quot;replace&quot;      &quot;var.type&quot;     &quot;B&quot;           
+## [13] &quot;nSamp&quot;        &quot;ntree&quot;</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">fit$predicted</code></pre>
+<pre><code>##  [1] 27.75018 27.01278 29.51879 31.41002 30.95473 31.30235 30.78515
+##  [8] 29.54473 28.54688 30.55313 30.40707 26.25919 24.42412 24.17418
+## [15] 23.15540 22.54380 26.13757 24.91612 24.52892 24.61099 22.98569
+## [22] 25.51193 25.71631 23.99969 24.59141 23.81139 23.34575 24.26701
+## [29] 24.87791 25.22870 24.10175 22.57462 22.61836 21.92327 21.83580
+## [36] 21.88743 21.88756 21.88227 21.05363 22.31446 22.44445 22.04143
+## [43] 22.59750 21.44109 22.45485 22.22903 21.97485 22.29389 25.32238</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(<span class="kw">forest.varU</span>(fit))</code></pre>
+<pre><code>##      y.hat  var.hat
+## 1 29.46487 4.821801
+## 2 28.38240 7.091837
+## 3 31.73299 3.767235
+## 4 31.35509 1.721253
+## 5 31.10075 1.736620
+## 6 29.79699 2.970714</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">predict</span>(fit,x)</code></pre>
+<pre><code>##  [1] 29.46487 28.38240 31.73299 31.35509 31.10075 29.79699 31.11459
+##  [8] 28.76997 26.99463 30.49469 31.44028 26.05391 22.75012 24.83487
+## [15] 22.13076 25.13866 29.19240 25.39735 24.27395 24.11915 23.92929
+## [22] 25.30897 24.77081 24.61152 24.42867 23.90476 22.75776 23.45683
+## [29] 24.27017 24.91155 24.90482 22.77424 22.17121 21.77625 21.86550
+## [36] 21.89509 21.97687 21.79942 21.54727 22.17441 22.23595 21.85301
+## [43] 22.67296 21.84667 21.33426 21.76104 20.73227 20.67468 22.77865</code></pre>
+<p>Now, compute the infinitesimal jackknife:</p>
+<pre class="sourceCode r"><code class="sourceCode r">fit =<span class="st"> </span><span class="kw">forest</span>(x,y,<span class="dt">replace=</span><span class="ot">TRUE</span>,<span class="dt">var.type=</span><span class="st">&quot;infjack&quot;</span>)
+<span class="kw">names</span>(fit)</code></pre>
+<pre><code>##  [1] &quot;inbag.times&quot;  &quot;predictedAll&quot; &quot;oob.times&quot;    &quot;forest&quot;      
+##  [5] &quot;predictedOOB&quot; &quot;predicted&quot;    &quot;type&quot;         &quot;mse&quot;         
+##  [9] &quot;varNames&quot;     &quot;replace&quot;      &quot;var.type&quot;     &quot;B&quot;           
+## [13] &quot;nSamp&quot;        &quot;ntree&quot;</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">output1 =<span class="st"> </span>fit$predicted
+<span class="kw">head</span>(<span class="kw">forest.varIJ</span>(fit))</code></pre>
+<pre><code>##      y.hat   var.hat
+## 1 29.96474 2.0532244
+## 2 28.90800 3.1683560
+## 3 32.43747 3.6195431
+## 4 31.37403 0.2456189
+## 5 31.08272 0.8332713
+## 6 29.89653 3.3806710</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">predict</span>(fit,x)</code></pre>
+<pre><code>##  [1] 29.96474 28.90800 32.43747 31.37403 31.08272 29.89653 31.14685
+##  [8] 28.52917 27.11329 30.30180 31.52044 25.91992 22.33121 24.95645
+## [15] 21.72063 25.28140 29.39530 25.50383 24.10365 23.87342 23.94562
+## [22] 25.17426 24.37908 24.84958 24.49942 24.04145 22.67318 23.54876
+## [29] 23.97394 25.04909 25.11860 22.78395 22.00927 21.70787 21.79468
+## [36] 21.90108 21.90787 21.74258 21.57895 22.02610 22.22492 21.72976
+## [43] 22.65835 21.80214 21.02862 21.61609 20.21389 20.22719 22.59752</code></pre>
+<p>Sampling without replacement:</p>
+<pre class="sourceCode r"><code class="sourceCode r">fit =<span class="st"> </span><span class="kw">forest</span>(x,y,<span class="dt">replace=</span><span class="ot">FALSE</span>)
+<span class="kw">names</span>(fit)</code></pre>
+<pre><code>##  [1] &quot;inbag.times&quot;  &quot;predictedAll&quot; &quot;oob.times&quot;    &quot;forest&quot;      
+##  [5] &quot;predictedOOB&quot; &quot;predicted&quot;    &quot;type&quot;         &quot;mse&quot;         
+##  [9] &quot;varNames&quot;     &quot;replace&quot;      &quot;B&quot;            &quot;nSamp&quot;       
+## [13] &quot;ntree&quot;</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">fit$predicted</code></pre>
+<pre><code>##  [1] 27.24042 26.96195 29.46305 31.29537 30.65326 31.67970 30.60502
+##  [8] 29.25647 28.33121 30.75067 30.22661 25.91606 24.56605 23.84384
+## [15] 23.35886 21.82597 26.06996 24.54081 24.02560 24.65033 23.11756
+## [22] 25.28192 25.29723 24.15560 24.26558 23.72298 23.54489 24.36523
+## [29] 24.62213 25.29766 24.17353 22.37866 22.85974 21.70662 21.75771
+## [36] 21.77865 21.96014 21.68497 20.99862 22.52331 22.45310 22.11621
+## [43] 22.67615 21.37165 22.37290 22.07277 21.38415 22.28074 25.05164</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">predict</span>(fit,x)</code></pre>
+<pre><code>##  [1] 29.48625 28.57322 31.74431 31.34567 31.03439 29.90697 31.23867
+##  [8] 28.72822 26.88034 30.54954 31.25342 25.94696 22.86230 24.89145
+## [15] 22.14448 24.88172 29.18829 25.19039 24.15870 24.08305 24.05936
+## [22] 25.33279 24.58504 24.72460 24.38299 23.98719 22.94064 23.61134
+## [29] 24.18677 24.89149 24.91920 22.66207 22.20873 21.69449 21.84636
+## [36] 21.83930 21.95146 21.72795 21.51874 22.22773 22.31857 21.83979
+## [43] 22.68818 21.69234 21.22356 21.59054 20.34856 20.42103 22.92333</code></pre>
+<p>Compare to the randomForest package:</p>
+<pre class="sourceCode r"><code class="sourceCode r">fit =<span class="st"> </span><span class="kw">randomForest</span>(x,y,<span class="dt">keep.forest=</span><span class="ot">TRUE</span>,<span class="dt">keep.inbag=</span><span class="ot">TRUE</span>,<span class="dt">replace=</span><span class="ot">TRUE</span>)
+output2 =<span class="st"> </span><span class="kw">as.numeric</span>(fit$predicted)
+<span class="kw">plot</span>(output1,output2)
+<span class="kw">lines</span>(output1,output1,<span class="dt">lty=</span><span class="st">&quot;dashed&quot;</span>)</code></pre>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAYAAAAUg66AAAAD8GlDQ1BJQ0MgUHJvZmlsZQAAOI2NVd1v21QUP4lvXKQWP6Cxjg4Vi69VU1u5GxqtxgZJk6XpQhq5zdgqpMl1bhpT1za2021Vn/YCbwz4A4CyBx6QeEIaDMT2su0BtElTQRXVJKQ9dNpAaJP2gqpwrq9Tu13GuJGvfznndz7v0TVAx1ea45hJGWDe8l01n5GPn5iWO1YhCc9BJ/RAp6Z7TrpcLgIuxoVH1sNfIcHeNwfa6/9zdVappwMknkJsVz19HvFpgJSpO64PIN5G+fAp30Hc8TziHS4miFhheJbjLMMzHB8POFPqKGKWi6TXtSriJcT9MzH5bAzzHIK1I08t6hq6zHpRdu2aYdJYuk9Q/881bzZa8Xrx6fLmJo/iu4/VXnfH1BB/rmu5ScQvI77m+BkmfxXxvcZcJY14L0DymZp7pML5yTcW61PvIN6JuGr4halQvmjNlCa4bXJ5zj6qhpxrujeKPYMXEd+q00KR5yNAlWZzrF+Ie+uNsdC/MO4tTOZafhbroyXuR3Df08bLiHsQf+ja6gTPWVimZl7l/oUrjl8OcxDWLbNU5D6JRL2gxkDu16fGuC054OMhclsyXTOOFEL+kmMGs4i5kfNuQ62EnBuam8tzP+Q+tSqhz9SuqpZlvR1EfBiOJTSgYMMM7jpYsAEyqJCHDL4dcFFTAwNMlFDUUpQYiadhDmXteeWAw3HEmA2s15k1RmnP4RHuhBybdBOF7MfnICmSQ2SYjIBM3iRvkcMki9IRcnDTthyLz2Ld2fTzPjTQK+Mdg8y5nkZfFO+se9LQr3/09xZr+5GcaSufeAfAww60mAPx+q8u/bAr8rFCLrx7s+vqEkw8qb+p26n11Aruq6m1iJH6PbWGv1VIY25mkNE8PkaQhxfLIF7DZXx80HD/A3l2jLclYs061xNpWCfoB6WHJTjbH0mV35Q/lRXlC+W8cndbl9t2SfhU+Fb4UfhO+F74GWThknBZ+Em4InwjXIyd1ePnY/Psg3pb1TJNu15TMKWMtFt6ScpKL0ivSMXIn9QtDUlj0h7U7N48t3i8eC0GnMC91dX2sTivgloDTgUVeEGHLTizbf5Da9JLhkhh29QOs1luMcScmBXTIIt7xRFxSBxnuJWfuAd1I7jntkyd/pgKaIwVr3MgmDo2q8x6IdB5QH162mcX7ajtnHGN2bov71OU1+U0fqqoXLD0wX5ZM005UHmySz3qLtDqILDvIL+iH6jB9y2x83ok898GOPQX3lk3Itl0A+BrD6D7tUjWh3fis58BXDigN9yF8M5PJH4B8Gr79/F/XRm8m241mw/wvur4BGDj42bzn+Vmc+NL9L8GcMn8F1kAcXgSteGGAAA0/0lEQVR4Ae2dB9icU9rHD6vXsFhdtEVYokTZxeq9WyKxwiqJGoKIXsIiaxE16sYGq0YiSEQLy2rRo7N676Jtls/57t/9Xc98M/POvPOWeeeZZ+Z/X9f7zlPPc57/OXPPfe46XTQKIiEgBIRACghMn8Iz9UghIASEgCMgBqSJIASEQGoIiAGlBr0eLASEgBiQ5oAQEAKpISAGlBr0erAQEAJiQJoDQkAIpIaAGFBq0OvBQkAIiAFpDggBIZAaAmJAqUGvBwsBISAGpDkgBIRAagiIAaUGvR4sBISAGJDmgBAQAqkhIAaUGvR6sBAQAmJAmgNCQAikhoAYUGrQ68FCQAiIAWkOCAEhkBoCYkCpQa8HCwEhIAakOSAEhEBqCIgBpQa9HiwEhIAYkOaAEBACqSEgBpQa9HqwEBACYkCaA0JACKSGgBhQatDrwUJACIgBaQ4IASGQGgJiQKlBrwcLASEgBqQ5IASEQGoIiAGlBr0eLASEgBiQ5oAQEAKpISAGlBr0erAQEAJiQJoDQkAIpIaAGFBq0OvBQkAIiAFpDggBIZAaAmJAqUGvBwsBISAGpDkgBIRAagiIAaUGvR4sBISAGJDmgBAQAqkhIAaUGvR6sBAQAmJAmgNCQAikhoAYUGrQ68FCQAiIAWkOCAEhkBoCYkCpQa8HCwEhIAakOSAEhEBqCIgBpQa9HiwEhIAYkOaAEBACqSEgBpQa9HqwEBACYkCaA0JACKSGgBhQatDrwUJACIgBaQ4IASGQGgJiQKlBrwcLASEgBqQ5IASEQGoIiAGlBr0eLASEgBiQ5oAQEAKpISAGlBr0erAQEAJiQJoDQkAIpIaAGFBq0OvBQkAIiAFpDggBIZAaAmJAqUGvBwsBISAGpDkgBIRAagiIAaUGvR4sBISAGJDmgBAQAqkhIAaUGvR6sBAQAmJAmgNCQAikhoAYUGrQ68FCQAiIAWkOCAEhkBoCYkCpQa8HCwEhIAakOSAEhEBqCIgBpQa9HiwEhIAYkOaAEBACqSEgBpQa9HqwEBACYkCaA0JACKSGgBhQatDrwUJACIgBaQ4IASGQGgJiQKlBrwcLASEgBqQ5IASEQGoIiAGlBr0eLASEgBiQ5oAQEAKpISAGlBr0erAQEAIzCIKOIXD++eeHESNGhLnnnrtjDeiupkbg559/DvxNN910Yfrpp/fP9gDyP//zP+H777/3+2afffaS988yyyzhtttuC3POOWd7mq7ptdNFo5o+sUEe1qtXr3DaaaeJATXIeNbqNWA6p556anj44YfDMsssE95///3w8ccfhwkTJoRu3bpV7MZ///vf8Le//S2MHTs2HHLIIWHrrbcue8+GG24YHn300bDKKquUvSbtE5KAOjgCM8wwQ5hrrrnC2muv3cEWdFszIrDWWmuFJ554wqWXmWee2SEYNGhQ2HLLLcM777wTFltssbKwwLS23XbbsOmmm4ZXXnkl/OpXvyp7LSd+/etft3q+Hk6KAdXDKKgPTYHAU089FR5//PHA8ollV0Lnnnuub55zzjkh2ebA119/HcaPHx9ef/318OCDD4Znn33Wl/19+/ZNbs38pxhQ5odQL5AVBCZPnhz69+9fwHySvv/hD38IgwcPTnbDBx98EH77298G9DvvvvtumGOOOcInn3wS1ltvvdw1jbDx/2y4Ed5G7yAE6hiB2WabLXz00UfhqKOOCltssUXYZZddwsiRI73HU6dOdSbDzhdffBEWWWSR8NNPP4UXX3wx3HLLLc6Qhg8fHpZddlnXG9Xxa7ara2JA7YJLFwuBjiOw3HLLhXHjxoXPP/88HHHEEWGnnXYKe++9tzOirbbaKmyyySbeeL9+/fyzZ8+e4csvv8wdP/TQQ8Nee+0V/v73v3e8E3V2pxhQnQ2IupMeAixxHnvssfDee++5nqaaPfnhhx8CCmiYDlasb7/91hXPzz//fLj11lvDL3/5y7Drrru6Of2OO+4IBxxwQLj99ttbWMYweqATahSSDqhRRlLv0WEEWOrssccegS/+iiuuGF599dUw00wzhTfeeCPMOuusHW43/0b0PyuvvHIYPXp0OP30013yYdnFc3gmUtGSSy7pt5x88snOoPLvT7bp0wILLJDsZv5TDCjzQ6gX6AwCuMHhj/PNN9+ETz/9NGAa59j666/v0gdSUUecTZFS7rvvvvCf//zHJR/aYQmGVeu4445z3Q9KZqxiMD8IS9e6664bXnjhBf9kuQVzSuitt95yHyLuaRjCEVHUfgRMFI7ml9H+G3VHXSEwceLEaN7IJftkS6L4l7/8peS51g6al3w0phX32WefePDBB+PoG816FRdeeGHfNnN6NFN8NIknzjvvvNEU0nHGGWeMtjTLNXvnnXf6tWeccUa8++674wUXXOD71113Xe6aZMOWd95esp98msQVn3nmmWS3Lj+lA2qYnxK9SEcQQOdz7LHHlrwVKxXOf+2hG264IQwcONCXcVdccUUwxuH6JKQbvJgxp//444+BMIk333wzGEMJxmzcMoZ0lNDmm2/uz8bh0JigOy/ef//9YbfddvNLWDbynPnnnz8YEwuLLrpoOPPMM5PbM/OpJVhmhkod7QoEYARfffVVyaZRHGM6bw+h37nrrrsK9DQ4HRK3Nc8884Rp06aFNdZYI6yzzjph+eWXd6U0eiG86ouXVlzDXzGZKOP6JPo3ZcqUsOCCCzrDY4mHz9BFF11UfEvd7ksCqtuhUcdqgQCm72uvvdZ1QMXPwxyemMaLz5Xbf+2110o6C/IMmA+EGX3nnXd25gIDwTJ2zTXXhN/85jflmi04ftVVV4WXXnrJJSiYD0TYBRIW0tQjjzxScH0970gCqufRUd+6HIFVV13VTd5IIHxxV1999YCyl0BPzOZ/+tOf2tWH+eabz834KLYhJJ/dd9/dg0dRcPfo0SOccMIJ4e233861e/HFFztTIjC1LTRp0qScA2P+9aZHCr1793bldynJKf/aetmWBFQvI6F+pIbASSed5DFWe+65p+to0L/gBPivf/2r3X1Cstl+++39PnQ2WNBgNttss034xS9+ER566CG3trG0I6aL0Ap0N0hOpqRu0/OQdDDflyKYEDqmrJAkoKKRwvMUR7RKxHX4cYgaA4H9998/8NdZOuuss8KYMWPcoRDnwiFDhngM1+WXX+66JhgPTohPP/20Mx0i2tdcc02P+WrrszHV/+Mf/3AGln8PuqGhQ4cGs5rlH67rbTGgouH55z//6SJy0eEWuzirYSHh11LUWAgQi4V16uWXX3YL0w477BBYqrWF0PUkyyuWc8wRvJeJAUv8iVBKc46/jhDhG6eccopbvlgukhoGpkb+H5aM7dVbdaQP1bpHDKgIScTnRIQuOlWwS5Y5TJ+ixkIA5rPCCiv4lxhHQaTh1VZbzRXVraXBINUGeheWRyQLa8sc6ihySFFJtDy6KzyoySVEKMdll13W0WZTuU8MKBXY9dB6ROC7777zmCwU0KTcTWjAgAH+JcfnhmRgxUSSMOK2kJLw9yGFRlcTuh58mMgZhHRF9DzMKGskJXTWRkz97TIECJ0gfWk+8+Fh3bt3D+hw+Msnlj+LL764Mx8U2UhBLK9wHiT0gsRjXUk8C98iJLYsMh+wEQPqyhmitjOFAE58KHhL0UorreROfsm5Sy65xKUidICY2gkgJcaLlKrojHAKTGLMknv02RIBLcFaYqIjTYoAOj28kksRDoOcf+6551xKQrFMilQi3CGWaehfSDBPtDrJ53fccUeXTFgiVcrfXOqZzXBMElAzjLLesU0IYEUiPouqFfmEwpdUqkS2s0RDssFHKGE+//73v535IAklqTJYHpHnB8ZELJeoNAKSgErjoqNNiACWTZTISDqYz3Eq/PDDD738EnCg9MU0z/Iqn2BGeDuXyh1ESo3DDjss/3Jt5yEgCSgPDG0KAaxJn332mVu7YCzXX3+9m9aJPE9y+hSjhB9OOe9jzPJ4QItKIyAGVBoXHW1iBPBgxvfnKgv6hLHAiM4777yyiJC8jAh4EpoVExIQSztRaQTEgErjoqNNigCZES2JmDMNHA/xeMchsTViyXbMMce4/ifJH0SKDxLNo1M68cQTW7u9qc81FAPC8oBCkGRNIiHQXgSIocKfBibEMoywirYSpXaIzyIUAk9lfIeStsoFjra17Ua+LpMMiEoCBA4SE/PAAw/4+Jx99tmemAkLBc5ZWXNJb+RJVu/vxtKJ3D/77ruvB5KSr4dlWHupT58+nqeHQGWSzBNPRgZEUXkEKjIgImzLEZJGrSPCYT69evXywYX5UFMbD1UcwYi/YdA322wzz/GSpajgchjreNciQCoMTOcEilIEECfCzhDmd/L+oHi2XNOdaao57i2Xqdq+6NG8QqOJj5482+pWt0h8bSKnJ8ou10ZXHDdzZ7Sgv2jRv9GWXPHII4/0PpgrfMHjbP0dbTIVHKvmjv2yRZOyqtmk2qohAmZej+Yo6HOHBPCNSJlNSk9oP6VjibC1L3hYaqmlvJIjSZVwxkqTUAqiHCTgj1+YpKQJCcTziVrb1FASZQsB4qfwHGbsypm22/NGxlg84RfxUkg5hFSQyoL0p5S8Ia+yUqq0B9HqXlvSEZHs/LiU44SVrIXJk7Pddtt5Vn7c1dPybSBrHEGDWCogtiGyz+XXUGKphnVClB0EGDOqPqCTwakPvxuqiCaVIDryJiQII0kXpnR+sJjX/LgeeOCBLTyeO9K+7ukkAqVEz2HDhnkdo+JzljM32sSIBx10kJ9KYwk2YcIEF5utskCuntLhhx8eF1pooTh8+PDI0tEmXTQGGUeNGlX8ClXb1xKsalB6Q5YP2cfVKjrkGn7yySf9mOVMzh1rz8ZNN93k95skFQcPHuzbJsFHs3J5jS4zmbenucxdm4UlWEkJCCnDBt8VzPlh/gTgYZpkuUMSpLbmsO0kjyy4nV+vG2+80R3DyIWCtQtnL37ZBg0a5FUt+aVjO1meFTRQYQdX+0Sqau1Slge1VsC31p+sn8OqyZghmSSEMyC5kkkOj5WqvXl2MELQJrlzsEahZEZBzB/mcpwHs5K8PcGk0T5LMiAcqBgkdD5MjPxMcET4UnANEzgTJA2CAfJnP0k5SwNlTRC3ycnCOh/LBuv7UvE5rfUZBzJK41YifI6qoaOo9JxmOf/oo4+GK6+8ssXr4lbBH9Ho/AC2lRibm2++OZDh0CTk8Ne//jU3V2iDuC/OiVJGoJxcaTqVaLlNoulRSl5ibupefta6X/J8Vx40P43YvXt3t9DZpIxWaaDF47CAGZNqcbxaB7QEqxaS/9eO1beKFnVeslHLNBitaF/Jc6UOPvHEE9F+hHzJZRkMS10STbcZjUGVPNcoB7OwBCvrB/T73//ek2tTRqQUUcKEzG+txciUuq+zxxCrefYSSywRbF3vCkticS688MLONq37U0SAMTz33HNb9ID5RwWJthTtM8bh1+IbdvTRR/sSmWqjlL5JCMmVtnAU7KzPT9KmPjuOQMklWNIcuhSWMljDTMmbHM59oh8iP0ot6dJLL3WzKRUgIXK3kA6TPL6I1TAnUfYQIGeOSbUeO8VyGhUA1titt946UIiPEsqt0cSJEz0/Dzl50PVQIBBi7pIMjPrpzFWWcuiUJk+enJolt7X3aLZzrTIgwEAhyxfcxNoW2HBsgw028F8TBrgWRMmTfCYDk8TMiv/Ifvvt58m5s1SWpBaYZeEZSLQo9dExEkqDNEO54XHjxvkcK/cOxGyhD8QNA53f7373u4JL0QESGoFfEZVHMZ6QNhWPZVH6CJRkQDgbYnXAIRGfjNdff90je/O7ywTBYoQUxISpFRX7ASXP/fOf/+w5e3FAxGdJlD0EkGBZYhPiwx9SDz8w5ci8891BlnQXMJlyUhI+a8suu6z/lWtLx9NBoOTPAAOJuZsoXpItMQnYzv/jGhJ445TY2iSp9mthkbvttttc2kE3kE84rSGRob9C1BZlDwHmEmZzJJdy8wqph3NHHHGER6AjpXfr1i17L6seVzZhWRrKaPqVujIM2JIrmo4gmo9Hi37haGZ+QW4BkRWsBTw1P2AZASMOhZYfOdoPRsQpsDOE86vpJaOFB0VbsnWmqYa/NwtWsJJLsHzGjNWASgBIFuWI9Xct6YQTTnALGD47xYTycuTIke6/hHOiKD0EWBYRZ8U4ESbD0hjfG3Q15ZZL5XrLkgzn2NNPPz3ccccdwTzhy12q4xlCoCID4gtdbAFDWYj+h7K1aSXcZgKb70hZqLF0iNJDAGsUhgly5JCoKyGyC+IoSkmbtng2m5jiToTEIaJrxNGUJZqoMRCoyIAoN0uOnWJiYmD6JmJeJASKESCpF3Mnn/lwDSlLYSY33HCDe9MX35e/j5V14403dveKQw891HWQ+ee1nX0ESiqh2/JaKAFJ1WEBf24ta8s9uqZ5EEBSIYynFFFf/Zlnnil1KncMUzmJ56jHxY8cBhBR4yFQUQJq7ZXRseB/Q1AowX4iIZAggHsGuh9cOdDZkJwdF4pEJ9TafKE2F8v7/MqjSbv6bCwEKjKgt956y53B8l8bpoMykVSoyy+/vDv/5Z/XthAgHIKIc2qoE0yK0piA08SJtDVfre7mEc0SX9T4CFRkQLi1E3NVTCgQe/bsWfNYsOJ+aL8+EcAIgBQDJT9UJByjXDGUXysdKSlfImL5JWoOBCoyIFJzTJs2rTnQ0FtWDYGxY8eG1Vdf3WujH3fccYH66lQdxVmUIGbyOA0ZMsTLHiMVpZXapWovrIY6hEC7lNAwIryP33333Q49TDc1DwKE71ClhPg8ll4oki2jpi/LSAKG9zKBzugPax3Q3DyjUP9v2iYGRDwYkhBiMr9Uiy++uE+eUukT6v+V1cNaIICPFoHDxYRz4oABA/yHDKU0Ton33HNP8WXabxIEKi7BzJXezaE4/hF7Q6Q5Jnj8OajFhTKalBiNQtQaQ3FaiQjYJWm6qDQCpNHAY53lVZKPhx8yCgUwp0i9+sc//jGgFyLu0BLc5RTUpVvU0UZEoCIDwiSKuZ2Sx/k5oBMHMaLQKXPSKOkNkO5YOlSiMWPGeAneStc163lwJGgYz2fS96L7gRnBfPjhIsULxHIMZrXccsv5X3vSrjYrtg313pUi8qhIYLmhS15GcTcDI5qoXfJ8Ix+05agKE7ZhgM0Z0eeI1eSKZjWNli6l5F0mRUerr17ynA52DIEsBKNW1AGRKhMlYqkif/yq4bPBr52oeRHALwzPZsIryF5IHBhOhCzVWc4yT3BKZCnGfCpFSNekSRU1FwIVl2AEFJL3h2hmJg/rdZTRlqYjXH311WGnnXYKpNNMCOez+eefP9nVZ4MjgC6MJRQ/UPj+YGJPwiyYB5jfySkF4bTKkp4YwmJiSVuOORVfq/0GQqCScEfdbHOrb/MfhQGbgbQEi9FSZPjyylKn+pBb9VHft6+Hf1r4RcFUMAknUv3CAksLjluKDb/elPoFx7XTOQSysASrKAERu4OvhqgxEWD5RB00jAw4CtqkbXOuHpZb1FunwB/LKypY4HxIwnfT54QLLrggnH322TngkKaxepEwnhxSSDykdXn11Vfdt0yScw6qptmoyIDw02D9XpwTCIQ4R9kTUqCKsocAuppk+USsFoyIJRQpT61uVsUXYun93XffuR6QizfaaCNnRuh++OGiUGQx0a6VRg733nuvMx3u4Y/gVVHzIVCRAdVbVYzmG6KueWMyDBLPh8SCwyD7EHl3kFBwveA8nu/EaiEZ5bth4MNDAnkIPeCoUaP8Pu5F7wMTI8l8KUKH2BZXh1L36lhjIVCSAdVzVYzGgj+9tyFFBgGhJJvDsMDyCSaEohhGQ/ka5gHLIoKOqbtlubbdosXy6tprr/XOzzbbbO6ICrNCIsZjHssX5ZBLlVpO74315HpEoKQZHq/neq2KUY8gZrFPWKpwDKT2Fs6AeHWju8F8jgTD8oyodKQfmA9ezHgrw3Cos06ohalIPeMhFlKCS9HlYAkjyPSYY46pmPEwi7ipz1VGoJKevR6rYpTrs31ZogU9ljtd1eNZt4IZE4nGYOK+++4bLXI92jIqZ8EyJhPNdB4tLCWaYtqPJ5+m34mWB9z/EkBNoRxN8olYw1ZYYYVopY+TU/pMEYEsWMFKSkD5PG7NNdcM559/fv6hut2+5ZZbPA9x3XawjjpGTB9ZDVhiUSOdRPEoj7GEIf1QzA8LF3XfIKqKbrvttr7EwvGUvD5WYsfPYYRgSYcCGwUzSzWREGgLAiV1QPk34gV99NFH5x9qsY1JtVaE+E+WxlLEFwCrzMEHH+ynidwnDknUEoEePXo4kznjjDM8YRg5nO3HOnz00Ue+zIIJofvJJ5gOpY85TjVS8jSzXMNCiv4HixpJyEo5Gua3o20hkCBQkQHVW1keakNdf/31XqKFX+t8wl2AX2Ui2iH6LiqNAKVtsFgRBGrxfm7t4krqbt18882uD2If8zg/QCQVGz9+vOf0wXIGA+J+0q1SLodSTegN0RmpbA7IidqEQEeXqFawMB500EFxt91262gTHbrPHOcinrPoYMwPJbKfkJmCo/mZJLtd+pklHZD598Rhw4ZFUxC7TscklrjjjjtGUz67fsekmnjaaadFk2hyeiCbPBF9j0lKfoxqpByzUjkFuFqSumhSUDSJKTInRPWDQBZ0QIjdHSZc7U1XEG3d3+E2OnojXwT79Y7mTRttSebNiAG1RNPM4R7+APNAScynLZWiSTW+bRKMf6J05lzyZz48kQj2ZN+knkiohSg7CGSBAVVUQtsELEv5ZXnKXtRFJ1gGoLfABIyTHIXwRIUIYDygMCDBxCiZ0ZGRjweFMTobiNSpUOKImNTfQpkMtiij0aNRJJDcPiIhUE0EKuqAUPiOGzeu4JnED9VDWR58UtBfoPzkSzLrrLMW9LOZdxgjW3Z57mWsVM8995zDgX7G8ji5s+Gyyy4bXnvttRxMZDIgpQaeyiinTeLxzJco/kVCoCsQqMiAslCWBwY0ZcoUDyPAYa4zxBcQL95KhLWtVM7jSvfV6jz9Q4rpbvma+OzWrVvu0fx42ELCmQ9M/Pbbb3fFM8yc6ziPJQupiCBVlMwiIdAlCGRnRduyp60pPVGK8tde4h7zean4h7PeiBEj2tt8Ta63xO/R6q+7/sZCJKJ5tseBAwf6sy3oNKfXwQHRJlU0C1acMGGCb+OQaOl1PTvh0ksv7ceMIdWk33pIdRHIgg6oXUpovIwtODW+9NJLBdan6sJWuTXT90T7ZXerjeUQjhbH1OImc66Lu+yyS4vj1TrQ1VYwcyeIJn1EK2UTW8uTAxM2s3kk9ek+++wTrQhgjpH07t07mt4mnnPOOX4MZpP8YeFi2/IzRxgW2+biEC0cw7FNrItYOQ844IBqwaZ2aohAwzAgvgjm95GbvExWJIBBgwbV3PRquWe8H6bXiOabEvmV5hfbcs8UDG2WGRC5tnv16uWhEompHCZQSuIzvY2HPlx44YXRgkCj+T65+dyUzC4Bms7HxyphPDBOtjG5Ix3ZMitaVLuPr/lR+TnaSciWttECVJNdfWYIgYZgQPh5ENtj0dHRggyj1fSOVpInnnnmmW6m5Vgtaeedd46Wayb3SL6UVv7FvzgWLJk7nlUGZMnf/F1MB5N7F5aFMI0jjzwyd4wNK5Pkx/MPWuhMxLRO8nck1oTxmBUs4stjuXc89sssmNEqm/h5ig4QF8Z5sMwnfnyQNkXZQ6AhGJCZbH2S8ktYTDi3MWlrSegwiqUdnn/sscdGfu35NYeyyoCOP/54Zwz+Enn/WBLhxwPzh2C8OF0WB99a+In76+Q7FSY6HJZkZpbPazVGSygXhw4dGs2C6Mu9gpO2Y0UE4+677158WPsZQCALDKiiHxApFsiWhx9JMRF0SBoHc0gsPtVl++SqIUlaMVGfzPQVwX75cybn4muysE/54sGDB7foKnXXyDJIMQCIMtn48pAyI58IrSBeC3+fE0880a1dSagEFr5iXx5b6nkBQVtOe1oOgk4TOu+888Kll15aMrNhco0+hUBnEKhohifeitwxRE4XT3bMtziqkRumVtS3b1+vqEnNcaprrrrqqrlHU/4FBoTfC6k/CUbNGmEWtyVXyW7DcMjVBOEwiN8TeBAfRwwWTIpg0ITIbggxdkSwk0hsiSWWSE4XfMLA8RHC+ZBrKKFM++RsLpWOt+Bm7QiBjiJQSZJEJ2GZ8+Kmm24aLT1ntCx5kWPGfKJN6rKF5iq125nzLBlQtqIELyb6Z5KZLxuzaAUbPnx4JOyhmLCE2RhH82b2Uybh+D5KZUsY5tucT/5YUnEOfRBLNaxdbSFyKtkPjlvgsMSVI8JfrCxTvOaaa3KhMOWu1fF0EMjCEgwRvSKhd1hqqaV8cifmWya65ZRp1URcseFOXICVB2tRObI0ItHSR5Q73enjXWWG50uP1Ql8LUzCGT6Jwdi30Ipcv7F+EVSKcplz5kDoQbrm3ewWLhiJOWVGq9cVwaqahPXRIuFdN4R+iOcXK6+r+Ty11TEEssCAKi7BbHK5bgBPYypgIJKzDCCfDMnK0iL60NrSj9SgWSSK+OF9bhYurxaBjo2UFyNHjgzo3BIiNQZey+DA0pM4LxLBE36B7gfdHctTUmZUk9AJsVwj9QkJyyBzAXBvaWPKvsyr5vPUVoMj0DHeqru6SgKqhCyZB5L0qaQlKUUWfOruEqXOdeYY0pllUIzGIFs0YwzPJbLWlm0tbtKBLkUgCxJQRStYg/PfTL1ev379vNQNqWfNAzwsuuiiLfpPHBcVLpBQq020jaLb8j63aJrAVggpTCQE2opAm5ZgbW1M15VHALM4ZnDTp7kFi5zM5FhujbBssRzD5J5fN91+NgNpcMlKSGmdzTbbzJsh6BTrHyZ1PqtN1PmiT7xLkrYjeQbHsJwly7LkuD6FQGsISAJqDZ0qnSM1Br5U5qkdzKvcI9QtWNTTiMBMiolIdhgU/juUzEmYD6VvbInjfxtssIGnR8U3CN8emBDmc3RHFvtV3GRV9tE3UYKZtB3FRD95R64RCYE2I9Cli9AGbrytOiA8lvHexks7n/BsxpWAzIT5MV7EZtngFfwlJXE4jocz9xELRypUdEJYyYhmt4Ty+Y/oku3PP//c+2YKbtczPfjgg9GqpPoxXCBE9YOAdEBtZoONeyF6Exw5kWoSIpOkxV95GRyLqXMvc6xaJApDQsqnk046KZdkH4kIj3RyHiGJ4BVOQjEkJBLCsxzrapp33nndA3vLLbf04oMUIMRBlfc0xtjVj1f7jYZA/fDrbPWkrRKQZSKMq6yySu7lkFhsDkX7AkesVWzn+1axz1+SBJ5t8jXjDErUf3I9cXj4BZFuI1+Cyj1IG02PQBYkICmh7RudTyhZ8b2pRPalzxXma+1apBRzBnRFMhKCJQZz69Wdd97pcVqEstBWPlEsECmJmDeLWPfMhMR3WR4mr8NlHunBHEPd34dtargTNiESAllDQAyoaMRgDNQ2r0TEZVHErxJhjUJBjFOglccJN910k1uSTMJxRgdjsRQnuWZgPpiyr7vuutCnT59gXtHuVIhjIQwI5bWlRvFrMH2b9BRQcouEQCYRaHo5tYMAtHUJRvMoZ0ngRgkjmySRkjfFyy7i1jiXhFawbYnhPeQhP7UGIRYJkXqDeDwtwRJE9JmPQBaWYDLD1+Bng6UX5vJEUiHa3SZK7smY3BMltTG2YFke/dy5557rkg4+NpAFfwbLYujbSGqUJaJiKVKQSAhkEQExoBqMGgxnzJgx4aKLLvKnJYwoqWF/zz33eNljTpLvh0oUxNxZBsRc76644opgaVndh4jUGpYozM/tuuuuuWu0IQSyhoB0QDUYMYr/4UVspaxzT0P5TBAnnsOW3sSVyOiVEsnIlmTh+eefd8c+lMxcSxkgrqVe1x577BEs2r+g3E6ucW0IgYwgIAZUxYGC0ZhjnsdL4amMZ7KVvgkwk6TyKI8jQj2JmYK5QDAfmBFVTJMlFR7HxH+xLCPbY3er8cVyjKyHN954oyuk/Wb9EwIZRUAMqEoDRwiEJecKOOhhVid1BharpKosyyZM/CyvcCi0BG+eyZC0FjAkjhH3RTqOUkQAamKuJyA0YVKlrtUxIZAVBErP9qz0vk76eeqpp3r8FQwGJbGFKwRSq5I7hzgtmMyVV17p23gNW9bDYCEYrmzmHqQljpdjPrwmDIdlm0gINBICUkJ3cjQJDiUJ2FtvveXMBykFiYYlFYGZJApjCUX6DMvj41IQ1it0QkhIkBUWdGtWJ7ui24VA5hAQA+rkkOE1TXwU+h4IHQ2OjFa91RXE6H5gQsR54YS41VZbhVGjRnm9dmqxI/WgXO6K9BmdfDXdLgS6HAExoE5CPNdcc3keHCQhCKmHAFOIpRVLLPLzEJJh0evB6qyFk08+2cMnsGiRHwj9kEgINCMCmWdAmK2JDicaOw1C50MunL333rvF42FG+PyQs5kSQoROwGxgQEg8JBWzQNUW9+mAEGgWBDLJgCiexzIHszSZ+Yir4guNGZsvNBYpJI9aEBYp4rawgJGkHzP8pEmTPN3Gtdde631CCT1ixAhPVwETYinGO1C/TCQEmhmBzFnB0JckvjL41xAVjg4GKxFSEFVaUeqOHj063Hvvvbmwhq4cZJgf3s5UiyA0AqmHpdVhhx0Wzj77bPcLwkcI5kPuHoonioSAEDAE8oPXsrBt3sSeR4cAz3JkimCvr27lacpd0unjrQWj9u/f3ytXFD/EnA+jMUvPZFh8TvtCoNoIKBi1C1g82QXxDm4t+x4lhnEEJGAzDWIZZtVbWzwaSYn0G9RXEwkBIRBC5nRAOPYRC1WJSOZFXfs0CNN6fuhFfh9YnsmhMB8RbTczApnTAfXt29c9iskYaGWBXceDZIEyGB0QDoEof8mxTJR5GkS5HCpT4AuUT/SNfhUfz79G20KgmRDIHAPq2bNnsDzLno5izz33zMVH5Q8a+XXuuuuuDlmZUBa3RcLC76ecpc3qpDtjxBpHmAZhGSilWX5Rmqfa5ZLz313bQiBLCEyH4itLHc7vK17H77zzjks9MASc/agWikTUUaKqKLl3KhHR6KRMJdVqKaI/tEPVCog67qRmJSSjmPBjmjhxYk0dEgkVQWKs5TIVhs3fggsuWAxBl+3j7Mk8IdVtrSjxScM6WytiDi2zzDIFfmWECN1+++0Fx2rVn7Y+J9MMCN5ZLiqcLxjUVcnaH330UZdmWgsgbesgvPvuu86AMNPXisjASBgJ+aVrRTCDqVOneuBtrZ4JMyDlCT9OtaKkqAH+abUivOz58aVcU0L4yeGFX9c6x2qb/mrRnulQooHrRfpMoogmtbR47A477BDJs5wFonSP1QOraVfNRyputNFGNX2mlaaOlsGxps+0RG4R141aktVyi+btXstH+jvyrlmjzFnB7r777oDuh+DPwYMHexgGzn1kDBQJASGQLQQyp4Qmxw4J3hMfH5S8VA895JBDPMUFzEkkBIRANhDIHAMiFCOfyaADwukP/5r99tvPlapYwURCQAjUPwKZW4KhTMTJsJiIwyJvMnFWmOlFQkAI1D8CmWNAOCLedtttLu1QljifSHtBDh6izKdMmZJ/SttCQAjUIQKZY0C9e/f2mugU6eMvnzCJm6UlmAXMk7/nn9O2EBAC9YdA5nRAQIinMRYw8uwUE0GqI0eODPvvv38gXEMkBIRA/SKQSQYEnGQbbM2jdq211qpf1NUzISAEHIFMe0I3yhjiqYs3dK09oZEQSehWK8ITmr9a5sCmRNK0adNq6gkNrlhna+0JjfTfmTCkWs2D/OeIAeWjoW0hIARqikDmlNA1RUcPEwJCoEsREAPqUnjVuBAQAq0hIAbUGjo6JwSEQJciIAbUpfCqcSEgBFpDQAyoNXR0TggIgS5FQAyoS+FV40JACLSGgBhQa+jonBAQAl2KgBhQl8KrxoWAEGgNATGg1tDROSEgBLoUATGgLoVXjQsBIdAaAmJAraHTRed+/vnnii235ZqKjaR8QVvewZKop9zLzj++Le/Qlms635PstSAGVMMxu+6668JKK63kde2pGUVuo/feey/XA0rlHHnkkR44SW4jEu+ffvrpZcs8526so422vgNVa3v16uVlkyjYeMEFF4QsfUmp+3buued6nbc55pjDk+A99thjLUaCKrgkyaM45Zprrhnuv//+Ftc09QEbdFENELAsjvzUR8tnHW0SxssuuyxaJLqX47Fobe9Bv3794jzzzBMtvWx85JFH4rHHHhuNEcXjjz++Bj2sziPa8g6WUjdarap48MEHx8cffzyecsopXmJp7Nix1elEDVqhBM7cc88dL7roomiVdKP9mMTZZ589vvTSS7mnP/DAA/5exlyjZe+MlqMqWhqZ+Oyzz+auafYNfnVENUBgiy228FpmtizJPe366693psREteRq0erbR0u0ljvPxs477xwtrUPBsXrdaes7bLrppnGrrbaK+Vj0798/Wj7ven21gn59//330XJRxaOOOip33NKMOAPixyOhFVZYIe6+++7Jrn+aBBz33nvvgmPNvJPZhGRZE1up2IGonl/JNalKSo4cqnqMGDEi2Jez4NW4Zvz48b48yb+34KI62WnLO3z00UeB2m5WGLEAC8otZYWotkvOcfLvJPTll1963qEZZ5zRD7G0NmkoUDYqn7bffvtw5ZVX5h9q7u1m5r5pv/vAgQN9iWVldUt2xb7Q0Wq3R9MhlDyfhYPF72B6Epf6LAGbLzFNDxQ322yzaEw2C6/Too9Wdz4iwW655ZZxoYUWim+++aZfwzLTOIsvpfNvuvjii335CS4is0AIhHQQoJy0/YIWiPHFPUHEZ1nGlzarVPwOY8aM8S/mxhtvHC0zYjzssMPiYostFk26i6NHj87caw4bNszfB2Zjkk2u/7feeqsff/XVV3PH2DBDhB+3+vEFx5t1RwwohZFHwYyy2coHxR9++KFkD0x094l61llnlTyfhYOl3sGsQv5elrM7miXJXwMpYpVVVnGlfBbeK7+P77zzTrQ6dK67m2mmmSLvDN1xxx3+nq+99lr+5TkGZEu0guPNuiMGVOORN92HKys33HDD+M0335R8upniffLy65pVKvcOVlLb3w3LUD4lzMpyOOcfztT2jjvu6MswlOtPPfWUv+fkyZML3oElGNLS1KlTC4436478gGqoApw0aVLYZpttAqWjUSyjlC4m/IDOOeecgFLWli/FpzOx39o7UNkWKk5Mnxy3L2LdvyNGA5NwPMF+fmcZ1w8//NB9u5KKLeznE0r4+eabL8w555z5h5t3u1k5b63f+/nnn4/mjBb79OkTf/rpp5KPR+JB54N5PqtU6R1YbqFYRwGfT0gPVhUk/1Ddbr/88ssu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" /></p>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

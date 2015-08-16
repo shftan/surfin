@@ -21,7 +21,7 @@ forest(x, y, ntree = 500, replace = TRUE, var.type = NULL, B = NULL,
 
 \item{var.type}{default is NULL. Type of variance estimate to be computed. 2 options: "ustat" for u-statistic based which needs replace=FALSE or "infjack" for infinitesimal jackknife which needs replace=TRUE}
 
-\item{B}{default is NULL. Number of common observations for u-statistic based variance estimate. Note that L, the number of trees sharing a common observation, typically >> B.}
+\item{B}{default is NULL. Number of unique common observations for u-statistic based variance estimate. Note that L, the number of trees sharing a common observation, typically >> B.}
 
 \item{keepForest}{keep forest or not, default is TRUE}
 
@@ -37,8 +37,8 @@ forest(x, y, ntree = 500, replace = TRUE, var.type = NULL, B = NULL,
 Wrapper for the C++ implementation of random forest
 }
 \examples{
-features = birds[,setdiff(names(birds),"y")]
-response = birds[,"y"]
+features = birds[,setdiff(names(birds),"detected")]
+response = birds[,"detected"]
 forest(x=features,y=response)
 }
 \keyword{forest}

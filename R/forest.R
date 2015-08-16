@@ -6,7 +6,7 @@
 #' @param ntree number of trees desired, default is 500
 #' @param replace bootstrap samples or subsamples, default is bootstrap samples
 #' @param var.type default is NULL. Type of variance estimate to be computed. 2 options: "ustat" for u-statistic based which needs replace=FALSE or "infjack" for infinitesimal jackknife which needs replace=TRUE
-#' @param B default is NULL. Number of common observations for u-statistic based variance estimate. Note that L, the number of trees sharing a common observation, typically >> B.
+#' @param B default is NULL. Number of unique common observations for u-statistic based variance estimate. Note that L, the number of trees sharing a common observation, typically >> B.
 #' @param keepForest keep forest or not, default is TRUE
 #' @param mtry tuning
 #' @param nodeSize node size
@@ -15,8 +15,8 @@
 #' @keywords random forest
 #' @export
 #' @examples
-#' features = birds[,setdiff(names(birds),"y")]
-#' response = birds[,"y"]
+#' features = birds[,setdiff(names(birds),"detected")]
+#' response = birds[,"detected"]
 #' forest(x=features,y=response)
 
 forest <- function (x, y, ntree = 500, replace=TRUE, var.type=NULL, B = NULL, keepForest = TRUE,

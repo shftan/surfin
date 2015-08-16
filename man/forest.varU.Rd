@@ -13,8 +13,8 @@ forest.varU(object)
 Calculate the u-statistic based variance
 }
 \examples{
-features = birds[,setdiff(names(birds),"y")]
-response = birds[,"y"]
+features = birds[,setdiff(names(birds),"detected")]
+response = birds[,"detected"]
 forestobject = forest(x=features,y=response,replace=FALSE,var.type="ustat", B=5)
 varU = forest.varU(forestobject)
 }

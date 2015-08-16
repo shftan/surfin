@@ -19,10 +19,10 @@ Wrapper for the C++ implementation of random forest predictions
 \examples{
 n = dim(birds)[1]
 n_train = round(n/2)
-features = birds[1:n_train,setdiff(names(birds),"y")]
-response = birds[,"y"]
+features = birds[1:n_train,setdiff(names(birds),"detected")]
+response = birds[,"detected"]
 forestobject = forest(x=features,y=response)
-testfeatures = birds[n_train+1:n,setdiff(names(birds),"y")]
+testfeatures = birds[n_train+1:n,setdiff(names(birds),"detected")]
 predict(object=forestobject,newdata=testfeatures)
 }
 \keyword{forest,}
