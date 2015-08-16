@@ -1,9 +1,9 @@
 #'surfin: Statistical Inference for Random Forests
 #'
-#'@section Description:
+#'@description:
 #'This R package computes variance estimates for random forest predictions using a fast implementation of random forests in C++. Two variance estimates are provided: U-statistic based and infinitesimal jackknife.
 #'
-#'@section Details:
+#'@details:
 #'Functions include: forest, forest.varU, forest.varIJ, predict.forest, proximity.forest, impute.forest
 #'
 #'Version: 0.0.0.9000
@@ -16,19 +16,21 @@
 #'
 #'BugReports: \url{http://github.com/shftan/surfin/issues}
 #'
-#'@section Dependencies:
+#'@dependencies:
 #'Rcpp, RcppArmadillo, Matrix
 #'
 #'@author Sarah Tan <ht395 AT cornell.edu>, David Miller, Giles Hooker, Lucas Mentch, Stefan Wager
 #'
 #'Maintainer: Sarah Tan
 #'
-#'@section References:
+#'@references:
 #' Mentch, Lucas, and Giles Hooker. (2014). Quantifying Uncertainty in Random Forests via Confidence Intervals and Hypothesis Tests. arXiv preprint arXiv:1404.6473.
 #'
 #' Wager, Stefan, Hastie, Trevor, and Efron, Bradley. (2014). Confidence Intervals for Random Forests: The Jackknife and the Infinitesimal Jackknife. Journal of Machine Learning Research, 15(May), 1625−1651. \url{http://jmlr.org/papers/v15/wager14a.html}
 #'
-#'@section Examples:
+#'@examples:
+#'See the vignette for a brief example. We've also provided a data set:
+#'
 #'data(birds)
 #'
 #'?birds
