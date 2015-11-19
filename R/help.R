@@ -24,9 +24,9 @@
 #'Maintainer: Sarah Tan
 #'
 #'@section References:
-#' Mentch, Lucas, and Giles Hooker. (2014). Quantifying Uncertainty in Random Forests via Confidence Intervals and Hypothesis Tests. arXiv preprint arXiv:1404.6473.
+#' Mentch, Lucas, and Giles Hooker. (2015). Quantifying Uncertainty in Random Forests via Confidence Intervals and Hypothesis Tests. arXiv preprint arXiv:1404.6473.
 #'
-#' Wager, Stefan, Hastie, Trevor, and Efron, Bradley. (2014). Confidence Intervals for Random Forests: The Jackknife and the Infinitesimal Jackknife. Journal of Machine Learning Research, 15(May), 1625−1651. \url{http://jmlr.org/papers/v15/wager14a.html}
+#' Wager, Stefan, Hastie, Trevor, and Efron, Bradley. (2014). Confidence Intervals for Random Forests: The Jackknife and the Infinitesimal Jackknife. Journal of Machine Learning Research, 15(May), 1625-1651. \url{http://jmlr.org/papers/v15/wager14a.html}
 #'
 #'@section Examples:
 #'See the vignette for a brief example. We've also provided a data set:
