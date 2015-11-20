@@ -46,7 +46,12 @@
 
 <p>Package not yet on CRAN. For now, download from this website the .zip (if you are on Windows) or .tar.gz (if you are on Mac / Linux). 
 
-If you don't already have the dependencies (Rcpp, RcppArmadillo, Matrix) installed, install those from CRAN first. Then type the following in R:</p>
+If you don't already have the dependencies (Rcpp, RcppArmadillo, Matrix) installed, install those from CRAN first. If you already have an older version of surfin installed, remove that first by typing the following in R:
+
+<pre><code>$ remove.packages("surfin")
+</code></pre>
+
+Then install using:</p>
 
 <pre><code>$ install.packages(path_to_downloaded_file, repos=NULL, type="source")
 $ library(surfin)
