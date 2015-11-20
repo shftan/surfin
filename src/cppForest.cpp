@@ -397,7 +397,7 @@ void predictTree(const NumericMatrix& x, double* yPred, int* nodes,
         double* nodePred, NumericVector& nOOB, std::vector<TempData>& tmp) {
           
     //iterate through the observations
-    int oob, var, nd = 0;
+    int var, nd = 0;
     for (int i = 0; i < x.nrow(); ++i) {
       
       //skip in-bag observations

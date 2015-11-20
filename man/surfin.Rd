@@ -38,11 +38,15 @@ Wager, Stefan, Hastie, Trevor, and Efron, Bradley. (2014). Confidence Intervals 
 
 \section{Examples}{
 
-See the vignette for a brief example. We've also provided a data set:
+See the vignette for an example:
 
-data(birds)
+vignette(package="surfin")
+
+We've also provided a data set:
 
 ?birds
+
+data(birds)
 }
 \author{
 Sarah Tan <ht395 AT cornell.edu>, David Miller, Giles Hooker, Lucas Mentch, Stefan Wager

@@ -29,11 +29,15 @@
 #' Wager, Stefan, Hastie, Trevor, and Efron, Bradley. (2014). Confidence Intervals for Random Forests: The Jackknife and the Infinitesimal Jackknife. Journal of Machine Learning Research, 15(May), 1625-1651. \url{http://jmlr.org/papers/v15/wager14a.html}
 #'
 #'@section Examples:
-#'See the vignette for a brief example. We've also provided a data set:
+#'See the vignette for an example:
 #'
-#'data(birds)
+#'vignette(package="surfin")
+#'
+#'We've also provided a data set:
 #'
 #'?birds
+#'
+#'data(birds)
 #'
 #'@docType package
 #'@name surfin
