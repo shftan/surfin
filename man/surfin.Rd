@@ -40,7 +40,7 @@ Wager, Stefan, Hastie, Trevor, and Efron, Bradley. (2014). Confidence Intervals 
 
 See the vignette for an example:
 
-vignette(package="surfin")
+vignette("example",package="surfin")
 
 We've also provided a data set:
 

@@ -31,7 +31,7 @@
 #'@section Examples:
 #'See the vignette for an example:
 #'
-#'vignette(package="surfin")
+#'vignette("example",package="surfin")
 #'
 #'We've also provided a data set:
 #'
