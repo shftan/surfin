@@ -42,7 +42,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // cppPredict
-NumericVector cppPredict(NumericMatrix x, IntegerMatrix splitVar, NumericMatrix split, IntegerMatrix lDaughter, IntegerMatrix rDaughter, NumericMatrix nodePred);
+NumericMatrix cppPredict(NumericMatrix x, IntegerMatrix splitVar, NumericMatrix split, IntegerMatrix lDaughter, IntegerMatrix rDaughter, NumericMatrix nodePred);
 RcppExport SEXP surfin_cppPredict(SEXP xSEXP, SEXP splitVarSEXP, SEXP splitSEXP, SEXP lDaughterSEXP, SEXP rDaughterSEXP, SEXP nodePredSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;

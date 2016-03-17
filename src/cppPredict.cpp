@@ -16,7 +16,7 @@ using namespace Rcpp;
 //' All other matrices represent the forest. Trees are columns, and nodes are rows.
 //' @export
 // [[Rcpp::export]]
-NumericVector cppPredict(NumericMatrix x, IntegerMatrix splitVar, 
+NumericMatrix cppPredict(NumericMatrix x, IntegerMatrix splitVar, 
                          NumericMatrix split, IntegerMatrix lDaughter,
                          IntegerMatrix rDaughter, NumericMatrix  nodePred) {
                               
@@ -33,7 +33,8 @@ NumericVector cppPredict(NumericMatrix x, IntegerMatrix splitVar,
   //get stats
   int nSample = x.nrow();
   int nTree   = splitVar.ncol();
-  NumericVector yPred(nSample);
+  //NumericVector yPred(nSample);
+  NumericMatrix yPred(nSample, nTree); 
 
   //iterate through the trees and observations
   int t, i, k, var;
@@ -56,11 +57,13 @@ NumericVector cppPredict(NumericMatrix x, IntegerMatrix splitVar,
       }
       
       //update prediction and move to next obs
-      yPred[i] +=  nodePred(k-1, t);
+      yPred(i,t) = nodePred(k-1, t);
+      //yPred[i] +=  nodePred(k-1, t);
     }
   }
   
   //normalize by number of trees
-  yPred = yPred / nTree;
+  //yPred = yPred / nTree;
+  
   return(yPred);
 }

@@ -3,6 +3,7 @@
 #' Wrapper for the C++ implementation of random forest predictions
 #' @param object random forest objectput
 #' @param newdata matrix
+#' @param individualTrees whether to return predictions of individual trees, default is FALSE
 #' @param ... further arguments passed to or from other methods
 #' @keywords random forest, prediction
 #' @export
@@ -15,7 +16,7 @@
 #' testfeatures = birds[n_train+1:n,setdiff(names(birds),"detected")]
 #' predict(object=forestobject,newdata=testfeatures)
 
-predict.forest <- function (object, newdata=NULL, ...) {  
+predict.forest <- function (object, newdata=NULL, individualTrees=FALSE,...) {  
   if (!inherits(object, "forest"))
     stop("object not of class forest")
   if (is.null(object$forest)) 
@@ -26,18 +27,24 @@ predict.forest <- function (object, newdata=NULL, ...) {
   newdata <- data.matrix(newdata[, object$varNames, drop = FALSE])
   
   #get predictions using C++ function 
-  predicted = cppPredict(data.matrix(newdata), 
+  predictedAll = cppPredict(data.matrix(newdata), 
              object$forest$splitVar, 
              object$forest$split,
              object$forest$leftDaughter, 
              object$forest$rightDaughter,
              object$forest$nodePred)  
-  
-  # Convert numbers to factor levels if binary classification
-  if (object$type == "binary classification")
+  if (individualTrees)
   {
-    predicted = numberToFactor(predicted,object$key)
-    predicted = factor(predicted)
-  }
-  return(predicted)
+    return(predictedAll)
+  } else
+  {
+    predicted = rowSums(predictedAll)/object$ntree
+    # Convert numbers to factor levels if binary classification
+    if (object$type == "binary classification")
+    {
+      predicted = numberToFactor(predicted,object$key)
+      predicted = factor(predicted)
+    }
+    return(predicted)
+  } 
 }

@@ -4,12 +4,15 @@
 \alias{predict.forest}
 \title{Prediction wrapper function}
 \usage{
-\method{predict}{forest}(object, newdata = NULL, ...)
+\method{predict}{forest}(object, newdata = NULL, individualTrees = FALSE,
+  ...)
 }
 \arguments{
 \item{object}{random forest objectput}
 
 \item{newdata}{matrix}
+
+\item{individualTrees}{whether to return predictions of individual trees, default is FALSE}
 
 \item{...}{further arguments passed to or from other methods}
 }
