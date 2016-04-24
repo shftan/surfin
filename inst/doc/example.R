@@ -8,14 +8,14 @@ x = kyphosis[,c("Age","Number","Start")]
 y = kyphosis$Kyphosis
 
 ## ------------------------------------------------------------------------
-fit = forest(x,y,replace=FALSE,var.type="ustat",B=10)
+fit = forest(x,y,var.type="ustat",B=10)
 names(fit)
 fit$predicted
 head(forest.varU(fit))
 predict(fit,x)
 
 ## ------------------------------------------------------------------------
-fit = forest(x,y,replace=TRUE,var.type="infjack")
+fit = forest(x,y,var.type="infjack")
 names(fit)
 output1 = fit$predicted
 head(forest.varIJ(fit))
@@ -43,14 +43,14 @@ y = y[keep]
 x = x[keep,]
 
 ## ------------------------------------------------------------------------
-fit = forest(x,y,replace=FALSE,var.type="ustat",B=10)
+fit = forest(x,y,var.type="ustat",B=10)
 names(fit)
 fit$predicted
 head(forest.varU(fit))
 predict(fit,x)
 
 ## ------------------------------------------------------------------------
-fit = forest(x,y,replace=TRUE,var.type="infjack")
+fit = forest(x,y,var.type="infjack")
 names(fit)
 output1 = fit$predicted
 head(forest.varIJ(fit))

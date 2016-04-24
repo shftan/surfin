@@ -24,7 +24,7 @@ y = kyphosis$Kyphosis
 
 To compute the U-statistic based variance, we use sampling without replacement and specify B, the number of common observations, to be 10.
 ```{r}
-fit = forest(x,y,replace=FALSE,var.type="ustat",B=10)
+fit = forest(x,y,var.type="ustat",B=10)
 names(fit)
 fit$predicted
 head(forest.varU(fit))
@@ -33,7 +33,7 @@ predict(fit,x)
 
 To compute the infinitesimal jackknife variance, we use sampling with replacement.
 ```{r}
-fit = forest(x,y,replace=TRUE,var.type="infjack")
+fit = forest(x,y,var.type="infjack")
 names(fit)
 output1 = fit$predicted
 head(forest.varIJ(fit))
@@ -69,7 +69,7 @@ x = x[keep,]
 
 Similarly, compute the U-statistic variance:
 ```{r}
-fit = forest(x,y,replace=FALSE,var.type="ustat",B=10)
+fit = forest(x,y,var.type="ustat",B=10)
 names(fit)
 fit$predicted
 head(forest.varU(fit))
@@ -78,7 +78,7 @@ predict(fit,x)
 
 Now, compute the infinitesimal jackknife:
 ```{r}
-fit = forest(x,y,replace=TRUE,var.type="infjack")
+fit = forest(x,y,var.type="infjack")
 names(fit)
 output1 = fit$predicted
 head(forest.varIJ(fit))

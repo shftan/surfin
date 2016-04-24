@@ -31,9 +31,16 @@ Rcpp, RcppArmadillo, Matrix
 
 \section{References}{
 
-Mentch, Lucas, and Giles Hooker. (2015). Quantifying Uncertainty in Random Forests via Confidence Intervals and Hypothesis Tests. arXiv preprint arXiv:1404.6473.
+Leo Breiman. (2001). Random Forests. Machine Learning 45(1), 5-32. http://link.springer.com/article/10.1023/A:1010933404324
 
-Wager, Stefan, Hastie, Trevor, and Efron, Bradley. (2014). Confidence Intervals for Random Forests: The Jackknife and the Infinitesimal Jackknife. Journal of Machine Learning Research, 15(May), 1625-1651. \url{http://jmlr.org/papers/v15/wager14a.html}
+Lucas K. Mentch and Giles J. Hooker. (2016). Quantifying Uncertainty in Random Forests via Confidence Intervals and Hypothesis Tests. Journal of Machine Learning Research, 17(26), 1-41. http://www.jmlr.org/papers/volume17/14-168/14-168.pdf  
+
+Stefan Wager, Trevor Hastie, and Bradley Efron. (2014). Confidence Intervals for Random Forests: The Jackknife and the Infinitesimal Jackknife. Journal of Machine Learning Research, 15(May), 1625-1651. http://jmlr.org/papers/v15/wager14a.html
+}
+
+\section{See Also}{
+
+\code{\link{forest}}, \code{\link{predict.forest}}, \code{\link{forest.varU}}, \code{\link{forest.varIJ}}
 }
 
 \section{Examples}{
