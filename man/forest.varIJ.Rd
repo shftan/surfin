@@ -9,14 +9,26 @@ forest.varIJ(object)
 \arguments{
 \item{object}{A random forest trained with replace = TRUE}
 }
+\value{
+predictions for each observation and corresponding variance
+}
 \description{
 Calculate the infinitesimal jackknife variance
 }
 \examples{
 features = birds[,setdiff(names(birds),"detected")]
 response = birds[,"detected"]
-forestobject = forest(x=features,y=response)
+forestobject = forest(x=features,y=response,individualTrees=TRUE)
 varIJ = forest.varIJ(forestobject)
+}
+\author{
+Hui Fen Tan <\email{ht395@cornell.edu}>, Stefan Wager
+}
+\references{
+Stefan Wager, Trevor Hastie, and Bradley Efron. (2014). Confidence Intervals for Random Forests: The Jackknife and the Infinitesimal Jackknife. Journal of Machine Learning Research, 15(May), 1625-1651. http://jmlr.org/papers/v15/wager14a.html
+}
+\seealso{
+\code{\link{forest.varU}}
 }
 \keyword{forest,}
 \keyword{infinitesimal}

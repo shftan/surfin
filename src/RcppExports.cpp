@@ -7,14 +7,14 @@
 using namespace Rcpp;
 
 // cppForest
-List cppForest(NumericMatrix& x, NumericVector& y, int nSamp, int nodeSize, int maxNodes, int nTree, int mtry, int keepF, int replace, int classify, int ustat, int B);
-RcppExport SEXP surfin_cppForest(SEXP xSEXP, SEXP ySEXP, SEXP nSampSEXP, SEXP nodeSizeSEXP, SEXP maxNodesSEXP, SEXP nTreeSEXP, SEXP mtrySEXP, SEXP keepFSEXP, SEXP replaceSEXP, SEXP classifySEXP, SEXP ustatSEXP, SEXP BSEXP) {
+List cppForest(NumericMatrix& x, NumericVector& y, int sampSize, int nodeSize, int maxNodes, int nTree, int mtry, int keepF, int replace, int classify, int ustat, int B);
+RcppExport SEXP surfin_cppForest(SEXP xSEXP, SEXP ySEXP, SEXP sampSizeSEXP, SEXP nodeSizeSEXP, SEXP maxNodesSEXP, SEXP nTreeSEXP, SEXP mtrySEXP, SEXP keepFSEXP, SEXP replaceSEXP, SEXP classifySEXP, SEXP ustatSEXP, SEXP BSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< NumericMatrix& >::type x(xSEXP);
     Rcpp::traits::input_parameter< NumericVector& >::type y(ySEXP);
-    Rcpp::traits::input_parameter< int >::type nSamp(nSampSEXP);
+    Rcpp::traits::input_parameter< int >::type sampSize(sampSizeSEXP);
     Rcpp::traits::input_parameter< int >::type nodeSize(nodeSizeSEXP);
     Rcpp::traits::input_parameter< int >::type maxNodes(maxNodesSEXP);
     Rcpp::traits::input_parameter< int >::type nTree(nTreeSEXP);
@@ -24,7 +24,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type classify(classifySEXP);
     Rcpp::traits::input_parameter< int >::type ustat(ustatSEXP);
     Rcpp::traits::input_parameter< int >::type B(BSEXP);
-    __result = Rcpp::wrap(cppForest(x, y, nSamp, nodeSize, maxNodes, nTree, mtry, keepF, replace, classify, ustat, B));
+    __result = Rcpp::wrap(cppForest(x, y, sampSize, nodeSize, maxNodes, nTree, mtry, keepF, replace, classify, ustat, B));
     return __result;
 END_RCPP
 }

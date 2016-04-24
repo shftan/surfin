@@ -4,7 +4,7 @@
 \alias{cppForest}
 \title{cppForest}
 \usage{
-cppForest(x, y, nSamp, nodeSize, maxNodes, nTree, mtry, keepF, replace,
+cppForest(x, y, sampSize, nodeSize, maxNodes, nTree, mtry, keepF, replace,
   classify, ustat, B)
 }
 \arguments{
@@ -12,7 +12,7 @@ cppForest(x, y, nSamp, nodeSize, maxNodes, nTree, mtry, keepF, replace,
 
 \item{y}{vector}
 
-\item{nSamp}{number of samples}
+\item{sampSize}{number of samples}
 
 \item{nodeSize}{node size}
 

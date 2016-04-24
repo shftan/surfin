@@ -2,7 +2,7 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-//#include "cppPredict.h"   // use when merging cppPredict and predictTree functions at some later time
+//#include "cppPredict.h"   // use when merging cppPredict and predictTree functions at some later time   //delete this line
 
 ///////////////////////////
 //      Header file      //
@@ -19,11 +19,11 @@ struct TempData {
 #define NODE_TERMINAL -1
 
 //define functions that will be used inside of other functions
-void resample(int nOrig, int nSamp, int replace, IntegerVector& IDs, 
+void resample(int nOrig, int sampSize, int replace, IntegerVector& IDs, 
         std::vector<TempData>& d, double* ySum, const NumericVector& y);
 
 void buildTree(const NumericMatrix& x, double ySum, int mtry, int nodeSize, 
-        int nSamp, int maxNodes, int* splitVar, double* split, int* lDaughter, 
+        int sampSize, int maxNodes, int* splitVar, double* split, int* lDaughter, 
         int* rDaughter, double* sumNode, IntegerVector& idMap, 
         std::vector<TempData>& tmp, int classify);
 
@@ -41,10 +41,10 @@ void sampNoReplace(int* next, IntegerVector indices, int* nRemain);
 
 // NumericMatrix na_matrix(int n, int p);
 
-void predictTree(const NumericMatrix& x, double* yPred,
-        int* nodes, int* splitVar, double* split, int* lDaughter, 
-        int* rDaughter, double* nodePred, NumericVector& nOOB,
-        std::vector<TempData>& tmp);
+//void predictTree(const NumericMatrix& x, double* yPred,
+//        int* nodes, int* splitVar, double* split, int* lDaughter, 
+//        int* rDaughter, double* nodePred, NumericVector& nOOB,
+//        std::vector<TempData>& tmp);
 
 ///////////////////////
 //     Main file     //
@@ -56,7 +56,7 @@ void predictTree(const NumericMatrix& x, double* yPred,
 //' Construct random forest
 //' @param x matrix
 //' @param y vector
-//' @param nSamp number of samples
+//' @param sampSize number of samples
 //' @param nodeSize node size
 //' @param maxNodes maximum number of nodes
 //' @param nTree number of trees desired
@@ -70,7 +70,7 @@ void predictTree(const NumericMatrix& x, double* yPred,
 //' Options available for bootstrap samples or subsamples
 //' @export
 // [[Rcpp::export]]
-List cppForest(NumericMatrix& x, NumericVector& y, int nSamp, int nodeSize, 
+List cppForest(NumericMatrix& x, NumericVector& y, int sampSize, int nodeSize, 
     int maxNodes, int nTree, int mtry, int keepF, int replace, int classify, int ustat, int B) {
     
     //allocate memory for the forest
@@ -86,7 +86,7 @@ List cppForest(NumericMatrix& x, NumericVector& y, int nSamp, int nodeSize,
     int n = x.nrow();
     double ySum = 0.0;
     IntegerMatrix nodes(n, nTree);
-    NumericMatrix yPred(n, nTree);   
+//    NumericMatrix yPred(n, nTree);   
     NumericVector nOOB(n);
     IntegerVector IDs(n);
     std::vector<TempData> tmp;
@@ -99,10 +99,10 @@ List cppForest(NumericMatrix& x, NumericVector& y, int nSamp, int nodeSize,
     int i, t, L;
 
     //// Sampling for U-statistic based variance estimate
-    // Sample without replacement and have common observations
+    // Sample without replacement with common observations
     if (ustat) {   
-		int j, k, id, nRemain;
-		for (i=0; i<n; ++i) tmp[i].wgt = 0.0;
+		int b, l, id, nRemain;
+		for (i = 0; i < n; ++i) tmp[i].wgt = 0.0;
 		for (i = 0; i < n; ++i) IDs[i] = i;
     	nRemain = n;
     	for (i = 0; i < B; ++i) {
@@ -113,47 +113,45 @@ List cppForest(NumericMatrix& x, NumericVector& y, int nSamp, int nodeSize,
 		L = double(nTree) / B;
 		
 		nt = 0;
-		for (i = 0; i < B; ++i) {
-			for (j=0; j < L; ++j) {
-			
+		for (b = 0; b < B; ++b) {
+			for (l = 0; l < L; ++l) {			
 				//// For each tree
-				for (k=0; k<n; ++k) tmp[k].wgt = 0.0;
+				for (i=0; i<n; ++i) tmp[i].wgt = 0.0;
 				
 				// First observation already sampled
-				tmp[obsB[i]].wgt++;	
-				for (k = 0; k < n; ++k) {
-					IDs[k] = k;
-				}
+				tmp[obsB[b]].wgt++;	
+				for (i = 0; i < n; ++i) IDs[i] = i;
 				nRemain = n;
-				swapInt(IDs[obsB[i]], IDs[nRemain-1]);
+				swapInt(IDs[obsB[b]], IDs[nRemain-1]);
     			nRemain -= 1;
   
     			// Sample rest of the observations
-    			for (k = 0; k < (nSamp-1); ++k) {
+    			for (i = 0; i < (sampSize-1); ++i) {
       				sampNoReplace(&id, IDs, &nRemain);
       				tmp[id].wgt++;
     			}
     			
-    			//calculate weighted y's (needed later for splitting criteria)
   				ySum = 0.0;
-  				for (k = 0; k < n; ++k) {
-    				tmp[k].yWgt = y[k] * tmp[k].wgt; 
-    				ySum += tmp[k].yWgt;
+  				for (i = 0; i < n; ++i) {
+    				tmp[i].yWgt = y[i] * tmp[i].wgt;   //calculate weighted y's (needed later for splitting criteria) 
+    				ySum += tmp[i].yWgt;
+    				nodes(i,nt) = tmp[i].wgt;   // in-bag status by tree
+    				if (tmp[i].wgt==0) nOOB[i]++;      // number of trees where observation was out of bag
   				}
              				
   				//tree index depends on setting for keepForest
       			t = keepF ? nt : 0;
 
       			//grow the regression tree 
-      			buildTree(x, ySum, mtry, nodeSize, nSamp, maxNodes, splitVar(_,t).begin(),
+      			buildTree(x, ySum, mtry, nodeSize, sampSize, maxNodes, splitVar(_,t).begin(),
                 	split(_,t).begin(), lDaughter(_,t).begin(), rDaughter(_,t).begin(),
                 	nodePred(_,t).begin(),  IDs, tmp, classify);
     
       			//update predictions, both out-of-bag and in-bag
-      			predictTree(x, yPred(_,t).begin(), nodes(_,t).begin(), splitVar(_,t).begin(),
-                	split(_,t).begin(), lDaughter(_,t).begin(), rDaughter(_,t).begin(), 
-                	nodePred(_,t).begin(), nOOB, tmp);
-                
+//      			predictTree(x, yPred(_,t).begin(), nodes(_,t).begin(), splitVar(_,t).begin(),
+//                	split(_,t).begin(), lDaughter(_,t).begin(), rDaughter(_,t).begin(), 
+//                	nodePred(_,t).begin(), nOOB, tmp);
+
                 nt++;	
 			}	
 		}
@@ -161,27 +159,33 @@ List cppForest(NumericMatrix& x, NumericVector& y, int nSamp, int nodeSize,
 	//// Sampling for infinitesimal jackknife or typical sampling without replacement
 	else {
 		//// For each tree
-    	for (i = 0; i < nTree; ++i) {
+    	for (nt = 0; nt < nTree; ++nt) {
       		//reset weights and resample
-      		resample(n, nSamp, replace, IDs, tmp, &ySum, y);
+      		resample(n, sampSize, replace, IDs, tmp, &ySum, y);
       
+      		for (i = 0; i < n; ++i) {
+          		nodes(i,nt) = tmp[i].wgt;   // in-bag status by tree
+    			if (tmp[i].wgt==0) nOOB[i]++;      // number of trees where observation was out of bag
+    		}
+    
       		//tree index depends on setting for keepForest
-      		t = keepF ? i : 0;
+      		t = keepF ? nt : 0;
 
       		//grow the regression tree 
-      		buildTree(x, ySum, mtry, nodeSize, nSamp, maxNodes, splitVar(_,t).begin(),
+      		buildTree(x, ySum, mtry, nodeSize, sampSize, maxNodes, splitVar(_,t).begin(),
                 split(_,t).begin(), lDaughter(_,t).begin(), rDaughter(_,t).begin(),
                 nodePred(_,t).begin(),  IDs, tmp, classify);
     
       		//update predictions, both out-of-bag and in-bag
-      		predictTree(x, yPred(_,t).begin(), nodes(_,t).begin(), splitVar(_,t).begin(),
-                  split(_,t).begin(), lDaughter(_,t).begin(), rDaughter(_,t).begin(), 
-                  nodePred(_,t).begin(), nOOB, tmp);
+//      		predictTree(x, yPred(_,t).begin(), nodes(_,t).begin(), splitVar(_,t).begin(),
+//                  split(_,t).begin(), lDaughter(_,t).begin(), rDaughter(_,t).begin(), 
+ //                 nodePred(_,t).begin(), nOOB, tmp);
         }
     }
     
-    //normalize the y predictions
-    //yPred = yPred / nOOB;
+    
+    ////normalize the y predictions
+    ////yPred = yPred / nOOB;
     
     //interface with R's random number generator
     PutRNGstate();
@@ -189,7 +193,7 @@ List cppForest(NumericMatrix& x, NumericVector& y, int nSamp, int nodeSize,
     //return as nested list
     return List::create(
             Named("inbag.times")     = nodes,
-            Named("predictedAll") = yPred,
+//            Named("predictedAll") = yPred,
             Named("oob.times") = nOOB,
             Named("forest") =  Rcpp::List::create(
               Named("splitVar")       = splitVar,
@@ -201,7 +205,7 @@ List cppForest(NumericMatrix& x, NumericVector& y, int nSamp, int nodeSize,
 
 //build an individual regression tree
 void buildTree(const NumericMatrix& x, double ySum, int mtry, int nodeSize, 
-              int nSamp, int maxNodes, int* splitVar, double* split,
+              int sampSize, int maxNodes, int* splitVar, double* split,
               int* lDaughter, int* rDaughter, double* sumNode,  
               IntegerVector& idMap, std::vector<TempData>& tmp, int classify) {
 
@@ -227,7 +231,7 @@ void buildTree(const NumericMatrix& x, double ySum, int mtry, int nodeSize,
     //initialize parent node
     ncur = 0;
     sumNode[0] = ySum;
-    nNode[0] = nSamp;
+    nNode[0] = sampSize;
     nodeStart[0] = 0;
     nodeUniq[0] = nUnique;
     
@@ -358,7 +362,7 @@ void findBestVal(int var, int* idTry, int nUniq, double nParent,
 }
 
 //generate a new sample for the different trees
-void resample(int nOrig, int nSamp, int replace, IntegerVector& IDs, 
+void resample(int nOrig, int sampSize, int replace, IntegerVector& IDs, 
               std::vector<TempData>& tmp, double* ySum, const NumericVector& y) {
               
   //reset weights
@@ -367,7 +371,7 @@ void resample(int nOrig, int nSamp, int replace, IntegerVector& IDs,
   
   // sample with replacement
   if (replace) {       
-    for (i = 0; i < nSamp; ++i) {
+    for (i = 0; i < sampSize; ++i) {
       id = nOrig * unif_rand();
       tmp[id].wgt++;
     }
@@ -377,7 +381,7 @@ void resample(int nOrig, int nSamp, int replace, IntegerVector& IDs,
   else {          
     for (i = 0; i < nOrig; ++i) IDs[i] = i;
     nRemain = nOrig;
-    for (i = 0; i < nSamp; ++i) {
+    for (i = 0; i < sampSize; ++i) {
       sampNoReplace(&id, IDs, &nRemain);
       tmp[id].wgt++;
     }
@@ -392,33 +396,33 @@ void resample(int nOrig, int nSamp, int replace, IntegerVector& IDs,
 }
         
 //generate predictions from a built tree
-void predictTree(const NumericMatrix& x, double* yPred, int* nodes, 
-        int* splitVar, double* split, int* lDaughter, int* rDaughter, 
-        double* nodePred, NumericVector& nOOB, std::vector<TempData>& tmp) {
+//void predictTree(const NumericMatrix& x, double* yPred, int* nodes, 
+//        int* splitVar, double* split, int* lDaughter, int* rDaughter, 
+//        double* nodePred, NumericVector& nOOB, std::vector<TempData>& tmp) {
           
     //iterate through the observations
-    int var, nd = 0;
-    for (int i = 0; i < x.nrow(); ++i) {
+//    int var, nd = 0;
+//    for (int i = 0; i < x.nrow(); ++i) {
       
-      //skip in-bag observations
-      //if (tmp[i].wgt>0) continue;
+      ////skip in-bag observations
+      ////if (tmp[i].wgt>0) continue;
       
       //iterate through nodes in the tree
-      while (splitVar[nd] > 0) { 
-        var = splitVar[nd] - 1;
-        nd = (x(i, var) <= split[nd]) ?          
-              lDaughter[nd] - 1 : rDaughter[nd] - 1;
-      }
+//      while (splitVar[nd] > 0) { 
+//        var = splitVar[nd] - 1;
+//        nd = (x(i, var) <= split[nd]) ?          
+//              lDaughter[nd] - 1 : rDaughter[nd] - 1;
+//      }
       
       //Reached terminal node. Update predictions and reset node
-      if (tmp[i].wgt==0) {
-      nOOB[i]++;
-      }
-      nodes[i] = tmp[i].wgt; //nodes[i] = nd+1;
-      yPred[i] = nodePred[nd]; 
-      nd = 0; 
-    }
-}
+//      if (tmp[i].wgt==0) {
+//      nOOB[i]++;
+//      }
+//      nodes[i] = tmp[i].wgt; //nodes[i] = nd+1;
+//      yPred[i] = nodePred[nd]; 
+//      nd = 0; 
+//    }
+//}
 
 //helper function for sampling without replacement
 void sampNoReplace(int* next, IntegerVector indices, int* nRemain) {

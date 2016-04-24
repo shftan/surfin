@@ -5,6 +5,10 @@
 #' @param newdata matrix
 #' @param individualTrees whether to return predictions of individual trees, default is FALSE
 #' @param ... further arguments passed to or from other methods
+#' @return vector of predictions for each observation if individualTrees=FALSE (default), otherwise matrix of predictions by each tree for each observation
+#' @author Hui Fen Tan <\email{ht395@cornell.edu}>, David I. Miller
+#' @references Leo Breiman. (2001). Random Forests. Machine Learning 45(1), 5-32. http://link.springer.com/article/10.1023/A:1010933404324
+#' @seealso \code{\link{forest.varIJ}}, \code{\link{forest.varU}}
 #' @keywords random forest, prediction
 #' @export
 #' @examples

@@ -19,9 +19,9 @@
 #'@section Dependencies:
 #'Rcpp, RcppArmadillo, Matrix
 #'
-#'@author Sarah Tan <ht395 AT cornell.edu>, David Miller, Giles Hooker, Lucas Mentch, Stefan Wager
+#'@author Hui Fen Tan <\email{ht395@cornell.edu}>, David Miller, Giles Hooker, Lucas Mentch, Stefan Wager
 #'
-#'Maintainer: Sarah Tan
+#'Maintainer: Hui Fen Tan
 #'
 #'@section References:
 #' Mentch, Lucas, and Giles Hooker. (2015). Quantifying Uncertainty in Random Forests via Confidence Intervals and Hypothesis Tests. arXiv preprint arXiv:1404.6473.

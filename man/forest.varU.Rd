@@ -9,14 +9,26 @@ forest.varU(object)
 \arguments{
 \item{object}{A random forest trained with replace=FALSE but with common observations}
 }
+\value{
+predictions for each observation and corresponding variance
+}
 \description{
 Calculate the u-statistic based variance
 }
 \examples{
 features = birds[,setdiff(names(birds),"detected")]
 response = birds[,"detected"]
-forestobject = forest(x=features,y=response,replace=FALSE,var.type="ustat", B=5)
+forestobject = forest(x=features,y=response,var.type="ustat",B=5)
 varU = forest.varU(forestobject)
+}
+\author{
+Hui Fen Tan <\email{ht395@cornell.edu}>, Lucas K. Mentch, Giles J. Hooker
+}
+\references{
+Lucas K. Mentch and Giles J. Hooker. (2016). Quantifying Uncertainty in Random Forests via Confidence Intervals and Hypothesis Tests. Journal of Machine Learning Research, 17(26), 1-41. http://www.jmlr.org/papers/volume17/14-168/14-168.pdf
+}
+\seealso{
+\code{\link{forest.varIJ}}
 }
 \keyword{based}
 \keyword{forest,}

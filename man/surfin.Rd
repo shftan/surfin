@@ -49,8 +49,8 @@ We've also provided a data set:
 data(birds)
 }
 \author{
-Sarah Tan <ht395 AT cornell.edu>, David Miller, Giles Hooker, Lucas Mentch, Stefan Wager
+Hui Fen Tan <\email{ht395@cornell.edu}>, David Miller, Giles Hooker, Lucas Mentch, Stefan Wager
 
-Maintainer: Sarah Tan
+Maintainer: Hui Fen Tan
 }
 

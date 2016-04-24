@@ -4,34 +4,55 @@
 \alias{forest}
 \title{Random forest wrapper function}
 \usage{
-forest(x, y, ntree = 500, replace = TRUE, var.type = NULL, B = NULL,
-  keepForest = TRUE, mtry = if (is.factor(y)) floor(sqrt(ncol(x))) else
-  max(floor(ncol(x)/3), 1), nodeSize = if (is.factor(y)) 1 else 5,
-  nSamp = if (replace) nrow(x) else ceiling(0.632 * nrow(x)), maxNodes = 2 *
-  trunc(nSamp/max(1, nodeSize - 4)) + 1)
+forest(x, y, individualTrees = FALSE, ntree = 500, replace = TRUE,
+  var.type = NULL, B = NULL, keepForest = TRUE, mtry = if (is.factor(y))
+  floor(sqrt(ncol(x))) else max(floor(ncol(x)/3), 1), nodeSize = if
+  (is.factor(y)) 1 else 5, sampSize = if (replace) nrow(x) else ceiling(0.632
+  * nrow(x)), maxNodes = 2 * trunc(sampSize/max(1, nodeSize - 4)) + 1)
 }
 \arguments{
 \item{x}{matrix}
 
 \item{y}{vector}
 
+\item{individualTrees}{whether to return predictions of individual trees, default is FALSE. If var.type is not NULL, this is set to TRUE.}
+
 \item{ntree}{number of trees desired, default is 500}
 
-\item{replace}{bootstrap samples or subsamples, default is bootstrap samples}
+\item{replace}{bootstrap samples or subsamples, default is bootstrap samples. If var.type = "ustat", this is set to FALSE; if var.type = "infjack", this is set to TRUE.}
 
 \item{var.type}{default is NULL. Type of variance estimate to be computed. 2 options: "ustat" for u-statistic based which needs replace=FALSE or "infjack" for infinitesimal jackknife which needs replace=TRUE}
 
 \item{B}{default is NULL. Number of unique common observations for u-statistic based variance estimate. Note that L, the number of trees sharing a common observation, typically >> B.}
 
-\item{keepForest}{keep forest or not, default is TRUE}
+\item{keepForest}{output forest in output object or not, default is TRUE}
 
-\item{mtry}{tuning}
+\item{mtry}{number of variables randomly sampled at each split, default value is floor(sqrt(p)) for classification, max(floor(p/3),1) for regression, where p is the number of features}
 
-\item{nodeSize}{node size}
+\item{nodeSize}{minimum size of terminal nodes, default value is 1 for classification, 5 for regression}
 
-\item{nSamp}{number of samples}
+\item{sampSize}{size of sample to draw. Default value is n for bootstrap samples, 0.632*n for subsamples, where n is the number of observations}
 
-\item{maxNodes}{maximum number of nodes}
+\item{maxNodes}{maximum number of terminal nodes trees can have}
+}
+\value{
+List with the following components
+\item{forest}{forest object}
+\item{err.rate}{forest error rate}
+\item{predictedAll}{n by ntree matrix with (i,j)th value being tree j's prediction for observation i, only returned if individualTrees=TRUE. If classification, refer to key to convert numbers to categories.} 
+\item{predictedOOB}{predictedAll but with in-bag observations NA-ed, only returned if individualTrees=TRUE. If classification, refer to key to convert numbers to categories.}
+\item{predicted}{length n vector of predictions based on out-of-bag observations}
+\item{inbag.times}{n by ntree matrix (i,j)th value being number of times observation i was used in tree j}
+\item{oob.times}{number of times observation was out-of-bag}
+\item{type}{classification or regression}
+\item{key}{mapping of numbers to categories for classification, NULL for regression}
+\item{varNames}{names of features}
+\item{ntree}{number of trees in forest}
+\item{replace}{replace value used}
+\item{var.type}{var.type value used}
+\item{B}{B value used}
+\item{sampSize}{sampSize value used}
+\item{individualTrees}{individualTrees value used}
 }
 \description{
 Wrapper for the C++ implementation of random forest
@@ -40,6 +61,15 @@ Wrapper for the C++ implementation of random forest
 features = birds[,setdiff(names(birds),"detected")]
 response = birds[,"detected"]
 forest(x=features,y=response)
+}
+\author{
+Hui Fen Tan <\email{ht395@cornell.edu}>, David I. Miller
+}
+\references{
+Leo Breiman. (2001). Random Forests. Machine Learning 45(1), 5-32. http://link.springer.com/article/10.1023/A:1010933404324
+}
+\seealso{
+\code{\link{predict.forest}}, \code{\link{forest.varIJ}}, \code{\link{forest.varU}}
 }
 \keyword{forest}
 \keyword{random}

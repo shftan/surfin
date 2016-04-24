@@ -7,7 +7,7 @@
 #' Construct random forest
 #' @param x matrix
 #' @param y vector
-#' @param nSamp number of samples
+#' @param sampSize number of samples
 #' @param nodeSize node size
 #' @param maxNodes maximum number of nodes
 #' @param nTree number of trees desired
@@ -20,8 +20,8 @@
 #' @details
 #' Options available for bootstrap samples or subsamples
 #' @export
-cppForest <- function(x, y, nSamp, nodeSize, maxNodes, nTree, mtry, keepF, replace, classify, ustat, B) {
-    .Call('surfin_cppForest', PACKAGE = 'surfin', x, y, nSamp, nodeSize, maxNodes, nTree, mtry, keepF, replace, classify, ustat, B)
+cppForest <- function(x, y, sampSize, nodeSize, maxNodes, nTree, mtry, keepF, replace, classify, ustat, B) {
+    .Call('surfin_cppForest', PACKAGE = 'surfin', x, y, sampSize, nodeSize, maxNodes, nTree, mtry, keepF, replace, classify, ustat, B)
 }
 
 #' @title
