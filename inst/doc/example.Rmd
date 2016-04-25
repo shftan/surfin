@@ -1,6 +1,6 @@
 ---
-title: "Example"
-author: "Sarah Tan"
+title: "How to Use the Surfin Package"
+author: "Hui Fen Tan"
 date: '`r Sys.Date()`'
 output: rmarkdown::html_vignette
 vignette: >
