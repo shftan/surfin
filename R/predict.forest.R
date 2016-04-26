@@ -25,8 +25,6 @@ predict.forest <- function (object, newdata=NULL, individualTrees=FALSE,...) {
     stop("object not of class forest")
   if (is.null(object$forest)) 
     stop("object does not have forest")
-  if (is.null(newdata))
-    stop("OOB predictions already available in forest object")
   ## make sure that variables are correctly ordered
   newdata <- data.matrix(newdata[, object$varNames, drop = FALSE])
   
@@ -39,16 +37,21 @@ predict.forest <- function (object, newdata=NULL, individualTrees=FALSE,...) {
              object$forest$nodePred)  
   if (individualTrees)
   {
-    return(predictedAll)
-  } else
-  {
-    predicted = rowSums(predictedAll)/object$ntree
     # Convert numbers to factor levels if binary classification
     if (object$type == "binary classification")
     {
-      predicted = numberToFactor(predicted,object$key)
-      predicted = factor(predicted)
+      predictedAll = numberToFactor(predictedAll,object$key)
     }
+    return(predictedAll)
+  } else
+  {
+    # Binary classification
+    if (object$type == "binary classification")
+    {
+      predicted = unlist(apply(predictedAll,1,function(x) names(sort(table(x)))[-1]))
+      predicted = numberToFactor(predicted,object$key)
+    }
+    else predicted = rowSums(predictedAll)/object$ntree
     return(predicted)
   } 
 }

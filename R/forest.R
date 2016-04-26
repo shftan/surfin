@@ -86,8 +86,7 @@ forest <- function (x, y, individualTrees = FALSE, ntree = 500, replace=TRUE, va
     stop('NA not permitted in predictors') 
   }
   
-  varNames <- if (is.null(colnames(x))) 1:ncol(x) else colnames(x)
-
+  # Call C++ function
   #yOffset <- if (is.factor(y)) 0 else mean(y)     # consider moving this back in for speed improvements
   #if (!is.factor(y)) y <- y - yOffset
   out <- cppForest(data.matrix(x), y, sampSize, nodeSize, maxNodes, ntree, mtry, 
@@ -95,57 +94,59 @@ forest <- function (x, y, individualTrees = FALSE, ntree = 500, replace=TRUE, va
   #if (!is.factor(y)) y = y + yOffset
   #out$forest$nodePred <- out$forest$nodePred + yOffset
   #out$predictedByTree <- out$predictedByTree + yOffset
+  
+  # Store meta-data in forest object
+  if (is.factor(y)) {
+    out$type = "binary classification"
+  
+    # Find mapping of factor level to number
+    # first (alphabetically-speaking) level becomes 1, second level becomes 2
+    out$key = unique(data.frame(y,as.numeric(y)))
+    out$key[,1] = as.character(out$key[,1])
+  } else
+  {
+    out$type = "regression"
+  }
+  out$varNames = if (is.null(colnames(x))) 1:ncol(x) else colnames(x)
+  out$replace = replace
+  out$var.type = var.type
+  out$B = B
+  out$sampSize = sampSize
+  out$ntree = ntree
+  out$individualTrees = individualTrees
+  
+  # Determine predictions of individual trees
   predictedAll = cppPredict(data.matrix(x), 
              out$forest$splitVar, 
              out$forest$split,
              out$forest$leftDaughter, 
              out$forest$rightDaughter,
             out$forest$nodePred) 
+  
+  # Convert numbers to characters for binary classification
+  if (out$type == "binary classification")
+  {
+    predictedAll = numberToFactor(predictedAll,out$key)
+  }
+  
+  # Determine OOB prediction
   predictedOOB = predictedAll
   predictedOOB[out$inbag.times!=0] = NA
+  
+  if (out$type == "binary classification") out$predicted = unlist(apply(predictedOOB,1,function(x) names(sort(table(x),decreasing=T))[1]))
+  else out$predicted = rowMeans(predictedOOB,na.rm=T)
+  
+  # Store predictions of individual trees
   if (individualTrees) {
     out$predictedAll = predictedAll
     out$predictedOOB = predictedOOB
   }
-  out$predicted = rowMeans(predictedOOB,na.rm=T)
   
-  ## If classification, format predictions as factors and calculate oob err.rate
-  # R orders levels of a factor alphabetically
-  ## If regression, calculate oob mse
-  if (is.factor(y)) {
-    out$type = "binary classification"
-    
-    # Find mapping of factor level to number
-    # first (alphabetically-speaking) level becomes 1, second level becomes 2
-    out$key = unique(data.frame(y,as.numeric(y)))
-    out$key[,1] = as.character(out$key[,1])
-    
-    ## Convert numbers to factor levels
-    # OOB predictions by tree
-    predictedOOB = numberToFactor(predictedOOB,out$key)
-    
-    # Prediction for each observation based on OOB predictions by tree
-    out$predicted = numberToFactor(out$predicted,out$key)
-    out$predicted = factor(out$predicted)
-    
-    out$err.rate = apply(predictedOOB,2,function(x) mean(x!=as.character(y),na.rm=TRUE))
-  }
-  else {
-    out$type = "regression"
-    out$mse = apply(predictedOOB,2,function(x) mean((x-y)^2,na.rm=TRUE))
-  }
-  
-  out$varNames        <- varNames
+  # If classification, calculate oob err.rate; if regression, oob mse
+  if (out$type == "binary classification") out$err.rate = apply(predictedOOB,2,function(x) mean(x!=as.character(y),na.rm=TRUE))
+  else out$mse = apply(predictedOOB,2,function(x) mean((x-y)^2,na.rm=TRUE))
   
   if (!keepForest) out$forest <- NULL
-  
-  out$replace = replace
-  
-  out$var.type = var.type
-  out$B = B
-  out$sampSize = sampSize
-  out$ntree = ntree
-  out$individualTrees = individualTrees
   
   class(out) = "forest"
   return(out)

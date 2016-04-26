@@ -30,7 +30,7 @@ forest.varIJ <- function (object) {
   n = dim(object$inbag.times)[1]
   s = sum(object$inbag.times) / object$ntree
   
-  pred = object$predictedAll
+  pred = factorToNumber(object$predictedAll)
   y.hat = rowMeans(pred)
   if (object$type == "binary classification") y.hat = numberToFactor(y.hat,object$key)
   pred.centered = pred - rowMeans(pred)   # centering does not change variance
