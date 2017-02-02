@@ -1,7 +1,7 @@
 # surfin
 Statistical Inference for Random Forests
 
-This R package computes standard error estimates for random forest predictions using a fast implementation of random forests in C++. Two variance estimates are provided: U-statistic based (Mentch & Hooker, 2016) and infinitesimal jackknife (Wager, Hastie, Efron, 2014).
+This R package computes uncertainty for random forest predictions using a fast implementation of random forests in C++. Two variance estimates are provided: U-statistic based (Mentch & Hooker, 2016) and infinitesimal jackknife (Wager, Hastie, Efron, 2014).
 
 References:
 
