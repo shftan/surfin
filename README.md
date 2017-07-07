@@ -1,4 +1,4 @@
-
+.
 # surfin
 Statistical Inference for Random Forests
 
@@ -14,4 +14,4 @@ http://shftan.github.io/surfin/
 
 Check out a demo on some real data: <a href="http://shftan.github.io/surfin/example.html">How Uncertain Are Your Random Forest Predictions?</a>
 
-Feedback, bug reports, etc. are very much welcome! <a href="mailto:ht395@cornell.edu">Email me!</a>
+Feedback, bug reports, etc. are very much welcome! <a href="mailto:ht395@cornell.edu">Email me.</a>
