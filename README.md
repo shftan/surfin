@@ -11,3 +11,5 @@ Wager S, Hastie T, Efron B. Confidence intervals for random forests: the jackkni
 
 Download from: 
 http://shftan.github.io/surfin/
+
+Check out a demo on some real data: <a href="http://shftan.github.io/surfin/example.html">How Uncertain Are Your Random Forest Predictions?</a>
