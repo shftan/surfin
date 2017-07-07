@@ -19,9 +19,9 @@
 #'@section Dependencies:
 #'Rcpp, RcppArmadillo, Matrix
 #'
-#'@author Hui Fen Tan <\email{ht395@cornell.edu}>, David Miller, Giles Hooker, Lucas Mentch, Stefan Wager
+#'@author Sarah Tan <\email{ht395@cornell.edu}>, David Miller, Giles Hooker, Lucas Mentch
 #'
-#'Maintainer: Hui Fen Tan
+#'Maintainer: Sarah Tan
 #'
 #'@section References:
 #'Leo Breiman. (2001). Random Forests. Machine Learning 45(1), 5-32. http://link.springer.com/article/10.1023/A:1010933404324

@@ -3,7 +3,7 @@
 #' Calculate the infinitesimal jackknife variance
 #' @param object A random forest trained with replace = TRUE
 #' @return predictions for each observation and corresponding variance
-#' @author Hui Fen Tan <\email{ht395@cornell.edu}>, Stefan Wager
+#' @author Sarah Tan <\email{ht395@cornell.edu}>, Stefan Wager
 #' @references Stefan Wager, Trevor Hastie, and Bradley Efron. (2014). Confidence Intervals for Random Forests: The Jackknife and the Infinitesimal Jackknife. Journal of Machine Learning Research, 15(May), 1625-1651. http://jmlr.org/papers/v15/wager14a.html
 #' @seealso \code{\link{forest.varU}} 
 #' @keywords random forest, variance, infinitesimal jackknife
@@ -30,11 +30,20 @@ forest.varIJ <- function (object) {
   n = dim(object$inbag.times)[1]
   s = sum(object$inbag.times) / object$ntree
   
-  pred = factorToNumber(object$predictedAll)
-  y.hat = rowMeans(pred)
-  if (object$type == "binary classification") y.hat = numberToFactor(y.hat,object$key)
-  pred.centered = pred - rowMeans(pred)   # centering does not change variance
-
+  if (object$type=="binary classification")
+  {
+  	pred = factorToNumber(object$predictedAll)
+  	y.hat = rowMeans(pred)
+  	y.hat = numberToFactor(y.hat,object$key)
+  	pred.centered = pred - rowMeans(pred)    # centering does not change variance
+  }
+  else
+  {
+  	pred = object$predictedAll
+  	y.hat = rowMeans(pred)
+  	pred.centered = pred - rowMeans(pred)    # centering does not change variance
+  }
+  
   N = Matrix::Matrix(object$inbag.times, sparse = TRUE)
   N.avg = Matrix::rowMeans(N)
   

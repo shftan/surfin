@@ -15,4 +15,3 @@ Given an n x nTree matrix of terminal nodes, this function will return an n x n 
 \details{
 The computed proximities are based on only the out-of-bag predictions. Zero-valued entries in nodes correspond to in-bag instances.
 }
-

@@ -38,4 +38,3 @@ Construct random forest
 \details{
 Options available for bootstrap samples or subsamples
 }
-

@@ -25,4 +25,3 @@ Returns predictions from a stored forest.
 \details{
 All other matrices represent the forest. Trees are columns, and nodes are rows.
 }
-

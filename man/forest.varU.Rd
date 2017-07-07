@@ -21,18 +21,17 @@ response = birds[,"detected"]
 forestobject = forest(x=features,y=response,var.type="ustat",B=5)
 varU = forest.varU(forestobject)
 }
-\author{
-Hui Fen Tan <\email{ht395@cornell.edu}>, Lucas K. Mentch, Giles J. Hooker
-}
 \references{
 Lucas K. Mentch and Giles J. Hooker. (2016). Quantifying Uncertainty in Random Forests via Confidence Intervals and Hypothesis Tests. Journal of Machine Learning Research, 17(26), 1-41. http://www.jmlr.org/papers/volume17/14-168/14-168.pdf
 }
 \seealso{
 \code{\link{forest.varIJ}}
 }
+\author{
+Sarah Tan <\email{ht395@cornell.edu}>, Lucas K. Mentch, Giles J. Hooker
+}
 \keyword{based}
 \keyword{forest,}
 \keyword{random}
 \keyword{u-statistic}
 \keyword{variance,}
-

@@ -19,4 +19,3 @@ Nearest neighbor 1:1 matching within and between conditions.
 \details{
 Ties are broken using the the first match (not randomly).
 }
-

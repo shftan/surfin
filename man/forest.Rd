@@ -4,7 +4,7 @@
 \alias{forest}
 \title{Random forest wrapper function}
 \usage{
-forest(x, y, individualTrees = FALSE, ntree = 500, replace = TRUE,
+forest(x, y, individualTrees = FALSE, ntree = 1000, replace = TRUE,
   var.type = NULL, B = NULL, keepForest = TRUE, mtry = if (is.factor(y))
   floor(sqrt(ncol(x))) else max(floor(ncol(x)/3), 1), nodeSize = if
   (is.factor(y)) 1 else 5, sampSize = if (replace) nrow(x) else ceiling(0.632
@@ -17,7 +17,7 @@ forest(x, y, individualTrees = FALSE, ntree = 500, replace = TRUE,
 
 \item{individualTrees}{whether to return predictions of individual trees, default is FALSE. If var.type is not NULL, this is set to TRUE.}
 
-\item{ntree}{number of trees desired, default is 500}
+\item{ntree}{number of trees desired, default is 1000}
 
 \item{replace}{bootstrap samples or subsamples, default is bootstrap samples. If var.type = "ustat", this is set to FALSE; if var.type = "infjack", this is set to TRUE.}
 
@@ -62,15 +62,14 @@ features = birds[,setdiff(names(birds),"detected")]
 response = birds[,"detected"]
 forest(x=features,y=response)
 }
-\author{
-Hui Fen Tan <\email{ht395@cornell.edu}>, David I. Miller
-}
 \references{
 Leo Breiman. (2001). Random Forests. Machine Learning 45(1), 5-32. http://link.springer.com/article/10.1023/A:1010933404324
 }
 \seealso{
 \code{\link{predict.forest}}, \code{\link{forest.varIJ}}, \code{\link{forest.varU}}
 }
+\author{
+Sarah Tan <\email{ht395@cornell.edu}>, David I. Miller
+}
 \keyword{forest}
 \keyword{random}
-

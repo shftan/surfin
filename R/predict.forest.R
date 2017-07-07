@@ -6,7 +6,7 @@
 #' @param individualTrees whether to return predictions of individual trees, default is FALSE
 #' @param ... further arguments passed to or from other methods
 #' @return vector of predictions for each observation if individualTrees=FALSE (default), otherwise matrix of predictions by each tree for each observation
-#' @author Hui Fen Tan <\email{ht395@cornell.edu}>, David I. Miller
+#' @author Sarah Tan <\email{ht395@cornell.edu}>, David I. Miller
 #' @references Leo Breiman. (2001). Random Forests. Machine Learning 45(1), 5-32. http://link.springer.com/article/10.1023/A:1010933404324
 #' @seealso \code{\link{forest.varIJ}}, \code{\link{forest.varU}}
 #' @keywords random forest, prediction
@@ -28,30 +28,32 @@ predict.forest <- function (object, newdata=NULL, individualTrees=FALSE,...) {
   ## make sure that variables are correctly ordered
   newdata <- data.matrix(newdata[, object$varNames, drop = FALSE])
   
-  #get predictions using C++ function 
+  # Determine predictions of individual trees
   predictedAll = cppPredict(data.matrix(newdata), 
              object$forest$splitVar, 
              object$forest$split,
              object$forest$leftDaughter, 
              object$forest$rightDaughter,
-             object$forest$nodePred)  
-  if (individualTrees)
+             object$forest$nodePred) 
+             
+  # Convert numbers to characters if binary classification
+  if (object$type == "binary classification")
   {
-    # Convert numbers to factor levels if binary classification
-    if (object$type == "binary classification")
-    {
-      predictedAll = numberToFactor(predictedAll,object$key)
-    }
-    return(predictedAll)
-  } else
+  	 predictedAll = numberToFactor(predictedAll,object$key)
+  	 if (!individualTrees)
+  	 {
+  	 	predicted = unlist(apply(predictedAll,1,function(x) names(sort(table(x),decreasing=T)[1])))
+  	 	return(predicted)
+  	 }  
+  	 return(predictedAll)
+  }
+  else    # regression
   {
-    # Binary classification
-    if (object$type == "binary classification")
-    {
-      predicted = unlist(apply(predictedAll,1,function(x) names(sort(table(x)))[-1]))
-      predicted = numberToFactor(predicted,object$key)
-    }
-    else predicted = rowSums(predictedAll)/object$ntree
-    return(predicted)
-  } 
+  	  if (!individualTrees)
+  	  {
+  	  	 predicted = rowMeans(predictedAll)
+  	  	 return(predicted)
+  	  }
+  	  return(predictedAll)
+  }
 }

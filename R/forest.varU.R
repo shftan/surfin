@@ -3,7 +3,7 @@
 #' Calculate the u-statistic based variance
 #' @param object A random forest trained with replace=FALSE but with common observations
 #' @return predictions for each observation and corresponding variance
-#' @author Hui Fen Tan <\email{ht395@cornell.edu}>, Lucas K. Mentch, Giles J. Hooker
+#' @author Sarah Tan <\email{ht395@cornell.edu}>, Lucas K. Mentch, Giles J. Hooker
 #' @references Lucas K. Mentch and Giles J. Hooker. (2016). Quantifying Uncertainty in Random Forests via Confidence Intervals and Hypothesis Tests. Journal of Machine Learning Research, 17(26), 1-41. http://www.jmlr.org/papers/volume17/14-168/14-168.pdf  
 #' @seealso \code{\link{forest.varIJ}} 
 #' @keywords random forest, variance, u-statistic based
@@ -33,10 +33,19 @@ forest.varU <- function (object) {
   L = object$ntree / B
   n = dim(object$inbag.times)[1]
   
-  pred = factorToNumber(object$predictedAll)
-  y.hat = rowMeans(pred)
-  if (object$type == "binary classification") y.hat = numberToFactor(y.hat,object$key)
-  pred.centered = pred - rowMeans(pred)    # centering does not change variance
+  if (object$type=="binary classification")
+  {
+  	pred = factorToNumber(object$predictedAll)
+  	y.hat = rowMeans(pred)
+  	y.hat = numberToFactor(y.hat,object$key)
+  	pred.centered = pred - rowMeans(pred)    # centering does not change variance
+  }
+  else
+  {
+  	pred = object$predictedAll
+  	y.hat = rowMeans(pred)
+  	pred.centered = pred - rowMeans(pred)    # centering does not change variance
+  }
   
   Bs = rep(1:B,each=L)
   predB = matrix(nrow=n,ncol=B)

@@ -1,6 +1,6 @@
 ---
-title: "How to Use the Surfin Package"
-author: "Hui Fen Tan"
+title: "How Uncertain Are Your Random Forest Predictions?"
+author: "Sarah Tan"
 date: '`r Sys.Date()`'
 output: rmarkdown::html_vignette
 vignette: >
@@ -9,53 +9,23 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-Load packages
+This vignette demonstrates how to use the surfin R package to compute uncertainty for random forest predictions. We will compare the U-statistics based estimate (Mentch & Hooker 2016) provided in this package with an infinitesimal jackknife estimate (Wager, Hastie, Efron, 2014) provided in another R package.
+
+First, load packages needed for this example:
 ```{r}
 library(rpart) # for kyphosis data
 library(randomForest)
 library(surfin)
+library(devtools)
 ```
 
-First try classification:
+Next, install and load the randomForestCI R package by the authors of the infinitesimal jackknife paper:
 ```{r}
-x = kyphosis[,c("Age","Number","Start")]
-y = kyphosis$Kyphosis
+install_github("swager/randomForestCI")
+library(randomForestCI)
 ```
 
-To compute the U-statistic based variance, we use sampling without replacement and specify B, the number of common observations, to be 10.
-```{r}
-fit = forest(x,y,var.type="ustat",B=10)
-names(fit)
-fit$predicted
-head(forest.varU(fit))
-predict(fit,x)
-```
-
-To compute the infinitesimal jackknife variance, we use sampling with replacement.
-```{r}
-fit = forest(x,y,var.type="infjack")
-names(fit)
-output1 = fit$predicted
-head(forest.varIJ(fit))
-predict(fit,x)
-```
-
-Let's look at the usual sampling without replacement:
-```{r}
-fit = forest(x,y,replace=FALSE)
-names(fit)
-fit$predicted
-predict(fit,x)
-```
-
-Now we compare to the randomForest package:
-```{r}
-fit = randomForest(x,y,keep.forest=TRUE,keep.inbag=TRUE,replace=TRUE)
-output2 = fit$predicted
-table(output1,output2)
-```
-
-Try regression:
+We start with a regression example:
 ```{r}
 x = cu.summary[,c("Price","Country","Reliability","Type")]
 y = cu.summary$Mileage
@@ -67,7 +37,75 @@ y = y[keep]
 x = x[keep,]
 ```
 
-Similarly, compute the U-statistic variance:
+To compute the U-statistics based variance, we use sampling without replacement and specify B, the number of common observations, to be 10.
+```{r}
+fit = forest(x,y,var.type="ustat",B=10)
+```
+
+Check out what the forest object outputs:
+```{r}
+names(fit)
+```
+
+Prediction using only out-of-bag samples:
+```{r}
+fit$predicted
+```
+
+Prediction using all samples:
+```{r}
+predict(fit,x)
+```
+
+Calculate the u-statistics based variance estimate:
+```{r}
+ustat = forest.varU(fit)
+head(ustat)
+plot(ustat)
+```
+
+Now we use the randomForestCI package to compute the infinitesimal jackknife variance (example taken from https://github.com/swager/randomForestCI):
+```{r}
+rf = randomForest(x, y, keep.inbag = TRUE)
+ij = randomForestInfJack(rf, x, calibrate = TRUE)
+head(ij)
+plot(ij)
+```
+
+Next we try our own implementation of the infinitesimal jackknife (we don't have some extras implemented by the authors of the randomForestCI package, such as their calibration, but this is nice as a comparison). To compute the infinitesimal jackknife variance, we need sampling with replacement. 
+```{r}
+fit = forest(x,y,var.type="infjack")
+names(fit)
+pred_forest = fit$predicted
+pred_forest
+predict(fit,x)
+ij2 = forest.varIJ(fit)
+head(ij2)
+plot(ij2)
+```
+
+Let's look at the usual sampling without replacement:
+```{r}
+fit = forest(x,y,replace=FALSE)
+names(fit)
+fit$predicted
+predict(fit,x)
+```
+
+Now we compare our forest's predictions to the predictions of the randomForest package:
+```{r}
+pred_randomForest = rf$predicted
+plot(pred_forest,pred_randomForest)
+lines(pred_forest,pred_forest,lty="dashed")
+```
+
+Next, we try classification:
+```{r}
+x = kyphosis[,c("Age","Number","Start")]
+y = kyphosis$Kyphosis
+```
+
+Compute the U-statistic variance:
 ```{r}
 fit = forest(x,y,var.type="ustat",B=10)
 names(fit)
@@ -76,7 +114,15 @@ head(forest.varU(fit))
 predict(fit,x)
 ```
 
-Now, compute the infinitesimal jackknife:
+Now, compute the infinitesimal jackknife variance: (looks like there is a bug in the randomForestCI code in converting labels for classification to numeric, so the code below is commented out until that is fixed)
+```{r}
+#rf = randomForest(x, y, keep.inbag = TRUE)
+#ij = randomForestInfJack(rf, x, calibrate = TRUE)
+#head(ij)
+#plot(ij)
+```
+
+Our own implementation of the infinitesimal jackknife variance:
 ```{r}
 fit = forest(x,y,var.type="infjack")
 names(fit)
@@ -93,10 +139,9 @@ fit$predicted
 predict(fit,x)
 ```
 
-Compare to the randomForest package:
+Now we compare to the randomForest package:
 ```{r}
 fit = randomForest(x,y,keep.forest=TRUE,keep.inbag=TRUE,replace=TRUE)
-output2 = as.numeric(fit$predicted)
-plot(output1,output2)
-lines(output1,output1,lty="dashed")
+output2 = fit$predicted
+table(output1,output2)
 ```

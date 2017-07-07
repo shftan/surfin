@@ -25,4 +25,3 @@ forestobject = forest(x=features,y=response)
 \keyword{matrix}
 \keyword{proximity}
 \keyword{random}
-

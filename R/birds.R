@@ -42,7 +42,7 @@
 #'
 #' @source This and more related data from the eBird project can be found at ebird.org.  NLCD variables and descriptions can be found at \url{http://www.mrlc.gov/nlcd2006.php}. A complete description of the elevation variable can be found at \url{http://eros.usgs.gov/#/Find_Data/Products_and_Data_Available/gtopo30_info}
 #'
-#' @references Mentch, Lucas, and Giles Hooker. (2014). Quantifying Uncertainty in Random Forests via Confidence Intervals and Hypothesis Tests. arXiv preprint arXiv:1404.6473. 
+#' @references Lucas K. Mentch and Giles J. Hooker. (2016). Quantifying Uncertainty in Random Forests via Confidence Intervals and Hypothesis Tests. Journal of Machine Learning Research, 17(26), 1-41. http://www.jmlr.org/papers/volume17/14-168/14-168.pdf 
 #' 
 #' Sullivan, Brian .L, Jocelyn L. Aycrigg, Jessie H. Barry, Rick E. Bonney, Nicholas Bruns, Caren B. Cooper, Theo Damoulas, Andre A. Dhondt, Tom Dietterich, Andrew Farnsworth, Daniel Finka, John W. Fitzpatrick, Thomas Fredericks, Jeff Gerbracht, Carla Gomes, Wesley M. Hochachka, Marshall J. Iliff, Carl Lagoze, Frank A. La Sorte, Matthew Merrifield, Will Morris, Tina B. Phillips, Mark Reynolds, Amanda D. Rodewald, Kenneth V. Rosenberg, Nancy M. Trautmann, Andrea Wiggins, David W. Winkler, Weng-Keen Wong, Christopher L. Wood, Jun Yu, Steve Kelling. (2014). The eBird enterprise: An integrated approach to development and application of citizen science. Biological Conservation, 169(January), 31-40. \url{http://dx.doi.org/10.1016/j.biocon.2013.11.003}
 "birds"

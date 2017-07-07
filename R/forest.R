@@ -4,7 +4,7 @@
 #' @param x matrix
 #' @param y vector
 #' @param individualTrees whether to return predictions of individual trees, default is FALSE. If var.type is not NULL, this is set to TRUE.
-#' @param ntree number of trees desired, default is 500
+#' @param ntree number of trees desired, default is 1000
 #' @param replace bootstrap samples or subsamples, default is bootstrap samples. If var.type = "ustat", this is set to FALSE; if var.type = "infjack", this is set to TRUE.
 #' @param var.type default is NULL. Type of variance estimate to be computed. 2 options: "ustat" for u-statistic based which needs replace=FALSE or "infjack" for infinitesimal jackknife which needs replace=TRUE
 #' @param B default is NULL. Number of unique common observations for u-statistic based variance estimate. Note that L, the number of trees sharing a common observation, typically >> B.
@@ -30,7 +30,7 @@
 #' \item{B}{B value used}
 #' \item{sampSize}{sampSize value used}
 #' \item{individualTrees}{individualTrees value used}
-#' @author Hui Fen Tan <\email{ht395@cornell.edu}>, David I. Miller
+#' @author Sarah Tan <\email{ht395@cornell.edu}>, David I. Miller
 #' @references Leo Breiman. (2001). Random Forests. Machine Learning 45(1), 5-32. http://link.springer.com/article/10.1023/A:1010933404324
 #' @seealso \code{\link{predict.forest}}, \code{\link{forest.varIJ}}, \code{\link{forest.varU}}
 #' @keywords random forest
@@ -40,7 +40,7 @@
 #' response = birds[,"detected"]
 #' forest(x=features,y=response)
 
-forest <- function (x, y, individualTrees = FALSE, ntree = 500, replace=TRUE, var.type=NULL, B = NULL, keepForest = TRUE,
+forest <- function (x, y, individualTrees = FALSE, ntree = 1000, replace=TRUE, var.type=NULL, B = NULL, keepForest = TRUE,
           mtry     = if (is.factor(y)) floor(sqrt(ncol(x))) else max(floor(ncol(x)/3), 1), 
           nodeSize = if (is.factor(y)) 1                    else 5, 
           sampSize    = if (replace) nrow(x) else ceiling(0.632 * nrow(x)),
@@ -114,7 +114,7 @@ forest <- function (x, y, individualTrees = FALSE, ntree = 500, replace=TRUE, va
   out$sampSize = sampSize
   out$ntree = ntree
   out$individualTrees = individualTrees
-  
+               
   # Determine predictions of individual trees
   predictedAll = cppPredict(data.matrix(x), 
              out$forest$splitVar, 
@@ -123,7 +123,7 @@ forest <- function (x, y, individualTrees = FALSE, ntree = 500, replace=TRUE, va
              out$forest$rightDaughter,
             out$forest$nodePred) 
   
-  # Convert numbers to characters for binary classification
+  # Convert numbers to characters if binary classification
   if (out$type == "binary classification")
   {
     predictedAll = numberToFactor(predictedAll,out$key)
