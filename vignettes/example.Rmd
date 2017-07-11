@@ -139,9 +139,14 @@ xtest = x[test,]
 ytest = y[test]
 ```
 
+The response is rather imbalanced:
+```{r}
+table(y)
+```
+
 ### Prediction
 
-Like for regression, we have several options for prediction:
+Like for regression, we have several options for prediction. Note, there is a bug in the predict.forest function for binary responses.
 ```{r}
 fit = forest(xtrain,ytrain,xtest,ytest,var.type="ustat",B=10)
 names(fit)
@@ -162,7 +167,7 @@ head(ustat)
 plot(ustat)
 ```
 
-We can also estimate the variance of the train set predicted probabilities. Note: there is a bug here because probability > 1, need to look closer at how it's being output.
+We can also estimate the variance of the train set predicted probabilities. Note: there is a bug here because probability > 1, need to look closer at how binary responses are being tracked.
 ```{r}
 ustat = forest.varU(fit$predictedProb,fit)
 head(ustat)
@@ -189,7 +194,7 @@ Next we compute the infinitesimal jackknife variance: (looks like there is a bug
 #plot(ij)
 ```
 
-Our own implementation of the infinitesimal jackknife variance:
+Our own implementation of the infinitesimal jackknife variance. Note, there is a bug in how binary responses are being tracked when sampling with replacement.
 ```{r}
 fit = forest(xtrain,ytrain,var.type="infjack")
 ij2_train_oob = fit$predicted   # Case (1)

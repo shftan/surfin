@@ -79,6 +79,9 @@ xtest = x[test,]
 ytest = y[test]
 
 ## ------------------------------------------------------------------------
+table(y)
+
+## ------------------------------------------------------------------------
 fit = forest(xtrain,ytrain,xtest,ytest,var.type="ustat",B=10)
 names(fit)
 u_train_oob = fit$predicted        # Case (1)
