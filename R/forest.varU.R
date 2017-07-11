@@ -1,48 +1,45 @@
-#' U-statistic based estimate for random forests
+#' U-statistic based estimate for random objects
 #'
 #' Calculate the u-statistic based variance
-#' @param object A random forest trained with replace=FALSE but with common observations
+#' @param predictedAll a matrix with ntree rows where each element is the individual tree's prediction for that prediction
+#' @param object A random object trained with replace=FALSE but with common observations
 #' @return predictions for each observation and corresponding variance
 #' @author Sarah Tan <\email{ht395@cornell.edu}>, Lucas K. Mentch, Giles J. Hooker
-#' @references Lucas K. Mentch and Giles J. Hooker. (2016). Quantifying Uncertainty in Random Forests via Confidence Intervals and Hypothesis Tests. Journal of Machine Learning Research, 17(26), 1-41. http://www.jmlr.org/papers/volume17/14-168/14-168.pdf  
-#' @seealso \code{\link{forest.varIJ}} 
-#' @keywords random forest, variance, u-statistic based
+#' @references Lucas K. Mentch and Giles J. Hooker. (2016). Quantifying Uncertainty in Random objects via Confidence Intervals and Hypothesis Tests. Journal of Machine Learning Research, 17(26), 1-41. http://www.jmlr.org/papers/volume17/14-168/14-168.pdf  
+#' @seealso \code{\link{object.varIJ}} 
+#' @keywords random object, variance, u-statistic based
 #' @export
 #' @examples
 #' features = birds[,setdiff(names(birds),"detected")]
 #' response = birds[,"detected"]
-#' forestobject = forest(x=features,y=response,var.type="ustat",B=5)
-#' varU = forest.varU(forestobject)
+#' object = forest(x=features,y=response,var.type="ustat",B=5)
+#' varU = forest.varU(object$predictedAll,object)
 
-forest.varU <- function (object) {
+forest.varU <- function (predictedAll,object) {
   # Ensure correct sampling scheme
-  if (object$replace | is.null(object$var.type)) {
-    stop('u-statistic based variance estimate requires sampling without replacement')  
-  }
-  if (object$var.type!="ustat") {
-    stop('random forest trained for other variance estimates')
-  }
+  if (object$replace | is.null(object$var.type)) stop('u-statistic based variance estimate requires sampling without replacement')  
+  if (object$var.type!="ustat") stop('random object trained for other variance estimates')
   
   # Ensure individual trees were stored
-  if (!object$individualTrees) {
-    stop('variance estimation requires individual tree predictions')  
-  }
-  
-  # Extract tree-wise predictions and variable counts from random forest
+  if (!object$individualTrees) stop('variance estimation requires individual tree predictions')  
+
+  # Ensure that predictedAll has same number of trees as object
+  if (is.null(dim(predictedAll))) stop('predictedAll must be a matrix of individual tree predictions')
+  if (ncol(predictedAll)!=object$ntree) stop('predictedAll does not have the same number of columns as the number of trees in the object')
+
+  # Extract parameters from object
   B = object$B
   L = object$ntree / B
-  n = dim(object$inbag.times)[1]
+  n = dim(predictedAll)[1]       
   
-  if (object$type=="binary classification")
-  {
-  	pred = factorToNumber(object$predictedAll)
+  if (class(predictedAll[1,1])%in%c("factor","character")) {
+  	pred = factorToNumber(predictedAll,object$key)
   	y.hat = rowMeans(pred)
   	y.hat = numberToFactor(y.hat,object$key)
   	pred.centered = pred - rowMeans(pred)    # centering does not change variance
   }
-  else
-  {
-  	pred = object$predictedAll
+  else {
+  	pred = predictedAll
   	y.hat = rowMeans(pred)
   	pred.centered = pred - rowMeans(pred)    # centering does not change variance
   }

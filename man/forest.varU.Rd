@@ -2,12 +2,14 @@
 % Please edit documentation in R/forest.varU.R
 \name{forest.varU}
 \alias{forest.varU}
-\title{U-statistic based estimate for random forests}
+\title{U-statistic based estimate for random objects}
 \usage{
-forest.varU(object)
+forest.varU(predictedAll, object)
 }
 \arguments{
-\item{object}{A random forest trained with replace=FALSE but with common observations}
+\item{predictedAll}{a matrix with ntree rows where each element is the individual tree's prediction for that prediction}
+
+\item{object}{A random object trained with replace=FALSE but with common observations}
 }
 \value{
 predictions for each observation and corresponding variance
@@ -18,20 +20,20 @@ Calculate the u-statistic based variance
 \examples{
 features = birds[,setdiff(names(birds),"detected")]
 response = birds[,"detected"]
-forestobject = forest(x=features,y=response,var.type="ustat",B=5)
-varU = forest.varU(forestobject)
+object = forest(x=features,y=response,var.type="ustat",B=5)
+varU = forest.varU(object$predictedAll,object)
 }
 \references{
-Lucas K. Mentch and Giles J. Hooker. (2016). Quantifying Uncertainty in Random Forests via Confidence Intervals and Hypothesis Tests. Journal of Machine Learning Research, 17(26), 1-41. http://www.jmlr.org/papers/volume17/14-168/14-168.pdf
+Lucas K. Mentch and Giles J. Hooker. (2016). Quantifying Uncertainty in Random objects via Confidence Intervals and Hypothesis Tests. Journal of Machine Learning Research, 17(26), 1-41. http://www.jmlr.org/papers/volume17/14-168/14-168.pdf
 }
 \seealso{
-\code{\link{forest.varIJ}}
+\code{\link{object.varIJ}}
 }
 \author{
 Sarah Tan <\email{ht395@cornell.edu}>, Lucas K. Mentch, Giles J. Hooker
 }
 \keyword{based}
-\keyword{forest,}
+\keyword{object,}
 \keyword{random}
 \keyword{u-statistic}
 \keyword{variance,}

@@ -11,7 +11,9 @@ using namespace Rcpp;
 //define temporary data structure
 struct TempData {
     double wgt;
+    double wgt1;
     double yWgt;
+    double y2Wgt;
 };
 
 //define helper function and value indicating a node terminal
@@ -20,22 +22,22 @@ struct TempData {
 
 //define functions that will be used inside of other functions
 void resample(int nOrig, int sampSize, int replace, IntegerVector& IDs, 
-        std::vector<TempData>& d, double* ySum, const NumericVector& y);
+        std::vector<TempData>& d, double* ySum, double* ySum2, double* yCount, const NumericVector& y, int classify);
 
-void buildTree(const NumericMatrix& x, double ySum, int mtry, int nodeSize, 
+void buildTree(const NumericMatrix& x, double ySum, double ySum2, double yCount, int mtry, int nodeSize, 
         int sampSize, int maxNodes, int* splitVar, double* split, int* lDaughter, 
-        int* rDaughter, double* sumNode, IntegerVector& idMap, 
+        int* rDaughter, double* sumNode, double* sumNode2, IntegerVector& idMap, 
         std::vector<TempData>& tmp, int classify);
 
-void findBestSplit(int mtry, const NumericMatrix& x, NumericVector& xTry, int nUniq, 
-        double sumParent, double nParent, int* idMap, int* idTry, int nodeStart,
-        IntegerVector& vars, int* splitVar, double* split, double* sumLeft, 
-        double* nLeft, int* nUniqLeft, std::vector<TempData>& tmp);
+void findBestSplit(int mtry, const NumericMatrix& x, NumericVector& xTry, int nUniq, double nParent, double n1Parent, 
+        double sumParent, double sumParent2, int* idMap, int* idTry, int nodeStart,
+        IntegerVector& vars, int* splitVar, double* split, double* sumLeft, double* sumLeft2,
+        double* n1Left, double* nLeft, int* nUniqLeft, std::vector<TempData>& tmp);
         
-void findBestVal(int var, int* idTry, int nUniq, double nParent, 
-        double sumParent, int* nUniqLeft, double* nLeft, double* sumLeft, 
+void findBestVal(int var, int* idTry, int nUniq, double nParent, double n1Parent,
+        double sumParent, double sum2Parent, int* nUniqLeft, double* n1Left, double* nLeft, double* sumLeft, double* sumLeft2,
         int* splitVar, double* split, int* idMap, const NumericVector& xTry,
-        double* critMax, const std::vector<TempData>& tmp);
+        double* critMin, const std::vector<TempData>& tmp);
                  
 void sampNoReplace(int* next, IntegerVector indices, int* nRemain);
 
@@ -81,10 +83,13 @@ List cppForest(NumericMatrix& x, NumericVector& y, int sampSize, int nodeSize,
     IntegerMatrix lDaughter(maxNodes, nt);
     IntegerMatrix rDaughter(maxNodes, nt);
     NumericMatrix nodePred(maxNodes, nt);
+    NumericMatrix nodePred2(maxNodes, nt);
     
     //allocate memory for other variables
     int n = x.nrow();
     double ySum = 0.0;
+    double ySum2 = 0.0;
+    double yCount = 0.0;
     IntegerMatrix nodes(n, nTree);
 //    NumericMatrix yPred(n, nTree);   
     NumericVector nOOB(n);
@@ -132,9 +137,18 @@ List cppForest(NumericMatrix& x, NumericVector& y, int sampSize, int nodeSize,
     			}
     			
   				ySum = 0.0;
+  				ySum2 = 0.0;
+  				yCount = 0.0;
   				for (i = 0; i < n; ++i) {
     				tmp[i].yWgt = y[i] * tmp[i].wgt;   //calculate weighted y's (needed later for splitting criteria) 
-    				ySum += tmp[i].yWgt;
+    				tmp[i].y2Wgt = y[i] * tmp[i].yWgt; //calculate weighted y^2's (needed later for splitting criteria)
+    				tmp[i].wgt1 = tmp[i].wgt;  // class 1 (only used for binary classification)
+    			    ySum += tmp[i].yWgt;         
+    				ySum2 += tmp[i].y2Wgt;
+    				if (classify) {
+    					if (y[i]==-1) tmp[i].wgt1 = 0;
+    					else yCount++;  //calculate # obs of class 1 (binary classification) 
+    				} 
     				nodes(i,nt) = tmp[i].wgt;   // in-bag status by tree
     				if (tmp[i].wgt==0) nOOB[i]++;      // number of trees where observation was out of bag
   				}
@@ -142,10 +156,10 @@ List cppForest(NumericMatrix& x, NumericVector& y, int sampSize, int nodeSize,
   				//tree index depends on setting for keepForest
       			t = keepF ? nt : 0;
 
-      			//grow the regression tree 
-      			buildTree(x, ySum, mtry, nodeSize, sampSize, maxNodes, splitVar(_,t).begin(),
+      			//grow the regression (or binary classification) tree 
+      			buildTree(x, ySum, ySum2, yCount, mtry, nodeSize, sampSize, maxNodes, splitVar(_,t).begin(),
                 	split(_,t).begin(), lDaughter(_,t).begin(), rDaughter(_,t).begin(),
-                	nodePred(_,t).begin(),  IDs, tmp, classify);
+                	nodePred(_,t).begin(), nodePred2(_,t).begin(), IDs, tmp, classify);
     
       			//update predictions, both out-of-bag and in-bag
 //      			predictTree(x, yPred(_,t).begin(), nodes(_,t).begin(), splitVar(_,t).begin(),
@@ -161,7 +175,7 @@ List cppForest(NumericMatrix& x, NumericVector& y, int sampSize, int nodeSize,
 		//// For each tree
     	for (nt = 0; nt < nTree; ++nt) {
       		//reset weights and resample
-      		resample(n, sampSize, replace, IDs, tmp, &ySum, y);
+      		resample(n, sampSize, replace, IDs, tmp, &ySum, &ySum2, &yCount, y, classify);
       
       		for (i = 0; i < n; ++i) {
           		nodes(i,nt) = tmp[i].wgt;   // in-bag status by tree
@@ -171,10 +185,10 @@ List cppForest(NumericMatrix& x, NumericVector& y, int sampSize, int nodeSize,
       		//tree index depends on setting for keepForest
       		t = keepF ? nt : 0;
 
-      		//grow the regression tree 
-      		buildTree(x, ySum, mtry, nodeSize, sampSize, maxNodes, splitVar(_,t).begin(),
+      		//grow the regression (or binary classification) tree 
+      		buildTree(x, ySum, ySum2, yCount, mtry, nodeSize, sampSize, maxNodes, splitVar(_,t).begin(),
                 split(_,t).begin(), lDaughter(_,t).begin(), rDaughter(_,t).begin(),
-                nodePred(_,t).begin(),  IDs, tmp, classify);
+                nodePred(_,t).begin(),  nodePred2(_,t).begin(), IDs, tmp, classify);
     
       		//update predictions, both out-of-bag and in-bag
 //      		predictTree(x, yPred(_,t).begin(), nodes(_,t).begin(), splitVar(_,t).begin(),
@@ -204,9 +218,9 @@ List cppForest(NumericMatrix& x, NumericVector& y, int sampSize, int nodeSize,
 }
 
 //build an individual regression tree
-void buildTree(const NumericMatrix& x, double ySum, int mtry, int nodeSize, 
+void buildTree(const NumericMatrix& x, double ySum, double ySum2, double yCount, int mtry, int nodeSize, 
               int sampSize, int maxNodes, int* splitVar, double* split,
-              int* lDaughter, int* rDaughter, double* sumNode,  
+              int* lDaughter, int* rDaughter, double* sumNode, double* sumNode2,
               IntegerVector& idMap, std::vector<TempData>& tmp, int classify) {
 
     //allocate memory for this function and findBestSplit
@@ -219,6 +233,7 @@ void buildTree(const NumericMatrix& x, double ySum, int mtry, int nodeSize,
     IntegerVector nodeStart(maxNodes);
     IntegerVector nodeUniq(maxNodes);
     NumericVector nNode(maxNodes);
+    NumericVector n1Node(maxNodes);
 
     //initialize ID map
     for (i = 0; i < x.nrow(); ++i) {
@@ -231,6 +246,8 @@ void buildTree(const NumericMatrix& x, double ySum, int mtry, int nodeSize,
     //initialize parent node
     ncur = 0;
     sumNode[0] = ySum;
+    sumNode2[0] = ySum2;
+    n1Node[0] = yCount;
     nNode[0] = sampSize;
     nodeStart[0] = 0;
     nodeUniq[0] = nUnique;
@@ -244,7 +261,7 @@ void buildTree(const NumericMatrix& x, double ySum, int mtry, int nodeSize,
       
       //check stopping criteria: nodesize and (if classification) homogeneity in y
       if (nNode[i] <= nodeSize)                                splitVar[i] = NODE_TERMINAL;
-      if (classify && (sumNode[i]==0 || sumNode[i]==nNode[i])) splitVar[i] = NODE_TERMINAL;
+      if (classify && (n1Node[i]==0 || n1Node[i]==nNode[i])) splitVar[i] = NODE_TERMINAL;
       
       //skip if at a terminal node
       if (splitVar[i] == NODE_TERMINAL) continue;
@@ -254,9 +271,9 @@ void buildTree(const NumericMatrix& x, double ySum, int mtry, int nodeSize,
       memcpy(idTry.begin(), idStart, nodeUniq[i] * sizeof(int));
       
       //find the best split and do "pointer ninja" to directly update values 
-      findBestSplit(mtry, x, xTry, nodeUniq[i], sumNode[i], nNode[i], idStart, 
+      findBestSplit(mtry, x, xTry, nodeUniq[i], nNode[i],n1Node[i],sumNode[i], sumNode2[i],idStart, 
                     idTry.begin(), nodeStart[i], vars, &splitVar[i], &split[i], 
-                    &sumNode[ncur + 1], &nNode[ncur + 1], &nodeUniq[ncur + 1], tmp);
+                    &sumNode[ncur + 1], &sumNode2[ncur + 1], &n1Node[ncur + 1], &nNode[ncur + 1], &nodeUniq[ncur + 1], tmp);
           
       //if no valid split was found, move on
       if (splitVar[i] == NODE_TERMINAL) continue;
@@ -270,6 +287,8 @@ void buildTree(const NumericMatrix& x, double ySum, int mtry, int nodeSize,
       nodeStart[ncur + 2] = nodeStart[i] + nodeUniq[ncur + 1];
       nodeUniq[ncur + 2]  = nodeUniq[i]  - nodeUniq[ncur + 1];
       sumNode[ncur + 2]   = sumNode[i]   - sumNode[ncur + 1];
+      sumNode2[ncur + 2]   = sumNode2[i]   - sumNode2[ncur + 1];
+      n1Node[ncur + 2]     = n1Node[i]     - n1Node[ncur + 1];
       nNode[ncur + 2]     = nNode[i]     - nNode[ncur + 1];
 
       //augment the tree by two nodes
@@ -277,21 +296,24 @@ void buildTree(const NumericMatrix& x, double ySum, int mtry, int nodeSize,
     }
     
     //once finished with loop over nodes, get terminal node predictions
-    for (i = 0; i < maxNodes - 1; ++i) sumNode[i] /= nNode[i];
+    for (i = 0; i < maxNodes - 1; ++i){
+		if (classify) sumNode[i] = n1Node[i]/nNode[i];   //CHECK THIS
+		else sumNode[i] /= nNode[i];    //CHECK THIS
+	}
 }
 
 //find a split at an individual node
-void findBestSplit(int mtry, const NumericMatrix& x, NumericVector& xTry, int nUniq, 
-        double sumParent, double nParent, int* idMap, int* idTry, int nodeStart,
-        IntegerVector& vars, int* splitVar, double* split, double* sumLeft, 
-        double* nLeft, int* nUniqLeft, std::vector<TempData>& tmp) {
+void findBestSplit(int mtry, const NumericMatrix& x, NumericVector& xTry, int nUniq, double nParent, double n1Parent,
+        double sumParent, double sumParent2, int* idMap, int* idTry, int nodeStart,
+        IntegerVector& vars, int* splitVar, double* split, double* sumLeft, double* sumLeft2,
+        double* n1Left, double* nLeft, int* nUniqLeft, std::vector<TempData>& tmp) {
     
     //assume node is terminal, unless proven otherwise...
     *splitVar = NODE_TERMINAL;
       
     //reset bookkeeping variables
     int i, j, var;
-    double critMax = 0.0;
+    double critMin = 1000000000000.0;   //arbitrarily large number
     vars = seq_along( vars );
     int last = vars.size();
     
@@ -309,25 +331,27 @@ void findBestSplit(int mtry, const NumericMatrix& x, NumericVector& xTry, int nU
       R_qsort_I(xTry.begin(), (int*) idTry, 1, nUniq);
      
       //find the best splitting value for this current variable
-      findBestVal(var, idTry, nUniq, nParent, sumParent, nUniqLeft, nLeft,
-                 sumLeft, splitVar, split, idMap, xTry, &critMax, tmp);
+      findBestVal(var, idTry, nUniq, nParent, n1Parent, sumParent, sumParent2, nUniqLeft, n1Left, nLeft,
+                 sumLeft, sumLeft2, splitVar, split, idMap, xTry, &critMin, tmp);
     }
 }
 
 //find the best splitting value for this current variable
-void findBestVal(int var, int* idTry, int nUniq, double nParent, 
-        double sumParent, int* nUniqLeft, double* nLeft, double* sumLeft, 
+void findBestVal(int var, int* idTry, int nUniq, double nParent, double n1Parent, 
+        double sumParent, double sumParent2, int* nUniqLeft, double* n1Left, double* nLeft, double* sumLeft, double* sumLeft2,
         int* splitVar, double* split, int* idMap, const NumericVector& xTry,
-        double* critMax, const std::vector<TempData>& tmp) {
+        double* critMin, const std::vector<TempData>& tmp) {
               
     // start by placing the lowest x value into the left daughter node
     double nL       = tmp[ idTry[0] ].wgt;
+    double n1L       = tmp[ idTry[0] ].wgt1;
     double sumL  = tmp[ idTry[0] ].yWgt;
+    double sumL2  = tmp[ idTry[0] ].y2Wgt;
     double xLeft = xTry[0];
     double xMax  = xTry[nUniq-1];
             
     // BIG LOOP HERE
-    double crit, xRight, sumR;
+    double crit, xRight, sumR, sumR2, nR;
     for (int j = 1; j < nUniq; ++j) {
 
         //If xLeft = xMax, then all values between them 
@@ -340,15 +364,21 @@ void findBestVal(int var, int* idTry, int nUniq, double nParent,
           
           //compute criteria
           sumR = sumParent - sumL;
-          crit = (sumL * sumL / nL) + (sumR * sumR / (nParent - nL));
+          sumR2 = sumParent2 - sumL2;
+          nR = nParent - nL; 
+          // when y={-1,+1}, minimizing gini in a classification is equivalent to minimizing mse in regression
+          crit = sumL2 / nL - (sumL * sumL / (nL * nL)) + sumR2 / nR - (sumR * sumR / (nR * nR));
+          //crit = (sumL * sumL / nL) + (sumR * sumR / (nParent - nL));     
           
           //update bookkeeping if the split is improved
-          if (crit > *critMax) {
-            *critMax = crit;
+          if (crit < *critMin) {
+            *critMin = crit;
             *splitVar = var;
             *split = (xLeft + xRight) / 2.0;
             *nLeft = nL;
+            *n1Left = n1L;
             *sumLeft = sumL;
+            *sumLeft2 = sumL2;
             *nUniqLeft = j;
             memcpy(idMap, idTry, nUniq * sizeof(int));
           }
@@ -356,14 +386,16 @@ void findBestVal(int var, int* idTry, int nUniq, double nParent,
         
         //move the current obs to the left daughter node
         sumL += tmp[ idTry[j] ].yWgt;
+        sumL2 += tmp[ idTry[j] ].y2Wgt;
         nL   += tmp[ idTry[j] ].wgt;
+        n1L   += tmp[ idTry[j] ].wgt1;
         xLeft = xRight;
       }
 }
 
 //generate a new sample for the different trees
 void resample(int nOrig, int sampSize, int replace, IntegerVector& IDs, 
-              std::vector<TempData>& tmp, double* ySum, const NumericVector& y) {
+              std::vector<TempData>& tmp, double* ySum, double* ySum2, double* yCount, const NumericVector& y, int classify) {
               
   //reset weights
   int i, id, nRemain;
@@ -389,9 +421,22 @@ void resample(int nOrig, int sampSize, int replace, IntegerVector& IDs,
   
   //calculate weighted y's (needed later for splitting criteria)
   *ySum = 0.0;
+  *ySum2 = 0.0;
+  *yCount = 0.0;
   for (i = 0; i < nOrig; ++i) {
     tmp[i].yWgt = y[i] * tmp[i].wgt; 
+    tmp[i].y2Wgt = y[i] * tmp[i].yWgt; 
+    tmp[i].wgt1 = tmp[i].wgt;    // class 1  (only used for binary classification)
     *ySum += tmp[i].yWgt;
+    *ySum2 += tmp[i].y2Wgt;
+    if (classify) {
+    	if (y[i]==-1) {
+    		tmp[i].wgt1 = 0;
+    	}
+    	else if (y[i]==1) {
+    		yCount++;  //calculate # obs of class 1 (binary classification) 
+    	}
+    } 
   }
 }
         

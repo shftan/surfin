@@ -19,16 +19,6 @@ using namespace Rcpp;
 NumericMatrix cppPredict(NumericMatrix x, IntegerMatrix splitVar, 
                          NumericMatrix split, IntegerMatrix lDaughter,
                          IntegerMatrix rDaughter, NumericMatrix  nodePred) {
-                              
-  // Returns predictions from a stored forest.
-  //     x = matrix of covariates for the test data
-  
-  // All other matrices represent the forest. Trees are columns, and nodes are rows.
-  //     splitVar  = best split variables 
-  //     split     = best split values
-  //     lDaughter = left daughter node assignments
-  //     rDaughter = right daughter node assignments
-  //     nnodePred = terminal node predictions
 
   //get stats
   int nSample = x.nrow();

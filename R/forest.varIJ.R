@@ -1,6 +1,7 @@
 #' The infinitesimal jackknife for random forests
 #'
 #' Calculate the infinitesimal jackknife variance
+#' @param predictedAll a matrix with ntree rows where each element is the individual tree's prediction for that prediction
 #' @param object A random forest trained with replace = TRUE
 #' @return predictions for each observation and corresponding variance
 #' @author Sarah Tan <\email{ht395@cornell.edu}>, Stefan Wager
@@ -11,10 +12,10 @@
 #' @examples
 #' features = birds[,setdiff(names(birds),"detected")]
 #' response = birds[,"detected"]
-#' forestobject = forest(x=features,y=response,individualTrees=TRUE)
-#' varIJ = forest.varIJ(forestobject)
+#' object = forest(x=features,y=response,individualTrees=TRUE)
+#' varIJ = forest.varIJ(object$predictedAll,object)
 
-forest.varIJ <- function (object) {
+forest.varIJ <- function (predictedAll,object) {
   # Ensure correct sampling scheme
   if (!object$replace) {
     stop('infinitesimal jackknife variance estimate requires sampling with replacement')  
@@ -25,21 +26,23 @@ forest.varIJ <- function (object) {
     stop('variance estimation requires individual tree predictions')  
   }
   
-  # Extract tree-wise predictions and variable counts from random forest
+  # Ensure that predictedAll has same number of trees as object
+  if (is.null(dim(predictedAll))) stop('predictedAll must be a matrix of individual tree predictions')
+  if (ncol(predictedAll)!=object$ntree) stop('predictedAll does not have the same number of columns as the number of trees in the object')
+
+  # Extract parameters from object
   B = object$ntree
-  n = dim(object$inbag.times)[1]
+  n = dim(predictedAll)[1]       
   s = sum(object$inbag.times) / object$ntree
   
-  if (object$type=="binary classification")
-  {
-  	pred = factorToNumber(object$predictedAll)
+  if (class(predictedAll[1,1])%in%c("factor","character")) {
+  	pred = factorToNumber(predictedAll,object$key)
   	y.hat = rowMeans(pred)
   	y.hat = numberToFactor(y.hat,object$key)
   	pred.centered = pred - rowMeans(pred)    # centering does not change variance
   }
-  else
-  {
-  	pred = object$predictedAll
+  else {
+  	pred = predictedAll
   	y.hat = rowMeans(pred)
   	pred.centered = pred - rowMeans(pred)    # centering does not change variance
   }
