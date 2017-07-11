@@ -162,7 +162,7 @@ head(ustat)
 plot(ustat)
 ```
 
-We can also estimate the variance of the train set predicted probabilities. Note: there is a bug here because probability > 1, need to look closer at the splitting.
+We can also estimate the variance of the train set predicted probabilities. Note: there is a bug here because probability > 1, need to look closer at how it's being output.
 ```{r}
 ustat = forest.varU(fit$predictedProb,fit)
 head(ustat)

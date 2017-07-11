@@ -23,26 +23,24 @@ forest.varU <- function (predictedAll,object) {
   # Ensure individual trees were stored
   if (!object$individualTrees) stop('variance estimation requires individual tree predictions')  
 
-  # Ensure that predictedAll has same number of trees as object
+  # Ensure that predictedAll has same number of trees as forest
   if (is.null(dim(predictedAll))) stop('predictedAll must be a matrix of individual tree predictions')
   if (ncol(predictedAll)!=object$ntree) stop('predictedAll does not have the same number of columns as the number of trees in the object')
 
-  # Extract parameters from object
+  # Extract parameters from forest
   B = object$B
   L = object$ntree / B
   n = dim(predictedAll)[1]       
   
   if (class(predictedAll[1,1])%in%c("factor","character")) {
+  	y.hat = unlist(apply(predictedAll,1,function(x) names(sort(table(x),decreasing=T)[1])))
   	pred = factorToNumber(predictedAll,object$key)
-  	y.hat = rowMeans(pred)
-  	y.hat = numberToFactor(y.hat,object$key)
-  	pred.centered = pred - rowMeans(pred)    # centering does not change variance
   }
   else {
+  	y.hat = rowMeans(predictedAll,na.rm=T)
   	pred = predictedAll
-  	y.hat = rowMeans(pred)
-  	pred.centered = pred - rowMeans(pred)    # centering does not change variance
   }
+  pred.centered = pred - rowMeans(pred)    # centering does not change variance
   
   Bs = rep(1:B,each=L)
   predB = matrix(nrow=n,ncol=B)

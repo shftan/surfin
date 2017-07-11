@@ -430,12 +430,8 @@ void resample(int nOrig, int sampSize, int replace, IntegerVector& IDs,
     *ySum += tmp[i].yWgt;
     *ySum2 += tmp[i].y2Wgt;
     if (classify) {
-    	if (y[i]==-1) {
-    		tmp[i].wgt1 = 0;
-    	}
-    	else if (y[i]==1) {
-    		yCount++;  //calculate # obs of class 1 (binary classification) 
-    	}
+    	if (y[i]==-1) tmp[i].wgt1 = 0;
+    	else yCount++;  //calculate # obs of class 1 (binary classification) 
     } 
   }
 }
