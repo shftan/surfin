@@ -3,8 +3,6 @@
 #' Wrapper for the C++ implementation of random forest
 #' @param x matrix of predictors. Currently non-response is not supported, and categorical predictors are converted to their numeric equivalents, not made into indicator variables. The latter feature is pending. 
 #' @param y vector of response. If it is a factor, classification is assumed. Otherwise, regression is assumed. Currently, only binary classification is supported, and non-response is not supported. 
-#' @param xtest matrix of test set predictors. Also see info for x.
-#' @param ytest vector of test set responses. Also see info for y.
 #' @param individualTrees whether to return predictions of individual trees, default is FALSE. If var.type is not NULL, this is set to TRUE.
 #' @param ntree number of trees desired, default is 1000
 #' @param replace bootstrap samples or subsamples, default is bootstrap samples. If var.type = "ustat", this is set to FALSE; if var.type = "infjack", this is set to TRUE.
@@ -21,14 +19,13 @@
 #' \item{oob.times}{number of times observation was out-of-bag}
 #' \item{predictedAll}{only returned if individualTrees=TRUE. n by ntree matrix with (i,j)th value being tree j's prediction for observation i} 
 #' \item{predictedOOB}{only returned if individualTrees=TRUE. predictedAll but with in-bag observations NA-ed}
-#' \item{predictedProb}{only returned if individualTrees=TRUE. n by ntree matrix with (i,j)th value being tree j's prediction for observation i as a probability of the class with key value 1} 
-#' \item{predictedProbOOB}{only returned if individualTrees=TRUE. predictedProb but with in-bag observations NA-ed}
+#' \item{predictedProb}{only returned for classification and if individualTrees=TRUE. n by ntree matrix with (i,j)th value being tree j's predicted probability of observation i being of class with key value 1. See forestobject$key for mapping of key value to class} 
+#' \item{predictedProbOOB}{only returned for classification and if individualTrees=TRUE. predictedProb but with in-bag observations NA-ed}
 #' \item{predicted}{length n vector of predictions based on out-of-bag observations}
-#' \item{err.rate}{only returned if classification. Forest error rate}
-#' \item{mse}{only returned if regression. Forest mean square error}
-#' \item{test}{only returned if xtest is provided. Prediction results on xtest, including predictedAll, predicted, err.rate or mse}
+#' \item{err.rate}{only returned for classification. Forest error rate}
+#' \item{mse}{only returned for regression. Forest mean square error}
 #' \item{type}{classification or regression}
-#' \item{key}{only returned if classification. Mapping of numbers to categories}
+#' \item{key}{only returned for classification. Mapping of numbers to classes}
 #' \item{varNames}{names of features}
 #' \item{ntree}{number of trees in forest}
 #' \item{replace}{replace value used}
@@ -46,7 +43,7 @@
 #' response = birds[,"detected"]
 #' forest(x=features,y=response)
 
-forest <- function (x, y, xtest=NULL, ytest=NULL, individualTrees = FALSE, ntree = 1000, replace=TRUE, var.type=NULL, B = NULL, keepForest = TRUE,
+forest <- function (x, y, individualTrees = FALSE, ntree = 1000, replace=TRUE, var.type=NULL, B = NULL, keepForest = TRUE,
           mtry     = if (is.factor(y)) floor(sqrt(ncol(x))) else max(floor(ncol(x)/3), 1), 
           nodeSize = if (is.factor(y)) 1                    else 5, 
           sampSize    = if (replace) nrow(x) else ceiling(0.632 * nrow(x)),
@@ -81,24 +78,23 @@ forest <- function (x, y, xtest=NULL, ytest=NULL, individualTrees = FALSE, ntree
   
   if (sum(is.na(x)) != 0) stop('NA not permitted in predictors') 
 
-  # Only perform test set predictions if at least xtest is provided
-  if (!is.null(ytest) & is.null(xtest)) stop('ytest provided but xtest not provided')
-  
   # Determine if classification or regression is to be performed
   if (is.factor(y)) {
     # Find mapping of factor level to number
-    # first (alphabetically-speaking) level becomes -1, second level becomes 1
     key = getKey(y)
     y_numeric = factorToNumber(y,key)
-  } 
-  else {
+  } else 
+  {
     y_numeric = y
   }
   
+  # Quick and dirty fix for categorical predictors, needs to be changed
+  x = data.matrix(x)
+
   # Call C++ function
   #yOffset <- if (is.factor(y)) 0 else mean(y)     # consider moving this back in for speed improvements
   #if (!is.factor(y)) y <- y - yOffset
-  out <- cppForest(data.matrix(x), y_numeric, sampSize, nodeSize, maxNodes, ntree, mtry, keepForest, replace, is.factor(y), ustat, B)
+  out <- cppForest(x, y_numeric, sampSize, nodeSize, maxNodes, ntree, mtry, keepForest, replace, is.factor(y), ustat, B)
   #if (!is.factor(y)) y = y + yOffset
   #out$forest$nodePred <- out$forest$nodePred + yOffset
   #out$predictedByTree <- out$predictedByTree + yOffset
@@ -107,8 +103,8 @@ forest <- function (x, y, xtest=NULL, ytest=NULL, individualTrees = FALSE, ntree
   if (is.factor(y)) {
     out$type = "binary classification"
     out$key = key
-  }
-  else {
+  } else 
+  {
     out$type = "regression"
   }  
   out$varNames = if (is.null(colnames(x))) 1:ncol(x) else colnames(x)
@@ -121,72 +117,40 @@ forest <- function (x, y, xtest=NULL, ytest=NULL, individualTrees = FALSE, ntree
                
   ### Prediction on x and y
   # Determine predictions of individual trees
-  predictedAll = cppPredict(data.matrix(x), 
+  predictedRaw = cppPredict(x, 
              out$forest$splitVar, 
              out$forest$split,
              out$forest$leftDaughter, 
              out$forest$rightDaughter,
             out$forest$nodePred) 
-  
-  # Convert probabilities to characters if binary classification
+    
+  # Process and store predictions
   if (out$type == "binary classification") {
-  	predictedProb = predictedAll
-    predictedAll = probToFactor(predictedProb,out$key)
-    predictedProbOOB = predictedProb
+    predictedProb = predictedRaw - 1
+  	predictedProbOOB = predictedProb
   	predictedProbOOB[out$inbag.times!=0] = NA
-  }
-  predictedOOB = predictedAll
-  predictedOOB[out$inbag.times!=0] = NA
-  
-  if (out$type == "binary classification") predicted = unlist(apply(predictedOOB,1,function(x) names(sort(table(x),decreasing=T)[1])))
-  else predicted = rowMeans(predictedOOB,na.rm=T)
-  
-  # Store predictions
-  if (individualTrees) {
-    out$predictedAll = predictedAll
-    out$predictedOOB = predictedOOB
-    if (out$type == "binary classification") {
+    out$predicted = collapseProbPred(predictedProbOOB,out$key)
+    if (individualTrees) {
+    	out$predictedAll = rawProbToFactor(predictedRaw,out$key)
     	out$predictedProb = predictedProb
-    	out$predictedProbOOB = predictedProbOOB
-    }
+    	out$predictedOOB = out$predictedAll
+  		out$predictedOOB[out$inbag.times!=0] = NA
+  		out$predictedProbOOB = predictedProbOOB
+    }	
+  } else 
+  {
+  	predictedOOB = predictedRaw
+  	predictedOOB[out$inbag.times!=0] = NA
+  	out$predicted = collapseRegPred(predictedOOB)
+  	if (individualTrees) {
+  		out$predictedAll = predictedRaw
+  		out$predictedOOB = predictedOOB	
+  	}
   }
-  out$predicted = predicted
   
   # If classification, calculate oob err.rate; if regression, oob mse
   #if (out$type == "binary classification") out$err.rate = mean(predicted!=y)
   #else out$mse = mean((predicted-y)^2)
-  
-  ### Prediction on xtest and ytest, if provided
-  out$test = NULL
-  if (!is.null(xtest)) {
-    # Determine predictions of individual trees
-    predictedAll = cppPredict(data.matrix(xtest), 
-             out$forest$splitVar, 
-             out$forest$split,
-             out$forest$leftDaughter, 
-             out$forest$rightDaughter,
-            out$forest$nodePred) 
-  
-    # Convert probabilities to characters if binary classification
-  	if (out$type == "binary classification") {
-  		predictedProb = predictedAll
-    	predictedAll = probToFactor(predictedProb,out$key)
-  	}
-  
-  	if (out$type == "binary classification") predicted = unlist(apply(predictedAll,1,function(x) names(sort(table(x),decreasing=T)[1])))
-  	else predicted = rowMeans(predictedAll,na.rm=T)
-  
-  	# Store predictions
-  	if (individualTrees) {
-    	out$test$predictedAll = predictedAll
-    	if (out$type == "binary classification") out$test$predictedProb = predictedProb
-  	}
-  	out$test$predicted = predicted
-  
-    # If classification, calculate oob err.rate; if regression, oob mse
-    #if (out$type == "binary classification") out$test$err.rate = mean(predicted!=ytest)
-    #else out$test$mse = mean((predicted-ytest)^2)
-  }
 
   if (!keepForest) out$forest <- NULL
   class(out) = "forest"

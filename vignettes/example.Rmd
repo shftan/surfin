@@ -9,15 +9,16 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-This vignette demonstrates how to use the surfin R package to compute uncertainty for random forest predictions. We will compare the U-statistics based variance estimate (Mentch & Hooker 2016) provided in this package with another estimate based on the infinitesimal jackknife (Wager, Hastie, Efron, 2014). The latter is provided in the R package randomForestCI by the authors of the paper. For a discussion of the differences between these two variance estimates, see Section ??? of Mentch et al. (Mentch & Hooker 2016).
+This vignette demonstrates how to use the surfin R package to compute uncertainty for random forest predictions. We will compare the U-statistics based variance estimate ([Mentch & Hooker 2016](http://jmlr.org/papers/v17/14-168.html)) provided in this package with another estimate based on the infinitesimal jackknife ([Wager, Hastie, Efron, 2014](http://jmlr.org/papers/v15/wager14a.html)). The latter is provided in the R code [randomForestCI](https://github.com/swager/randomForestCI/) by the authors of the paper. For a discussion of the differences between these two variance estimates, see [Section 2.1 of Mentch et al.](http://jmlr.org/papers/volume17/14-168/14-168.pdf)
 
-In a foundational paper, Breiman (2001) showed that a random forest's sampling variance (by which we mean ....) is determined by two factors: the variance of each tree in the forest, and the correlation between trees. Intuitively, having trees that are certain about their predictions and less correlated with each other means the forest is reasonably certain .
+## Package Updates
+Categorical predictors are currently converted to their numeric equivalents, not made into indicator variables. This feature is pending. If you have categorical predictors, for now, make them indicators before calling the forest function.
 
-One of the parameters driving correlation between individual trees is how many features they share. Hence, the higher the proportion of features sampled by each tree, the higher the probability that trees have features in common. However, this same parameter also affects the variance of an individual tree - the less features a tree is allowed to use, the more uncertain its prediction. Hence, 
+This package is actively under development. Feedback, bug reports, etc. are very much welcome! Find our contact info on the [package website](http://shftan.github.io/surfin/).
 
 ## Setup
 
-First, load packages needed for this example:
+Let's get started! First, load packages needed for this example:
 ```{r}
 library(surfin)
 library(devtools)  # to install randomForestCI package from github
@@ -25,7 +26,7 @@ library(randomForest)  # to compare forest implementations
 library(rpart) # for kyphosis data
 ```
 
-Next, install and load the randomForestCI R package:
+Next, install and load the [randomForestCI](https://github.com/swager/randomForestCI/) R package:
 ```{r}
 install_github("swager/randomForestCI")
 library(randomForestCI)
@@ -53,7 +54,7 @@ ytest = y[test]
 
 To compute the U-statistics based variance estimate, we use sampling without replacement and specify B, the number of common observations, to be 10.
 ```{r}
-fit = forest(xtrain,ytrain,xtest,ytest,var.type="ustat",B=10)
+fit = forest(xtrain,ytrain,var.type="ustat",B=10)
 ```
 
 Check out what the forest object outputs:
@@ -72,33 +73,34 @@ There are a variety of prediction options to choose from:
 
 ```{r}
 u_train_oob = fit$predicted        # Case (1)
-u_train_all = predict(fit,xtrain)  # Case (2)
-u_test_all = fit$test$predicted    # Case (3)
-temp = data.frame(u_train_oob,u_train_all)
+u_train = predict(fit,xtrain)  # Case (2)
+temp = predict(fit,xtest,individualTrees=T)   # Case (3)
+u_test = temp$predicted
+u_test_all = temp$predictedAll
+temp = data.frame(u_train_oob,u_train)
 head(temp)
-head(u_test_all)
+head(u_test)
 ```
 
 ### U-statistics based variance estimate
 
-Now we calculate and plot the u-statistics based variance estimate on the train set (Case (1)):
+We can calculate and plot the u-statistics based variance estimate on the test set (Case (2)):
 ```{r}
-ustat = forest.varU(fit$predictedAll,fit)
+ustat = forest.varU(u_test_all,fit)
 head(ustat)
 plot(ustat)
 ```
-We see that the ...  
 
-We can also calculate the u-statistics based variance estimate on the test set (Case (2)):
+We can also calculate variance estimate on the train set (Case (1)):
 ```{r}
-ustat = forest.varU(fit$test$predictedAll,fit)
+ustat = forest.varU(fit$predictedAll,fit)
 head(ustat)
 plot(ustat)
 ```
 
 ### Infinitesimal jackknife based variance estimate
 
-Now we use the randomForestCI package to compute the infinitesimal jackknife based variance estimate (example taken from https://github.com/swager/randomForestCI):
+Now we compare to the infinitesimal jackknife based variance using the randomForestCI package:
 ```{r}
 rf = randomForest(xtrain, ytrain, keep.inbag = TRUE) 
 ij = randomForestInfJack(rf, xtrain, calibrate = TRUE)
@@ -106,7 +108,7 @@ head(ij)
 plot(ij)
 ```
 
-Next we try our own implementation of the infinitesimal jackknife (we don't have some extras implemented by the authors of the randomForestCI package, such as their calibration, but this is nice as a comparison). To compute the infinitesimal jackknife variance, we need sampling with replacement. 
+Next we try our own implementation of the infinitesimal jackknife (we don't have some extras implemented by the authors of the randomForestCI package, such as calibration, but this is nice as a comparison). To compute the infinitesimal jackknife variance, we need sampling with replacement. 
 ```{r}
 fit = forest(xtrain,ytrain,var.type="infjack")
 ij2_train_oob = fit$predicted   # Case (1)
@@ -126,7 +128,7 @@ lines(ij2_train_oob,ij2_train_oob,lty="dashed")
 
 ## Binary Classification
 
-Next, we try classification. We currently only support binary classification:
+Next, we try classification. Currently only binary classification is supported:
 ```{r}
 x = kyphosis[,c("Age","Number","Start")]
 y = kyphosis$Kyphosis
@@ -146,47 +148,49 @@ table(y)
 
 ### Prediction
 
-Like for regression, we have several options for prediction. Note, there is a bug in the predict.forest function for binary responses.
+Like for regression, we have several options for prediction.
 ```{r}
-fit = forest(xtrain,ytrain,xtest,ytest,var.type="ustat",B=10)
+fit = forest(xtrain,ytrain,var.type="ustat",B=10)
 names(fit)
 u_train_oob = fit$predicted        # Case (1)
-u_train_all = predict(fit,xtrain)  # Case (2)
-u_test_all = fit$test$predicted    # Case (3)
-temp = data.frame(u_train_oob,u_train_all)
-head(temp)
-head(u_test_all)
+table(u_train_oob)
+u_train = predict(fit,xtrain)  # Case (2)
+table(u_train)
+temp = predict(fit,xtest,individualTrees=T)   # Case (3)
+u_test = temp$predicted
+u_test_prob = temp$predictedProb
+u_test_all = temp$predictedAll
+table(u_test)
 ```
 
 ### U-statistics based variance estimate
 
-Calculate and plot the u-statistics based variance estimate on the train set predicted responses (Case (1)):
+Check out the test set variance estimate (Case (2)):
 ```{r}
-ustat = forest.varU(fit$predictedAll,fit)
+ustat = forest.varU(u_test_all,fit)
 head(ustat)
 plot(ustat)
 ```
 
-We can also estimate the variance of the train set predicted probabilities. Note: there is a bug here because probability > 1, need to look closer at how binary responses are being tracked.
+It's possible to look at the predicted probability of the classes, instead of class names:
 ```{r}
+ustat = forest.varU(u_test_prob,fit)
+head(ustat)
+plot(ustat)
+```
+
+Now we look at the training set (Case (1)), both class names and probabilities:
+```{r}
+ustat = forest.varU(fit$predictedAll,fit)
+head(ustat)
+plot(ustat)
 ustat = forest.varU(fit$predictedProb,fit)
 head(ustat)
 plot(ustat)
 ```
 
-Now try the same but on the test set (Case (2)):
-```{r}
-ustat = forest.varU(fit$test$predictedAll,fit)
-head(ustat)
-plot(ustat)
-ustat = forest.varU(fit$test$predictedProb,fit)
-head(ustat)
-plot(ustat)
-```
-
 ### Infinitesimal jackknife based variance estimate
-
-Next we compute the infinitesimal jackknife variance: (looks like there is a bug in the randomForestCI code in converting labels for classification to numeric, so the code below is commented out until that package is fixed)
+Again we can compare to the infinitesimal jackknife: (looks like there is a bug in the [randomForestCI](https://github.com/swager/randomForestCI/) code (infinitesimalJackknife.R; line 144-145) in variance estimates for classification, so the code below is commented out until that package is fixed)
 ```{r}
 #rf = randomForest(x, y, keep.inbag = TRUE)
 #ij = randomForestInfJack(rf, x, calibrate = TRUE)
@@ -194,7 +198,7 @@ Next we compute the infinitesimal jackknife variance: (looks like there is a bug
 #plot(ij)
 ```
 
-Our own implementation of the infinitesimal jackknife variance. Note, there is a bug in how binary responses are being tracked when sampling with replacement.
+Our own implementation of the infinitesimal jackknife variance.
 ```{r}
 fit = forest(xtrain,ytrain,var.type="infjack")
 ij2_train_oob = fit$predicted   # Case (1)
@@ -213,6 +217,17 @@ table(ij2_train_oob,rf_train_oob)
 ```
 
 ## Implementation Notes 
-- Data with non-response, or classification with more than 2 categories is not yet supported. Contact us if you are eager for these!
-- Categorical predictors are currently converted to their numeric equivalents, not made into indicator variables. This feature is pending. 
-- Like the randomForest package, the splitting criterion for regression is mean squared error, and gini impurity for binary classification.
+
+* Data with non-response, or classification with more than 2 categories is not yet supported. Contact us if you are eager for these!
+
+* Categorical predictors are currently converted to their numeric equivalents, not made into indicator variables. This feature is pending. 
+
+* Like the randomForest package, the splitting criterion for regression is mean squared error, and gini impurity for binary classification.
+
+## Mathematical Notes
+* Minimizing gini impurity in binary classification is equivalent to minimizing mean squared error. For example, taking $Y\in\{0,1\}$, it can be shown that MSE = $\frac{1}{2}$ Gini impurity.
+
+## Some Intuition (to be fleshed out)
+In a foundational paper, Breiman (2001) showed that a random forest's sampling variance (by which we mean ....) is determined by two factors: the variance of each tree in the forest, and the correlation between trees. Intuitively, having trees that are certain about their predictions and less correlated with each other means the forest is reasonably certain .
+
+One of the parameters driving correlation between individual trees is how many features they share. Hence, the higher the proportion of features sampled by each tree, the higher the probability that trees have features in common. However, this same parameter also affects the variance of an individual tree - the less features a tree is allowed to use, the more uncertain its prediction. Hence, .... 

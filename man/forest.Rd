@@ -4,21 +4,16 @@
 \alias{forest}
 \title{Random forest wrapper function}
 \usage{
-forest(x, y, xtest = NULL, ytest = NULL, individualTrees = FALSE,
-  ntree = 1000, replace = TRUE, var.type = NULL, B = NULL,
-  keepForest = TRUE, mtry = if (is.factor(y)) floor(sqrt(ncol(x))) else
-  max(floor(ncol(x)/3), 1), nodeSize = if (is.factor(y)) 1 else 5,
-  sampSize = if (replace) nrow(x) else ceiling(0.632 * nrow(x)),
-  maxNodes = 2 * trunc(sampSize/max(1, nodeSize - 4)) + 1)
+forest(x, y, individualTrees = FALSE, ntree = 1000, replace = TRUE,
+  var.type = NULL, B = NULL, keepForest = TRUE, mtry = if (is.factor(y))
+  floor(sqrt(ncol(x))) else max(floor(ncol(x)/3), 1), nodeSize = if
+  (is.factor(y)) 1 else 5, sampSize = if (replace) nrow(x) else ceiling(0.632
+  * nrow(x)), maxNodes = 2 * trunc(sampSize/max(1, nodeSize - 4)) + 1)
 }
 \arguments{
 \item{x}{matrix of predictors. Currently non-response is not supported, and categorical predictors are converted to their numeric equivalents, not made into indicator variables. The latter feature is pending.}
 
 \item{y}{vector of response. If it is a factor, classification is assumed. Otherwise, regression is assumed. Currently, only binary classification is supported, and non-response is not supported.}
-
-\item{xtest}{matrix of test set predictors. Also see info for x.}
-
-\item{ytest}{vector of test set responses. Also see info for y.}
 
 \item{individualTrees}{whether to return predictions of individual trees, default is FALSE. If var.type is not NULL, this is set to TRUE.}
 
@@ -47,14 +42,13 @@ List with the following components
 \item{oob.times}{number of times observation was out-of-bag}
 \item{predictedAll}{only returned if individualTrees=TRUE. n by ntree matrix with (i,j)th value being tree j's prediction for observation i} 
 \item{predictedOOB}{only returned if individualTrees=TRUE. predictedAll but with in-bag observations NA-ed}
-\item{predictedProb}{only returned if individualTrees=TRUE. n by ntree matrix with (i,j)th value being tree j's prediction for observation i as a probability of the class with key value 1} 
-\item{predictedProbOOB}{only returned if individualTrees=TRUE. predictedProb but with in-bag observations NA-ed}
+\item{predictedProb}{only returned for classification and if individualTrees=TRUE. n by ntree matrix with (i,j)th value being tree j's predicted probability of observation i being of class with key value 1. See forestobject$key for mapping of key value to class} 
+\item{predictedProbOOB}{only returned for classification and if individualTrees=TRUE. predictedProb but with in-bag observations NA-ed}
 \item{predicted}{length n vector of predictions based on out-of-bag observations}
-\item{err.rate}{only returned if classification. Forest error rate}
-\item{mse}{only returned if regression. Forest mean square error}
-\item{test}{only returned if xtest is provided. Prediction results on xtest, including predictedAll, predicted, err.rate or mse}
+\item{err.rate}{only returned for classification. Forest error rate}
+\item{mse}{only returned for regression. Forest mean square error}
 \item{type}{classification or regression}
-\item{key}{only returned if classification. Mapping of numbers to categories}
+\item{key}{only returned for classification. Mapping of numbers to classes}
 \item{varNames}{names of features}
 \item{ntree}{number of trees in forest}
 \item{replace}{replace value used}

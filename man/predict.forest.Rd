@@ -30,6 +30,7 @@ response = birds[,"detected"]
 forestobject = forest(x=features,y=response)
 testfeatures = birds[n_train+1:n,setdiff(names(birds),"detected")]
 predict(object=forestobject,newdata=testfeatures)
+predict(object=forestobject,newdata=testfeatures, individualTrees=TRUE)
 }
 \references{
 Leo Breiman. (2001). Random Forests. Machine Learning 45(1), 5-32. http://link.springer.com/article/10.1023/A:1010933404324

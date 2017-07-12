@@ -26,26 +26,28 @@ xtest = x[test,]
 ytest = y[test]
 
 ## ------------------------------------------------------------------------
-fit = forest(xtrain,ytrain,xtest,ytest,var.type="ustat",B=10)
+fit = forest(xtrain,ytrain,var.type="ustat",B=10)
 
 ## ------------------------------------------------------------------------
 names(fit)
 
 ## ------------------------------------------------------------------------
 u_train_oob = fit$predicted        # Case (1)
-u_train_all = predict(fit,xtrain)  # Case (2)
-u_test_all = fit$test$predicted    # Case (3)
-temp = data.frame(u_train_oob,u_train_all)
+u_train = predict(fit,xtrain)  # Case (2)
+temp = predict(fit,xtest,individualTrees=T)   # Case (3)
+u_test = temp$predicted
+u_test_all = temp$predictedAll
+temp = data.frame(u_train_oob,u_train)
 head(temp)
-head(u_test_all)
+head(u_test)
 
 ## ------------------------------------------------------------------------
-ustat = forest.varU(fit$predictedAll,fit)
+ustat = forest.varU(u_test_all,fit)
 head(ustat)
 plot(ustat)
 
 ## ------------------------------------------------------------------------
-ustat = forest.varU(fit$test$predictedAll,fit)
+ustat = forest.varU(fit$predictedAll,fit)
 head(ustat)
 plot(ustat)
 
@@ -82,30 +84,33 @@ ytest = y[test]
 table(y)
 
 ## ------------------------------------------------------------------------
-fit = forest(xtrain,ytrain,xtest,ytest,var.type="ustat",B=10)
+fit = forest(xtrain,ytrain,var.type="ustat",B=10)
 names(fit)
 u_train_oob = fit$predicted        # Case (1)
-u_train_all = predict(fit,xtrain)  # Case (2)
-u_test_all = fit$test$predicted    # Case (3)
-temp = data.frame(u_train_oob,u_train_all)
-head(temp)
-head(u_test_all)
+table(u_train_oob)
+u_train = predict(fit,xtrain)  # Case (2)
+table(u_train)
+temp = predict(fit,xtest,individualTrees=T)   # Case (3)
+u_test = temp$predicted
+u_test_prob = temp$predictedProb
+u_test_all = temp$predictedAll
+table(u_test)
+
+## ------------------------------------------------------------------------
+ustat = forest.varU(u_test_all,fit)
+head(ustat)
+plot(ustat)
+
+## ------------------------------------------------------------------------
+ustat = forest.varU(u_test_prob,fit)
+head(ustat)
+plot(ustat)
 
 ## ------------------------------------------------------------------------
 ustat = forest.varU(fit$predictedAll,fit)
 head(ustat)
 plot(ustat)
-
-## ------------------------------------------------------------------------
 ustat = forest.varU(fit$predictedProb,fit)
-head(ustat)
-plot(ustat)
-
-## ------------------------------------------------------------------------
-ustat = forest.varU(fit$test$predictedAll,fit)
-head(ustat)
-plot(ustat)
-ustat = forest.varU(fit$test$predictedProb,fit)
 head(ustat)
 plot(ustat)
 
