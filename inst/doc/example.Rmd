@@ -123,7 +123,7 @@ head(ij)
 plot(ij)
 ```
 
-Next we try our own implementation of the infinitesimal jackknife (we don't have some extras implemented by the authors of the randomForestCI package, such as calibration, but this is nice as a comparison). To compute the infinitesimal jackknife variance, we need sampling with replacement. 
+Next we try calling the infinitesimal jackknife code in the randomForestCI package, but using our forest where sampling is performed with replacement:
 ```{r}
 fit = forest(xtrain,ytrain,var.type="infjack")
 ij2_train_oob = fit$predicted   # Case (1)
@@ -213,7 +213,7 @@ Again we can compare to the infinitesimal jackknife: (looks like there is a bug 
 #plot(ij)
 ```
 
-Our own implementation of the infinitesimal jackknife variance.
+Again we run the infinitesimal jackknife code in the randomForestCI package on our forest with sampling with replacement:
 ```{r}
 fit = forest(xtrain,ytrain,var.type="infjack")
 ij2_train_oob = fit$predicted   # Case (1)
