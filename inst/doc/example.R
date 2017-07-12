@@ -47,6 +47,16 @@ head(ustat)
 plot(ustat)
 
 ## ------------------------------------------------------------------------
+temp = forest.varU(u_test_all,fit,covariance=TRUE)
+y.hat = temp[[1]]
+cov = temp[[2]]
+dim(cov)
+cov[1:6,1:6]
+
+## ------------------------------------------------------------------------
+unique(diag(cov) - ustat[,2])
+
+## ------------------------------------------------------------------------
 ustat = forest.varU(fit$predictedAll,fit)
 head(ustat)
 plot(ustat)

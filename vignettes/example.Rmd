@@ -91,6 +91,21 @@ head(ustat)
 plot(ustat)
 ```
 
+It's also possible to retrieve not just the variance, but also covariance between predictions:
+```{r}
+temp = forest.varU(u_test_all,fit,covariance=TRUE)
+y.hat = temp[[1]]
+cov = temp[[2]]
+dim(cov)
+cov[1:6,1:6]
+```
+The (i,j) element in the covariance matrix represents the estimated covariance between observation i and observation j's predictions.
+
+The diagonals of the covariance matrix are exactly the variances we saw above:
+```{r}
+unique(diag(cov) - ustat[,2])
+```
+
 We can also calculate variance estimate on the train set (Case (1)):
 ```{r}
 ustat = forest.varU(fit$predictedAll,fit)

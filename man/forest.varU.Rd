@@ -4,15 +4,17 @@
 \alias{forest.varU}
 \title{U-statistic based estimate for random objects}
 \usage{
-forest.varU(predictedAll, object)
+forest.varU(predictedAll, object, covariance = FALSE)
 }
 \arguments{
 \item{predictedAll}{a matrix with ntree rows where each element is the individual tree's prediction for that prediction}
 
 \item{object}{A random object trained with replace=FALSE but with common observations}
+
+\item{covariance}{whether covariance should be returned instead of variance, default is FALSE}
 }
 \value{
-predictions for each observation and corresponding variance
+if covariance=TRUE, a list with predictions for each observation and covariances between predictions; otherwise, predictions for each observation and corresponding variance
 }
 \description{
 Calculate the u-statistic based variance
