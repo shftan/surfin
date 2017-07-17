@@ -2,7 +2,7 @@
 % Please edit documentation in R/forest.varIJ.R
 \name{forest.varIJ}
 \alias{forest.varIJ}
-\title{The infinitesimal jackknife for random forests}
+\title{Wrapper to infinitesimal jackknife variance estimate code by Stefan Wager (https://github.com/swager/randomForestCI/)}
 \usage{
 forest.varIJ(predictedAll, object)
 }
@@ -15,7 +15,7 @@ forest.varIJ(predictedAll, object)
 predictions for each observation and corresponding variance
 }
 \description{
-Calculate the infinitesimal jackknife variance
+Wrapper to infinitesimal jackknife variance estimate code by Stefan Wager (https://github.com/swager/randomForestCI/)
 }
 \examples{
 features = birds[,setdiff(names(birds),"detected")]
@@ -28,9 +28,6 @@ Stefan Wager, Trevor Hastie, and Bradley Efron. (2014). Confidence Intervals for
 }
 \seealso{
 \code{\link{forest.varU}}
-}
-\author{
-Sarah Tan <\email{ht395@cornell.edu}>, Stefan Wager
 }
 \keyword{forest,}
 \keyword{infinitesimal}

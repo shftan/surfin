@@ -59,7 +59,9 @@ forest <- function (x, y, individualTrees = FALSE, ntree = 1000, replace=TRUE, v
       if (replace) replace = FALSE
       if (!individualTrees) individualTrees = TRUE
       if (is.null(B)) stop("need to specify B")
-      if (B < 0 | ntree %% B != 0) stop("ntree and B values needed such that ntree = B * positive integer")
+      if (B<0) stop("B must be a positive integer")
+      if (ntree<0) stop ("ntree must be a positive integer")
+      if (ntree %% B != 0) stop("ntree and B values needed such that ntree is divisible by B")
       ustat=TRUE
     }
     if (var.type == "infjack") {

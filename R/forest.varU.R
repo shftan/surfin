@@ -25,11 +25,11 @@ forest.varU <- function (predictedAll,object,covariance=FALSE) {
   if (is.null(dim(predictedAll))) stop('predictedAll must be a matrix of individual tree predictions')
   if (ncol(predictedAll)!=object$ntree) stop('predictedAll do not have the same number of columns as the number of trees in the forest object')
 
-  # Extract parameters from forest
+  # Extract parameters from trained forest
   M = object$ntree
   B = object$B
   L = M / B
-  n = dim(predictedAll)[1]    
+  n = nrow(object$inbag.times)     # Number of observations in training set  
   k = object$sampSize  
   
   if (class(predictedAll[1,1])%in%c("factor","character")) {
@@ -43,7 +43,7 @@ forest.varU <- function (predictedAll,object,covariance=FALSE) {
   pred.centered = pred - rowMeans(pred)    # centering does not change variance
   
   Bs = rep(1:B,each=L)
-  predB = matrix(nrow=n,ncol=B)
+  predB = matrix(nrow=nrow(predictedAll),ncol=B)      # Number of observations in predictedAll
   for (i in 1:B)
   {
     predB[,i] = rowMeans(pred.centered[,Bs==i])

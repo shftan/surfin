@@ -3,12 +3,16 @@ library(surfin)
 library(devtools)  # to install randomForestCI package from github
 library(randomForest)  # to compare forest implementations
 library(rpart) # for kyphosis data
+#library(MASS) # for Boston housing and breast cancer data
 
 ## ------------------------------------------------------------------------
 install_github("swager/randomForestCI")
 library(randomForestCI)
 
 ## ------------------------------------------------------------------------
+#data(Boston)
+#x = Boston[,1:(ncol(Boston)-1)]
+#y = Boston[,ncol(Boston)]
 x = cu.summary[,c("Price","Country","Reliability","Type")]
 y = cu.summary$Mileage
 keep = !is.na(y)
@@ -26,7 +30,7 @@ xtest = x[test,]
 ytest = y[test]
 
 ## ------------------------------------------------------------------------
-fit = forest(xtrain,ytrain,var.type="ustat",B=10)
+fit = forest(xtrain,ytrain,var.type="ustat",B=20,ntree=5000)
 
 ## ------------------------------------------------------------------------
 names(fit)
@@ -62,13 +66,13 @@ head(ustat)
 plot(ustat)
 
 ## ------------------------------------------------------------------------
-rf = randomForest(xtrain, ytrain, keep.inbag = TRUE) 
+rf = randomForest(xtrain, ytrain, keep.inbag = TRUE, ntree=5000) 
 ij = randomForestInfJack(rf, xtrain, calibrate = TRUE)
 head(ij)
 plot(ij)
 
 ## ------------------------------------------------------------------------
-fit = forest(xtrain,ytrain,var.type="infjack")
+fit = forest(xtrain,ytrain,var.type="infjack",ntree=5000)
 ij2_train_oob = fit$predicted   # Case (1)
 ij2 = forest.varIJ(fit$predictedAll,fit)
 head(ij2)
@@ -80,8 +84,46 @@ plot(ij2_train_oob,rf_train_oob)
 lines(ij2_train_oob,ij2_train_oob,lty="dashed")
 
 ## ------------------------------------------------------------------------
+varU = vector("numeric")
+varIJ = vector("numeric")
+nts = seq(1000,10000,2000)
+for (nt in nts)
+{
+  fit = forest(xtrain,ytrain,var.type="ustat",B=20,ntree=nt)
+  varU = c(varU,mean(forest.varU(fit$predictedAll,fit)[,2]))
+  rf = randomForest(xtrain, ytrain, keep.inbag = TRUE, ntree=nt) 
+  varIJ = c(varIJ,mean(randomForestInfJack(rf, xtrain, calibrate = TRUE)[,2]))
+}
+plot(nts,varU,ylim=c(0,max(varU,varIJ)),cex.axis=0.6,ylab="Mean Est. Variance",xlab="Number of Trees",type="o",cex.lab=0.5)
+points(nts,varIJ,col="blue",type="o")
+legend("topright",legend=c("U-Stat","IJ"),col=c("black","blue"),lty="solid",cex=0.6)
+print(varU)
+print(varIJ)
+
+## ------------------------------------------------------------------------
+varU = vector("numeric")
+varIJ = vector("numeric")
+bs = c(2,5,10,20,25)
+for (b in bs)
+{
+  fit = forest(xtrain,ytrain,var.type="ustat",B=b,ntree=1000)
+  varU = c(varU,mean(forest.varU(fit$predictedAll,fit)[,2]))
+}
+plot(bs,varU,ylim=c(0,max(varU,varIJ)),cex.axis=0.6,ylab="Mean Est. Variance",xlab="B",type="o",cex.lab=0.5)
+print(varU)
+
+## ------------------------------------------------------------------------
+#data(biopsy)
+#x = biopsy[1:(ncol(biopsy)-1)]
+#y = biopsy[,ncol(biopsy)]
 x = kyphosis[,c("Age","Number","Start")]
 y = kyphosis$Kyphosis
+keep = !is.na(y)
+y = y[keep]
+x = x[keep,]
+keep = !apply(is.na(x),1,any)
+y = y[keep]
+x = x[keep,]
 n = length(y)
 train = sample(1:n,n*0.7)
 test = setdiff(1:n,train)
@@ -94,7 +136,7 @@ ytest = y[test]
 table(y)
 
 ## ------------------------------------------------------------------------
-fit = forest(xtrain,ytrain,var.type="ustat",B=10)
+fit = forest(xtrain,ytrain,var.type="ustat",B=20,ntree=5000)
 names(fit)
 u_train_oob = fit$predicted        # Case (1)
 table(u_train_oob)
@@ -131,14 +173,14 @@ plot(ustat)
 #plot(ij)
 
 ## ------------------------------------------------------------------------
-fit = forest(xtrain,ytrain,var.type="infjack")
+fit = forest(xtrain,ytrain,var.type="infjack",ntree=5000)
 ij2_train_oob = fit$predicted   # Case (1)
 ij2 = forest.varIJ(fit$predictedAll,fit)
 head(ij2)
 plot(ij2)
 
 ## ------------------------------------------------------------------------
-rf = randomForest(xtrain,ytrain,keep.forest=TRUE,keep.inbag=TRUE,replace=TRUE)
+rf = randomForest(xtrain,ytrain,keep.forest=TRUE,keep.inbag=TRUE,replace=TRUE,ntree=5000)
 rf_train_oob = rf$predicted
 table(ij2_train_oob,rf_train_oob)
 
