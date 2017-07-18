@@ -23,7 +23,7 @@ forest(x, y, individualTrees = FALSE, ntree = 1000, replace = TRUE,
 
 \item{var.type}{default is NULL. Type of variance estimate to be computed. 2 options: "ustat" for u-statistic based which needs replace=FALSE or "infjack" for infinitesimal jackknife which needs replace=TRUE}
 
-\item{B}{default is NULL. Number of unique common observations for u-statistic based variance estimate. Note that L, the number of trees sharing a common observation, typically >> B.}
+\item{B}{default is NULL. Number of unique common observations for u-statistic based variance estimate, must be: 1. <= number of observations in x 2. ntree is divisible by B, where L (=ntree/B), the number of trees sharing a common observation, is typically >> B.}
 
 \item{keepForest}{output forest in output object or not, default is TRUE}
 

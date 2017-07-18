@@ -7,7 +7,7 @@
 #' @param ntree number of trees desired, default is 1000
 #' @param replace bootstrap samples or subsamples, default is bootstrap samples. If var.type = "ustat", this is set to FALSE; if var.type = "infjack", this is set to TRUE.
 #' @param var.type default is NULL. Type of variance estimate to be computed. 2 options: "ustat" for u-statistic based which needs replace=FALSE or "infjack" for infinitesimal jackknife which needs replace=TRUE
-#' @param B default is NULL. Number of unique common observations for u-statistic based variance estimate. Note that L, the number of trees sharing a common observation, typically >> B.
+#' @param B default is NULL. Number of unique common observations for u-statistic based variance estimate, must be: 1. <= number of observations in x 2. ntree is divisible by B, where L (=ntree/B), the number of trees sharing a common observation, is typically >> B.
 #' @param keepForest output forest in output object or not, default is TRUE
 #' @param mtry number of variables randomly sampled at each split, default value is floor(sqrt(p)) for classification, max(floor(p/3),1) for regression, where p is the number of features
 #' @param nodeSize minimum size of terminal nodes, default value is 1 for classification, 5 for regression
@@ -56,10 +56,17 @@ forest <- function (x, y, individualTrees = FALSE, ntree = 1000, replace=TRUE, v
       stop('wrong input method for type of variance estimate')  
     }
     if (var.type=="ustat") {
-      if (replace) replace = FALSE
-      if (!individualTrees) individualTrees = TRUE
-      if (is.null(B)) stop("need to specify B")
+      if (replace) {
+        replace = FALSE
+        print("U-statistics based variance needs replace=FALSE. Forest was built with this option.")
+      }
+      if (!individualTrees) {
+        individualTrees = TRUE
+        print("U-statistics based variance needs individualTrees=TRUE. Forest was built with this option.")
+      } 
+      if (is.null(B)) stop("need to specify B. B must be such that ")
       if (B<0) stop("B must be a positive integer")
+      if (B>nrow(x)) stop ("B must be <= number of observations in x, and ntree must be divisible by B")
       if (ntree<0) stop ("ntree must be a positive integer")
       if (ntree %% B != 0) stop("ntree and B values needed such that ntree is divisible by B")
       ustat=TRUE
