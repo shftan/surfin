@@ -8,7 +8,7 @@ using namespace Rcpp;
 
 // cppForest
 List cppForest(NumericMatrix& x, NumericVector& y, int sampSize, int nodeSize, int maxNodes, int nTree, int mtry, int keepF, int replace, int classify, int ustat, int B);
-RcppExport SEXP surfin_cppForest(SEXP xSEXP, SEXP ySEXP, SEXP sampSizeSEXP, SEXP nodeSizeSEXP, SEXP maxNodesSEXP, SEXP nTreeSEXP, SEXP mtrySEXP, SEXP keepFSEXP, SEXP replaceSEXP, SEXP classifySEXP, SEXP ustatSEXP, SEXP BSEXP) {
+RcppExport SEXP _surfin_cppForest(SEXP xSEXP, SEXP ySEXP, SEXP sampSizeSEXP, SEXP nodeSizeSEXP, SEXP maxNodesSEXP, SEXP nTreeSEXP, SEXP mtrySEXP, SEXP keepFSEXP, SEXP replaceSEXP, SEXP classifySEXP, SEXP ustatSEXP, SEXP BSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -30,7 +30,7 @@ END_RCPP
 }
 // cppMatch
 DataFrame cppMatch(IntegerVector tr, NumericVector dist, char type);
-RcppExport SEXP surfin_cppMatch(SEXP trSEXP, SEXP distSEXP, SEXP typeSEXP) {
+RcppExport SEXP _surfin_cppMatch(SEXP trSEXP, SEXP distSEXP, SEXP typeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -43,7 +43,7 @@ END_RCPP
 }
 // cppPredict
 NumericMatrix cppPredict(NumericMatrix x, IntegerMatrix splitVar, NumericMatrix split, IntegerMatrix lDaughter, IntegerMatrix rDaughter, NumericMatrix nodePred);
-RcppExport SEXP surfin_cppPredict(SEXP xSEXP, SEXP splitVarSEXP, SEXP splitSEXP, SEXP lDaughterSEXP, SEXP rDaughterSEXP, SEXP nodePredSEXP) {
+RcppExport SEXP _surfin_cppPredict(SEXP xSEXP, SEXP splitVarSEXP, SEXP splitSEXP, SEXP lDaughterSEXP, SEXP rDaughterSEXP, SEXP nodePredSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -59,7 +59,7 @@ END_RCPP
 }
 // cppProx
 arma::mat cppProx(arma::umat nodes);
-RcppExport SEXP surfin_cppProx(SEXP nodesSEXP) {
+RcppExport SEXP _surfin_cppProx(SEXP nodesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -70,10 +70,10 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"surfin_cppForest", (DL_FUNC) &surfin_cppForest, 12},
-    {"surfin_cppMatch", (DL_FUNC) &surfin_cppMatch, 3},
-    {"surfin_cppPredict", (DL_FUNC) &surfin_cppPredict, 6},
-    {"surfin_cppProx", (DL_FUNC) &surfin_cppProx, 1},
+    {"_surfin_cppForest", (DL_FUNC) &_surfin_cppForest, 12},
+    {"_surfin_cppMatch", (DL_FUNC) &_surfin_cppMatch, 3},
+    {"_surfin_cppPredict", (DL_FUNC) &_surfin_cppPredict, 6},
+    {"_surfin_cppProx", (DL_FUNC) &_surfin_cppProx, 1},
     {NULL, NULL, 0}
 };
 

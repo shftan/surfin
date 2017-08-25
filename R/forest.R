@@ -46,14 +46,14 @@
 forest <- function (x, y, individualTrees = FALSE, ntree = 1000, replace=TRUE, var.type=NULL, B = NULL, keepForest = TRUE,
           mtry     = if (is.factor(y)) floor(sqrt(ncol(x))) else max(floor(ncol(x)/3), 1), 
           nodeSize = if (is.factor(y)) 1                    else 5, 
-          sampSize    = if (replace) nrow(x) else ceiling(0.632 * nrow(x)),
+          sampSize    = if (replace) nrow(x) else ceiling(0.3 * nrow(x)),
           maxNodes = 2 * trunc(sampSize/max(1, nodeSize - 4)) + 1) {
   
   # Ensure correct sampling scheme
   ustat = FALSE
   if (!is.null(var.type)) {
     if (var.type != "ustat" & var.type != "infjack") {
-      stop('wrong input method for type of variance estimate')  
+      stop('var.type must be either ustat or infjack')  
     }
     if (var.type=="ustat") {
       if (replace) {
@@ -64,11 +64,11 @@ forest <- function (x, y, individualTrees = FALSE, ntree = 1000, replace=TRUE, v
         individualTrees = TRUE
         print("U-statistics based variance needs individualTrees=TRUE. Forest was built with this option.")
       } 
-      if (is.null(B)) stop("need to specify B. B must be such that ")
-      if (B<0) stop("B must be a positive integer")
-      if (B>nrow(x)) stop ("B must be <= number of observations in x, and ntree must be divisible by B")
-      if (ntree<0) stop ("ntree must be a positive integer")
-      if (ntree %% B != 0) stop("ntree and B values needed such that ntree is divisible by B")
+      if (is.null(B)) stop("need to specify B. B must be such that ntree is divisible by B")
+      if (B<0) stop("B must be a positive integer such that ntree is divisible by B")
+      if (B>nrow(x)) stop ("B must be <= number of observations in x and such that ntree is divisible by B")
+      if (ntree<0) stop ("ntree must be a positive integer and such that ntree is divisible by B")
+      if (ntree %% B != 0) stop("ntree and B must be such that ntree is divisible by B")
       ustat=TRUE
     }
     if (var.type == "infjack") {

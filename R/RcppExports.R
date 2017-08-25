@@ -21,7 +21,7 @@
 #' Options available for bootstrap samples or subsamples
 #' @export
 cppForest <- function(x, y, sampSize, nodeSize, maxNodes, nTree, mtry, keepF, replace, classify, ustat, B) {
-    .Call('surfin_cppForest', PACKAGE = 'surfin', x, y, sampSize, nodeSize, maxNodes, nTree, mtry, keepF, replace, classify, ustat, B)
+    .Call('_surfin_cppForest', PACKAGE = 'surfin', x, y, sampSize, nodeSize, maxNodes, nTree, mtry, keepF, replace, classify, ustat, B)
 }
 
 #' @title
@@ -35,7 +35,7 @@ cppForest <- function(x, y, sampSize, nodeSize, maxNodes, nTree, mtry, keepF, re
 #' Ties are broken using the the first match (not randomly).
 #' @export
 cppMatch <- function(tr, dist, type) {
-    .Call('surfin_cppMatch', PACKAGE = 'surfin', tr, dist, type)
+    .Call('_surfin_cppMatch', PACKAGE = 'surfin', tr, dist, type)
 }
 
 #' @title
@@ -52,7 +52,7 @@ cppMatch <- function(tr, dist, type) {
 #' All other matrices represent the forest. Trees are columns, and nodes are rows.
 #' @export
 cppPredict <- function(x, splitVar, split, lDaughter, rDaughter, nodePred) {
-    .Call('surfin_cppPredict', PACKAGE = 'surfin', x, splitVar, split, lDaughter, rDaughter, nodePred)
+    .Call('_surfin_cppPredict', PACKAGE = 'surfin', x, splitVar, split, lDaughter, rDaughter, nodePred)
 }
 
 #' @title
@@ -64,6 +64,6 @@ cppPredict <- function(x, splitVar, split, lDaughter, rDaughter, nodePred) {
 #' The computed proximities are based on only the out-of-bag predictions. Zero-valued entries in nodes correspond to in-bag instances.
 #' @export
 cppProx <- function(nodes) {
-    .Call('surfin_cppProx', PACKAGE = 'surfin', nodes)
+    .Call('_surfin_cppProx', PACKAGE = 'surfin', nodes)
 }
 

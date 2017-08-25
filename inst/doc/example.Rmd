@@ -9,7 +9,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-This vignette demonstrates how to use the surfin R package to compute uncertainty for random forest predictions. We will compare the U-statistics based variance estimate ([Mentch & Hooker 2016](http://jmlr.org/papers/v17/14-168.html)) provided in this package with another estimate based on the infinitesimal jackknife ([Wager, Hastie, Efron, 2014](http://jmlr.org/papers/v15/wager14a.html)). The latter is provided in the R code [randomForestCI](https://github.com/swager/randomForestCI/) by the authors of the paper. For a discussion of the differences between these two variance estimates, see [Section 2.1 of Mentch et al.](http://jmlr.org/papers/volume17/14-168/14-168.pdf)
+This vignette demonstrates how to use the [surfin R package](http://shftan.github.io/surfin/) to compute uncertainty for random forest predictions. As noted by Wager et al., two sources of variability contribute to the variance of a random forest's predictions: sampling variability (that the data we see is merely a sample from the unseen population) and Monte Carlo noise (that only a finite number of bagged replicates - i.e. the bootstrapped samples or subsamples trees are trained on - is used). We will compare two ways to estimate this variance: (1) a U-statistics based estimate ([Mentch & Hooker 2016](http://jmlr.org/papers/v17/14-168.html)) based on subsampled trees that is implemented in this package (2) an infinitesimal jackknife based estimate ([Wager, Hastie, Efron, 2014](http://jmlr.org/papers/v15/wager14a.html)) based on bootstrapped trees using the R package [randomForestCI](https://github.com/swager/randomForestCI/) provided by the authors. For further discussion of the differences between these first two variance estimates, see [Section 2.1 of Mentch et al.](http://jmlr.org/papers/volume17/14-168/14-168.pdf). We will show some experiments on combining these two estimates to make a (hopefully) even better estimate. Comparison with a third estimate, "bootstrap of little bags" ([Sexton and Laake 2009](http://dl.acm.org/citation.cfm?id=1465325)), is pending.
 
 ## Package Updates
 Categorical predictors are currently converted to their numeric equivalents, not made into indicator variables. This feature is pending. If you have categorical predictors, for now, make them indicators before calling the forest function.
@@ -24,23 +24,23 @@ library(surfin)
 library(devtools)  # to install randomForestCI package from github
 library(randomForest)  # to compare forest implementations
 library(rpart) # for kyphosis data
-#library(MASS) # for Boston housing and breast cancer data
+library(MASS) # for Boston housing and breast cancer data
 ```
 
 Next, install and load the [randomForestCI](https://github.com/swager/randomForestCI/) R package:
 ```{r}
-install_github("swager/randomForestCI")
+#install_github("swager/randomForestCI")
 library(randomForestCI)
 ```
 
 ## Regression
 We start with a regression example:
 ```{r}
-#data(Boston)
-#x = Boston[,1:(ncol(Boston)-1)]
-#y = Boston[,ncol(Boston)]
-x = cu.summary[,c("Price","Country","Reliability","Type")]
-y = cu.summary$Mileage
+data(Boston)
+x = Boston[,1:(ncol(Boston)-1)]
+y = Boston[,ncol(Boston)]
+#x = cu.summary[,c("Price","Country","Reliability","Type")]
+#y = cu.summary$Mileage
 keep = !is.na(y)
 y = y[keep]
 x = x[keep,]
@@ -56,9 +56,11 @@ xtest = x[test,]
 ytest = y[test]
 ```
 
-To compute the U-statistics based variance estimate, we use sampling without replacement and specify B, the number of common observations between trees to be 20. To give an idea of what this means, if we use ntree=5000 trees and B=20 common observations between trees, L=5000/20 = 250 trees will share an observation, then the next 250 trees with share another observation, and so forth. So two of these three parameters can be specified, and the third will automatically follow.
+Typical random forest implementations use bootstrapped trees. The U-statistics based variance estimate is based on subsamples which allows the Central Limit Theorem to be applied. The number of observations subsampled should be on the order of $\sqrt{n}$ where $n$ is the number of observations in the data set. Other parameters of interest are the number of trees, and B (the number of common observations between trees), and L (the number of trees sharing a observation). ntree, B and L are connected: if we use ntree=5000 trees and B=25 common observations between trees, L=5000/25 = 200 trees will share an observation, then the next 200 trees with share another observation, and so forth. So two of these three parameters need to be specified, and the third will automatically follow. Mentch & Hooker found in their experiments that a range of 10 to 50 for B works well empirically.
+
+Below, the variance option "ustat" automatically sets sampling to be performed without replacement with the appropriate subsample size. We specified ntree to be 5000 and B to be 25, so L follows as 200.
 ```{r}
-fit = forest(xtrain,ytrain,var.type="ustat",B=20,ntree=5000)
+fit = forest(xtrain,ytrain,var.type="ustat",B=25,ntree=5000)
 ```
 
 Check out what the forest object outputs:
@@ -118,8 +120,8 @@ plot(ustat)
 ```
 
 ### Infinitesimal jackknife based variance estimate
+Now we compare to the infinitesimal jackknife based variance using the randomForestCI package. The infinitesimal jackknife based variance estimate uses bootstrapped samples. The parameter of interest here is the number of trees. Wager et al. showed that the number of trees should be on the order of $\sqrt{n}$ to $\frac{n}{\log n}$ for the variance estimate to be stable. 
 
-Now we compare to the infinitesimal jackknife based variance using the randomForestCI package:
 ```{r}
 rf = randomForest(xtrain, ytrain, keep.inbag = TRUE, ntree=5000) 
 ij = randomForestInfJack(rf, xtrain, calibrate = TRUE)
@@ -127,7 +129,7 @@ head(ij)
 plot(ij)
 ```
 
-Next we try calling the infinitesimal jackknife code in the randomForestCI package, but using our forest where sampling is performed with replacement:
+Next we try calling the infinitesimal jackknife code in the randomForestCI package, but using our forest with bootstrapped samples (sampling with replacement):
 ```{r}
 fit = forest(xtrain,ytrain,var.type="infjack",ntree=5000)
 ij2_train_oob = fit$predicted   # Case (1)
@@ -145,15 +147,26 @@ plot(ij2_train_oob,rf_train_oob)
 lines(ij2_train_oob,ij2_train_oob,lty="dashed")
 ```
 
+### Combining the two estimates
+
+We can look at the two components of the U-statistics based variance separately, to obtain a more equitable comparison with the infinitesimal jackknife based variance:
+
+```{r}
+fit = forest(xtrain,ytrain,var.type="ustat",B=25,ntree=5000)
+ustat = forest.varU(fit$predictedAll,fit,separate=TRUE)
+head(ustat)
+head(ij)
+```
+
 ### Sensitivity Analysis
-Let's compare the variance estimates and see how they change when more trees are used in the forest:
+Let's compare the variance estimates and see how they change when more trees are used in the forest. Like the examples above, B is set to 25. We vary the number of trees from 1000 to 7000:
 ```{r}
 varU = vector("numeric")
 varIJ = vector("numeric")
-nts = seq(1000,10000,2000)
+nts = seq(1000,7000,1000)
 for (nt in nts)
 {
-  fit = forest(xtrain,ytrain,var.type="ustat",B=20,ntree=nt)
+  fit = forest(xtrain,ytrain,var.type="ustat",B=25,ntree=nt)
   varU = c(varU,mean(forest.varU(fit$predictedAll,fit)[,2]))
   rf = randomForest(xtrain, ytrain, keep.inbag = TRUE, ntree=nt) 
   varIJ = c(varIJ,mean(randomForestInfJack(rf, xtrain, calibrate = TRUE)[,2]))
@@ -165,19 +178,21 @@ print(varU)
 print(varIJ)
 ```
 
-We can also perform sensitivity analysis on the B parameter, the number of common observations between trees.
+We can also perform sensitivity analysis on the B parameter, the number of common observations between trees. Using 5000 trees:
 ```{r}
 varU = vector("numeric")
 varIJ = vector("numeric")
-bs = c(2,5,10,20,25)
+bs = c(10,25,50,100)
 for (b in bs)
 {
-  fit = forest(xtrain,ytrain,var.type="ustat",B=b,ntree=1000)
+  fit = forest(xtrain,ytrain,var.type="ustat",B=b,ntree=5000)
   varU = c(varU,mean(forest.varU(fit$predictedAll,fit)[,2]))
 }
 plot(bs,varU,ylim=c(0,max(varU,varIJ)),cex.axis=0.6,ylab="Mean Est. Variance",xlab="B",type="o",cex.lab=0.5)
 print(varU)
 ```
+
+Another parameter that's important for the U-statistics based variance is the number of observations used by each tree. In a regular random forest this would just be $n$, the number of observations, but in a subsampled random forest we need to select the number of subsamples. Sensitivity analysis for this parameter pending.
 
 ## Binary Classification
 
@@ -212,7 +227,7 @@ table(y)
 
 Like for regression, we have several options for prediction.
 ```{r}
-fit = forest(xtrain,ytrain,var.type="ustat",B=20,ntree=5000)
+fit = forest(xtrain,ytrain,var.type="ustat",B=50,ntree=5000)
 names(fit)
 u_train_oob = fit$predicted        # Case (1)
 table(u_train_oob)
@@ -290,6 +305,6 @@ table(ij2_train_oob,rf_train_oob)
 * Minimizing gini impurity in binary classification is equivalent to minimizing mean squared error. For example, taking $Y\in\{0,1\}$, it can be shown that MSE = $\frac{1}{2}$ Gini impurity.
 
 ## Some Intuition (to be fleshed out)
-In a foundational paper, Breiman (2001) showed that a random forest's sampling variance (by which we mean ....) is determined by two factors: the variance of each tree in the forest, and the correlation between trees. Intuitively, having trees that are certain about their predictions and less correlated with each other means the forest is reasonably certain .
+In a foundational paper, [Breiman (2001)](https://link.springer.com/article/10.1023%2FA%3A1010933404324) showed that the variance of a random forest's predictions is determined by two factors: the variance of each tree in the forest, and the correlation between trees. Intuitively, having trees that are certain about their predictions and less correlated with each other means the forest is reasonably certain .
 
-One of the parameters driving correlation between individual trees is how many features they share. Hence, the higher the proportion of features sampled by each tree, the higher the probability that trees have features in common. However, this same parameter also affects the variance of an individual tree - the less features a tree is allowed to use, the more uncertain its prediction. Hence, .... 
+One of the parameters driving correlation between individual trees is how many features they share - the higher the proportion of features each tree is allowed to see, the higher the probability that different trees have features in common. However, this parameter also affects the variance of an individual tree, as the less features a tree is allowed to see, the more uncertain its predictions.  

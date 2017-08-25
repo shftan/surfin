@@ -4,7 +4,8 @@
 #' @param predictedAll a matrix with ntree rows where each element is the individual tree's prediction for that prediction
 #' @param object A random object trained with replace=FALSE but with common observations
 #' @param covariance whether covariance should be returned instead of variance, default is FALSE
-#' @return if covariance=TRUE, a list with predictions for each observation and covariances between predictions; otherwise, predictions for each observation and corresponding variance
+#' @param separate whether the two components of the variance estimate should be returned separately, default is FALSE
+#' @return if covariance=TRUE, a list with predictions for each observation and covariances between predictions; otherwise, predictions for each observation and corresponding variance (two components separately if separate=TRUE)
 #' @author Sarah Tan <\email{ht395@cornell.edu}>, Lucas K. Mentch, Giles J. Hooker
 #' @references Lucas K. Mentch and Giles J. Hooker. (2016). Quantifying Uncertainty in Random objects via Confidence Intervals and Hypothesis Tests. Journal of Machine Learning Research, 17(26), 1-41. http://www.jmlr.org/papers/volume17/14-168/14-168.pdf  
 #' @seealso \code{\link{object.varIJ}} 
@@ -16,7 +17,7 @@
 #' object = forest(x=features,y=response,var.type="ustat",B=5)
 #' varU = forest.varU(object$predictedAll,object)
 
-forest.varU <- function (predictedAll,object,covariance=FALSE) {
+forest.varU <- function (predictedAll,object,covariance=FALSE,separate=FALSE) {
   # Ensure correct sampling scheme
   if (object$replace | is.null(object$var.type)) stop('u-statistic based variance estimate requires sampling without replacement')  
   if (object$var.type!="ustat") stop('random object trained for other variance estimates')
@@ -50,13 +51,16 @@ forest.varU <- function (predictedAll,object,covariance=FALSE) {
   }
   var_predB = apply(predB,1,var)
   var_pred = apply(pred.centered,1,var)
-  varU = k^2 / n * var_predB + var_pred/M
+  component1 = k^2 / n * var_predB
+  component2 = var_pred/M
+  varU = component1 + component2 
   	
-  if (covariance) {
+  if (covariance) { 
     cov_predB = cov(t(predB))
   	cov_pred = cov(t(pred))
   	covU = k^2 / n * cov_predB + cov_pred/M
   	return(list(y.hat,covU))
   }
+  if (separate) return(data.frame(y.hat=y.hat,var.hat=varU, var.hat.component1=component1, var.hat.component2=component2))
   else return(data.frame(y.hat=y.hat, var.hat=varU))
 }

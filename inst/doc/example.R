@@ -3,18 +3,18 @@ library(surfin)
 library(devtools)  # to install randomForestCI package from github
 library(randomForest)  # to compare forest implementations
 library(rpart) # for kyphosis data
-#library(MASS) # for Boston housing and breast cancer data
+library(MASS) # for Boston housing and breast cancer data
 
 ## ------------------------------------------------------------------------
-install_github("swager/randomForestCI")
+#install_github("swager/randomForestCI")
 library(randomForestCI)
 
 ## ------------------------------------------------------------------------
-#data(Boston)
-#x = Boston[,1:(ncol(Boston)-1)]
-#y = Boston[,ncol(Boston)]
-x = cu.summary[,c("Price","Country","Reliability","Type")]
-y = cu.summary$Mileage
+data(Boston)
+x = Boston[,1:(ncol(Boston)-1)]
+y = Boston[,ncol(Boston)]
+#x = cu.summary[,c("Price","Country","Reliability","Type")]
+#y = cu.summary$Mileage
 keep = !is.na(y)
 y = y[keep]
 x = x[keep,]
@@ -30,7 +30,7 @@ xtest = x[test,]
 ytest = y[test]
 
 ## ------------------------------------------------------------------------
-fit = forest(xtrain,ytrain,var.type="ustat",B=20,ntree=5000)
+fit = forest(xtrain,ytrain,var.type="ustat",B=25,ntree=5000)
 
 ## ------------------------------------------------------------------------
 names(fit)
@@ -84,12 +84,18 @@ plot(ij2_train_oob,rf_train_oob)
 lines(ij2_train_oob,ij2_train_oob,lty="dashed")
 
 ## ------------------------------------------------------------------------
+fit = forest(xtrain,ytrain,var.type="ustat",B=25,ntree=5000)
+ustat = forest.varU(fit$predictedAll,fit,separate=TRUE)
+head(ustat)
+head(ij)
+
+## ------------------------------------------------------------------------
 varU = vector("numeric")
 varIJ = vector("numeric")
-nts = seq(1000,10000,2000)
+nts = seq(1000,7000,1000)
 for (nt in nts)
 {
-  fit = forest(xtrain,ytrain,var.type="ustat",B=20,ntree=nt)
+  fit = forest(xtrain,ytrain,var.type="ustat",B=25,ntree=nt)
   varU = c(varU,mean(forest.varU(fit$predictedAll,fit)[,2]))
   rf = randomForest(xtrain, ytrain, keep.inbag = TRUE, ntree=nt) 
   varIJ = c(varIJ,mean(randomForestInfJack(rf, xtrain, calibrate = TRUE)[,2]))
@@ -103,10 +109,10 @@ print(varIJ)
 ## ------------------------------------------------------------------------
 varU = vector("numeric")
 varIJ = vector("numeric")
-bs = c(2,5,10,20,25)
+bs = c(10,25,50,100)
 for (b in bs)
 {
-  fit = forest(xtrain,ytrain,var.type="ustat",B=b,ntree=1000)
+  fit = forest(xtrain,ytrain,var.type="ustat",B=b,ntree=5000)
   varU = c(varU,mean(forest.varU(fit$predictedAll,fit)[,2]))
 }
 plot(bs,varU,ylim=c(0,max(varU,varIJ)),cex.axis=0.6,ylab="Mean Est. Variance",xlab="B",type="o",cex.lab=0.5)
@@ -136,7 +142,7 @@ ytest = y[test]
 table(y)
 
 ## ------------------------------------------------------------------------
-fit = forest(xtrain,ytrain,var.type="ustat",B=20,ntree=5000)
+fit = forest(xtrain,ytrain,var.type="ustat",B=50,ntree=5000)
 names(fit)
 u_train_oob = fit$predicted        # Case (1)
 table(u_train_oob)
