@@ -33,14 +33,19 @@
           <h3>
 <a id="description" class="anchor" href="#description" aria-hidden="true"><span class="octicon octicon-link"></span></a>Description</h3>
 
-<p>This R package computes uncertainty for random forest predictions using a fast implementation of random forests in C++. Two variance estimates are provided: U-statistic based (Mentch & Hooker, 2016) and infinitesimal jackknife (Wager, Hastie, Efron, 2014), the latter as a wrapper to the authors' R code <a href="http://www.github.com/swager/randomForestCI">randomForestCI</a>.</p> 
-
+<p>This R package computes uncertainty for random forest predictions using a fast implementation of random forests in C++. Two variance estimates are provided: U-statistic based (Mentch & Hooker, 2016) and infinitesimal jackknife on bootstrap samples (Wager, Hastie, Efron, 2014), the latter as a wrapper to the authors' R code <a href="http://www.github.com/swager/randomForestCI">randomForestCI</a>.</p>
+     
 <p>Check out a demo: <a href="example.html">How Uncertain Are Your Random Forest Predictions?</a></p>
+
+<p>This is an exciting time for research on the theoretical properties of random forests, with several other variance estimates unveiled recently. This R package aims to provide all the different variance estimates in one place, to (1) make it easier for random forest practitioners to see the empirical differences between estimates (2) expedite research in this area.</p> 
+         
+<p>Pending variance estimates: (1) Infinitesimal jackknife on subsamples (Wager & Athey, 2017; Athey, Tibshirani, Wager, 2016) as a wrapper to the authors' R package <a href="https://cran.r-project.org/web/packages/grf/index.html">grf</a>
+  (2) Bag of little bags (Sexton and Laake 2009)
 
 <h3>
 <a id="latest-version" class="anchor" href="#latest-version" aria-hidden="true"><span class="octicon octicon-link"></span></a>Latest Version</h3>
 
-<p>v0.0.0.9000, under development. Feedback, bug reports, etc. very much welcome! Scroll to the bottom to contact us.</p>
+<p>v0.9.1, beta mode, soon to be uploaded to CRAN. Feedback, bug reports, etc. very much welcome! Scroll to the bottom to contact us.</p>
 
           <h3>
 <a id="latest-version" class="anchor" href="#references" aria-hidden="true"><span class="octicon octicon-link"></span></a>References</h3>
@@ -48,8 +53,11 @@
 <p>Mentch L, Hooker G. <a href="http://jmlr.org/papers/v17/14-168.html">Quantifying uncertainty in random forests via confidence intervals and hypothesis tests.</a> Journal of Machine Learning Research. 2016.</p>
 
 <p>Wager S, Hastie T, Efron B. <a href="http://jmlr.org/papers/v15/wager14a.html">Confidence intervals for random forests: the jackknife and the infinitesimal jackknife.</a> Journal of Machine Learning Research. 2014.</p>
-   
-          
+
+<p>Wager S, Athey S. <a href="https://arxiv.org/abs/1510.04342">Estimation and Inference of Heterogeneous Treatment Effects using Random Forests.</a> arxiv. 2017.</p>
+ 
+<p>Athey S., Tibshirani, J., Wager, S. <a href="https://arxiv.org/abs/1610.01271">Generalized Random Forests.</a> arxiv. 2016.</p>
+
 <h3>
 <a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h3>
 
