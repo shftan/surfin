@@ -33,23 +33,22 @@
           <h3>
 <a id="description" class="anchor" href="#description" aria-hidden="true"><span class="octicon octicon-link"></span></a>Description</h3>
 
-<p>This R package computes uncertainty for random forest predictions using a fast implementation of random forests in C++. Two variance estimates are provided: U-statistics based (Mentch & Hooker, 2016) and infinitesimal jackknife on bootstrap samples (Wager, Hastie, Efron, 2014), the latter as a wrapper to the authors' R code <a href="http://www.github.com/swager/randomForestCI">randomForestCI</a>.</p>
+<p>This R package computes uncertainty for random forest predictions using a fast implementation of random forests in C++. This is an exciting time for research into the theoretical properties of random forests. This R package aims to provide all state-of-the-art variance estimates in one place, to make it easier for practitioners to compare estimates and expedite research in this area.</p> 
+  
+<p>Two variance estimates are provided: U-statistics based (Mentch & Hooker, 2016) and infinitesimal jackknife on bootstrap samples (Wager, Hastie, Efron, 2014), the latter as a wrapper to the authors' R code <a href="http://www.github.com/swager/randomForestCI">randomForestCI</a>.</p>
      
 <p>Check out a demo: <a href="example.html">How Uncertain Are Your Random Forest Predictions?</a></p>
 
-<h3>
-  <a id="updates" class="anchor" href="#updates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Updates</h3>
-
-<p>This is an exciting time for research into the theoretical properties of random forests. This R package aims to provide all state-of-the-art variance estimates in one place, to make it easier for random forest practitioners to compare estimates, as well as expedite research in this area.</p> 
-         
-<p>Variance estimates coming soon! (1) Bag of little bags (Sexton and Laake 2009) (2) Infinitesimal jackknife on subsamples (Wager & Athey, 2017; Athey, Tibshirani, Wager, 2016) as a wrapper to the authors' R package <a href="https://cran.r-project.org/web/packages/grf/index.html">grf</a>.
+<h3><a id="updates" class="anchor" href="#updates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Updates</h3>
+   
+<p>More variance estimates coming soon: (1) Bag of little bags (Sexton and Laake 2009) (2) Infinitesimal jackknife on subsamples (Wager & Athey, 2017; Athey, Tibshirani, Wager, 2016) as a wrapper to the authors' R package <a href="https://cran.r-project.org/web/packages/grf/index.html">grf</a>.
   
-<p>This package is actively under development. Feedback, bug reports, etc. very much welcome! Or know of another variance estimate? <a href="mailto:ht395@cornell.edu">Email me</a>.</p>
+<p>This package is actively under development, and soon to be uploaded to CRAN. Feedback, bug reports, pointers to other variance estimates very much welcome! 
   
 <h3>
 <a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h3>
 
-<p>Soon to be uploaded to CRAN. For now, download from this website the .tar.gz (whether you are on Mac, Linux, or Windows). Note that it is a source, not binary file, and needs to be compiled using C++ development tools.
+<p>Download from this website the .tar.gz (whether you are on Mac, Linux, or Windows). Note that it is a source, not binary file, and needs to be compiled using C++ development tools.
 
 If you don't already have the dependencies (Rcpp, RcppArmadillo, Matrix, knitr) and optional dependencies (randomForest, rpart) installed, install those from CRAN first. If you are on Windows, make sure you have RTools installed for C++ development tools. If you already have an older version of surfin installed, remove that first by typing the following in R:
 
@@ -90,7 +89,7 @@ See help file at:</p>
 <h3>
 <a id="maintainer" class="anchor" href="#maintainer" aria-hidden="true"><span class="octicon octicon-link"></span></a>Maintainer</h3>
 
-      <p>Feeback, bug reports, etc.? <a href="mailto:ht395@cornell.edu">Email me</a> or submit a request at <a href="http://github.com/shftan/surfin/issues">http://github.com/shftan/surfin/issues</a>.</p>
+      <p>Feeback, bug reports, know another variance estimate? <a href="mailto:ht395@cornell.edu">Email me</a> or submit a request at <a href="http://github.com/shftan/surfin/issues">http://github.com/shftan/surfin/issues</a>.</p>
         </section>
 
         <footer>
