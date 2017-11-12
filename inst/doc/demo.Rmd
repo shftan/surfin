@@ -9,7 +9,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-This vignette demonstrates how to use the [surfin R package](http://shftan.github.io/surfin/) to compute uncertainty for random forest predictions. As noted by Wager et al., two sources of variability contribute to the variance of a random forest's predictions: sampling variability (that the data we see is merely a sample from the unseen population) and Monte Carlo noise (that only a finite number of bagged replicates - i.e. the bootstrapped samples or subsamples trees are trained on - is used). We will compare two ways to estimate this variance: (1) a U-statistics based estimate ([Mentch & Hooker 2016](http://jmlr.org/papers/v17/14-168.html)) based on subsampled trees that is implemented in this package (2) an infinitesimal jackknife based estimate ([Wager, Hastie, Efron, 2014](http://jmlr.org/papers/v15/wager14a.html)) based on bootstrapped trees using the R package [randomForestCI](https://github.com/swager/randomForestCI/) provided by the authors. For further discussion of the differences between these first two variance estimates, see [Section 2.1 of Mentch et al.](http://jmlr.org/papers/volume17/14-168/14-168.pdf). We will show some experiments on combining these two estimates to make a (hopefully) even better estimate. Comparison with a third estimate, "bootstrap of little bags" ([Sexton and Laake 2009](http://dl.acm.org/citation.cfm?id=1465325)), is pending.
+This vignette demonstrates how to use the [surfin R package](http://shftan.github.io/surfin/) to compute uncertainty for random forest predictions. As noted by Wager et al., two sources of variability contribute to the variance of a random forest's predictions: sampling variability (that the data we see is merely a sample from the unseen population) and Monte Carlo noise (that only a finite number of bagged replicates - i.e. the bootstrapped samples or subsamples trees are trained on - is used). We will compare two ways to estimate this variance: (1) a U-statistics based estimate ([Mentch & Hooker 2016](http://jmlr.org/papers/v17/14-168.html)) based on subsampled trees that is implemented in this package (2) an infinitesimal jackknife based estimate ([Wager, Hastie, Efron, 2014](http://jmlr.org/papers/v15/wager14a.html)) based on bootstrapped trees using the R package [randomForestCI](https://github.com/swager/randomForestCI/) provided by the authors. For further discussion of the differences between these first two variance estimates, see [Section 2.1 of Mentch et al.](http://jmlr.org/papers/volume17/14-168/14-168.pdf).
 
 ## Package Updates
 Categorical predictors are currently converted to their numeric equivalents, not made into indicator variables. This feature is pending. If you have categorical predictors, for now, make them indicators before calling the forest function.
@@ -31,6 +31,7 @@ Next, install and load the [randomForestCI](https://github.com/swager/randomFore
 ```{r}
 #install_github("swager/randomForestCI")
 library(randomForestCI)
+library(grf)
 ```
 
 ## Regression
@@ -139,7 +140,6 @@ plot(ij2)
 ```
 
 ### Compare to randomForest package
-
 Let's compare our forest's predictions to the predictions of the randomForest package:
 ```{r}
 rf_train_oob = rf$predicted
@@ -147,8 +147,16 @@ plot(ij2_train_oob,rf_train_oob)
 lines(ij2_train_oob,ij2_train_oob,lty="dashed")
 ```
 
-### Combining the two estimates
+### Infinitesimal jackknife based variance estimate on subsamples
+```{r}
+fit = regression_forest(as.matrix(xtrain),ytrain,num.trees=5000)
+tmp = predict(fit,xtrain,estimate.variance = TRUE)
+ij_s = data.frame(tmp$predictions,tmp$variance.estimates)
+head(ij_s)
+plot(ij_s)
+```
 
+### Combining the three estimates
 We can look at the two components of the U-statistics based variance separately, to obtain a more equitable comparison with the infinitesimal jackknife based variance:
 
 ```{r}
@@ -156,6 +164,7 @@ fit = forest(xtrain,ytrain,var.type="ustat",B=25,ntree=5000)
 ustat = forest.varU(fit$predictedAll,fit,separate=TRUE)
 head(ustat)
 head(ij)
+head(ij_s)
 ```
 
 ### Sensitivity Analysis

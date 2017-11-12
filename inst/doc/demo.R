@@ -8,6 +8,7 @@ library(MASS) # for Boston housing and breast cancer data
 ## ------------------------------------------------------------------------
 #install_github("swager/randomForestCI")
 library(randomForestCI)
+library(grf)
 
 ## ------------------------------------------------------------------------
 data(Boston)
@@ -84,10 +85,18 @@ plot(ij2_train_oob,rf_train_oob)
 lines(ij2_train_oob,ij2_train_oob,lty="dashed")
 
 ## ------------------------------------------------------------------------
+fit = regression_forest(as.matrix(xtrain),ytrain,num.trees=5000)
+tmp = predict(fit,xtrain,estimate.variance = TRUE)
+ij_s = data.frame(tmp$predictions,tmp$variance.estimates)
+head(ij_s)
+plot(ij_s)
+
+## ------------------------------------------------------------------------
 fit = forest(xtrain,ytrain,var.type="ustat",B=25,ntree=5000)
 ustat = forest.varU(fit$predictedAll,fit,separate=TRUE)
 head(ustat)
 head(ij)
+head(ij_s)
 
 ## ------------------------------------------------------------------------
 varU = vector("numeric")
