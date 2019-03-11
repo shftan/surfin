@@ -41,27 +41,25 @@
 
 <h3><a id="updates" class="anchor" href="#updates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Updates</h3>
    
-<p>More variance estimates coming soon: (1) Bootstrap-of-little-bags (Sexton and Laake 2009) (2) Infinitesimal jackknife on subsamples (Wager & Athey, 2017; Athey, Tibshirani, Wager, 2016) as a wrapper to the authors' R package <a href="https://cran.r-project.org/web/packages/grf/index.html">grf</a>.
+<p>More variance estimates coming soon: (1) Bootstrap-of-little-bags (Sexton and Laake 2009) (2) Infinitesimal jackknife on subsamples (Wager & Athey, 2017; Athey, Tibshirani, Wager, 2016) as a wrapper to the authors' R package <a href="https://cran.r-project.org/web/packages/grf/index.html">grf</a>.</p>
   
-<p>This package is actively under development. Feedback, bug reports, pointers to other variance estimates very much welcome! <a href="mailto:ht395@cornell.edu">Email me</a>.
+<p>This package is actively under development. Feedback, bug reports, pointers to other variance estimates very much welcome! <a href="mailto:ht395@cornell.edu">Email me</a>.</p>
   
 <h3>
 <a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h3>
 
-<p>Download the .tar.gz (whether you are on Mac, Linux, or Windows). Note that it is a source, not binary file, and needs to be compiled using C++ development tools.
-
-If you don't already have the dependencies (Rcpp, RcppArmadillo, Matrix, knitr) and optional dependencies (randomForest, rpart) installed, install those from CRAN first. If you are on Windows, make sure you have RTools installed for C++ development tools. If you already have an older version of surfin installed, remove that first by typing the following in R:
+<p>Download the .tar.gz (whether you are on Mac, Linux, or Windows). Note that it is a source, not binary file, and needs to be compiled using C++ development tools. If you don't already have the dependencies (Rcpp, RcppArmadillo, Matrix, knitr) and optional dependencies (randomForest, rpart) installed, install those from CRAN first. If you are on Windows, make sure you have RTools installed for C++ development tools. If you already have an older version of surfin installed, remove that first by typing the following in R:</p>
 
 <pre><code>$ remove.packages("surfin")
 </code></pre>
           
-Then, within base R (not RStudio), install using:</p>
+<p>Then, within base R (not RStudio), install using:</p>
 
 <pre><code>$ install.packages(path_to_downloaded_file, repos=NULL, type="source")
 $ library(surfin)
 </code></pre>
 
-While surfin installation is currently incompatible with RStudio, once it is installed (using base R), it can be ran from Rstudio. Please <a href="mailto:ht395@cornell.edu">email me</a> if you encounter any installation issues.</p>
+<p>While surfin installation is currently incompatible with RStudio, once it is installed (using base R), it can be ran from Rstudio. Please <a href="mailto:ht395@cornell.edu">email me</a> if you encounter any installation issues.</p>
         
 <p>Once installed, you can see surfin's help file by typing:</p>
 <pre><code>$ ?surfin
